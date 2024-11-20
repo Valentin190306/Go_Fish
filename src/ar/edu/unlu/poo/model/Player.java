@@ -53,12 +53,13 @@ public class Player implements IPlayer {
 
         int[] rankCounts = new int[Rank.values().length];
 
-        for (Card card : hand) rankCounts[card.getRank().ordinal()]++;
+        for (Card card : hand)
+            rankCounts[card.getRank().ordinal()]++;
 
         for (int rankCount : rankCounts) {
             if (rankCount == 4) {
-                score++;
                 areSets = true;
+                break;
             }
         }
         return areSets;
@@ -80,6 +81,16 @@ public class Player implements IPlayer {
 
     @Override
     public int getScore() {
+        int[] rankCounts = new int[Rank.values().length];
+        this.score = 0;
+
+        for (Card card : hand) rankCounts[card.getRank().ordinal()]++;
+
+        for (int rankCount : rankCounts) {
+            if (rankCount == 4) {
+                score++;
+            }
+        }
         return score;
     }
 

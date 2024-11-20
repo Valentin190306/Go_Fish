@@ -15,6 +15,8 @@ public class Main {
         List<Player> players = new ArrayList<>();
         players.add(new Player("J1"));
         players.add(new Player("J2"));
+        players.add(new Player("J3"));
+        players.add(new Player("J4"));
 
         IGame game = new Game(players);
 
