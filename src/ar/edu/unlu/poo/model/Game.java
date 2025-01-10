@@ -3,11 +3,14 @@ package ar.edu.unlu.poo.model;
 import ar.edu.unlu.poo.interfaces.IDeck;
 import ar.edu.unlu.poo.interfaces.IGame;
 import ar.edu.unlu.poo.interfaces.IPlayer;
-import ar.edu.unlu.poo.observer.Observable;
+import ar.edu.unlu.poo.observer.Observer;
+import ar.edu.unlu.rmimvc.observer.IObservadorRemoto;
+import ar.edu.unlu.rmimvc.observer.ObservableRemoto;
 
+import java.rmi.RemoteException;
 import java.util.*;
 
-public class Game extends Observable implements IGame {
+public class Game extends ObservableRemoto implements IGame {
     private final Deck deck;
     private final List<Player> players;
     private int currentPlayerIndex;
@@ -21,18 +24,18 @@ public class Game extends Observable implements IGame {
     }
 
     @Override
-    public void dealInitialCards() {
+    public void dealInitialCards() throws RemoteException {
         int initialHandSize = 7;
         for (Player player : players) {
             for (int i = 0; i < initialHandSize; i++) {
                 player.addCard(deck.drawCard());
             }
         }
-        notifyObservers(GameState.DEALING_CARDS);
+        gameNotifysObservers(GameState.DEALING_CARDS);
     }
 
     @Override
-    public void playTurn(Rank rankRequested, Player targetPlayer) {
+    public void playTurn(Rank rankRequested, Player targetPlayer) throws RemoteException {
         if (targetPlayer.hasCardOfRank(rankRequested)) {
             this.targetPlayer = targetPlayer;
             transferringCardsToPlayer(rankRequested, targetPlayer);
@@ -42,34 +45,34 @@ public class Game extends Observable implements IGame {
         nextPlayer();
     }
 
-    private void transferringCardsToPlayer(Rank rank, Player player) {
+    private void transferringCardsToPlayer(Rank rank, Player player) throws RemoteException {
         Player currentPlayer = players.get(currentPlayerIndex);
         currentPlayer.addCards(player.removeCardsByRank(rank));
-        notifyObservers(GameState.TRANSFERRING_CARDS);
+        gameNotifysObservers(GameState.TRANSFERRING_CARDS);
 
         if (player.checkForSets()) {
-            notifyObservers(GameState.PLAYER_COMPLETED_SET);
+            gameNotifysObservers(GameState.PLAYER_COMPLETED_SET);
         }
     }
 
-    private void playerWentFishing() {
+    private void playerWentFishing() throws RemoteException {
         Player currentPlayer = players.get(currentPlayerIndex);
         Card lastDrawnCard = deck.drawCard();
         if (lastDrawnCard != null) {
-            notifyObservers(GameState.GO_FISH);
+            gameNotifysObservers(GameState.GO_FISH);
             currentPlayer.addCard(lastDrawnCard);
 
             if (currentPlayer.checkForSets()) {
-                notifyObservers(GameState.PLAYER_COMPLETED_SET);
+                gameNotifysObservers(GameState.PLAYER_COMPLETED_SET);
             }
         } else {
-            notifyObservers(GameState.GAME_OVER);
+            gameNotifysObservers(GameState.GAME_OVER);
         }
     }
 
-    private void nextPlayer() {
+    private void nextPlayer() throws RemoteException {
         currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
-        notifyObservers(GameState.TURN_SWITCH);
+        gameNotifysObservers(GameState.TURN_SWITCH);
     }
 
     @Override
@@ -78,10 +81,10 @@ public class Game extends Observable implements IGame {
     }
 
     @Override
-    public boolean isGameOver() {
+    public boolean isGameOver() throws RemoteException {
         boolean isOver = deck.isEmpty();
         if (isOver) {
-            super.notifyObservers(GameState.GAME_OVER);
+            gameNotifysObservers(GameState.GAME_OVER);
         }
         return isOver;
     }
@@ -118,8 +121,17 @@ public class Game extends Observable implements IGame {
     public GameState getGameState() { return gameState; }
 
     @Override
-    public void notifyObservers(GameState gameState) {
+    public void addObserver(Observer observer) throws RemoteException {
+        agregarObservador((IObservadorRemoto) observer);
+    }
+
+    @Override
+    public void removeObserver(Observer observer) throws RemoteException {
+        removerObservador((IObservadorRemoto) observer);
+    }
+
+    public void gameNotifysObservers(GameState gameState) throws RemoteException {
         this.gameState = gameState;
-        super.notifyObservers(gameState);
+        super.notificarObservadores(gameState);
     }
 }

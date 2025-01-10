@@ -6,6 +6,7 @@ import ar.edu.unlu.poo.model.Player;
 import ar.edu.unlu.poo.model.Rank;
 import ar.edu.unlu.poo.model.Suit;
 
+import java.rmi.RemoteException;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +17,7 @@ public class GameController implements IGameController {
     private IGameView view;
     private final IPlayer clientPlayer;
 
-    public GameController(IGame game, IPlayer clientPlayer) {
+    public GameController(IGame game, IPlayer clientPlayer) throws RemoteException {
         this.game = game;
         this.clientPlayer = clientPlayer;
         game.addObserver(this);
@@ -28,7 +29,7 @@ public class GameController implements IGameController {
     }
 
     @Override
-    public void initializeGame() {
+    public void initializeGame() throws RemoteException {
         game.addObserver(this);
     }
 
@@ -51,6 +52,8 @@ public class GameController implements IGameController {
                 }
             } catch (IllegalArgumentException e) {
                 view.notifyInvalidInputFormat();
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
             }
         } else {
         view.notifyInvalidInputFormat();

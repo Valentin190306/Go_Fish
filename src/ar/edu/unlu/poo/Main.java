@@ -7,11 +7,12 @@ import ar.edu.unlu.poo.model.Game;
 import ar.edu.unlu.poo.model.Player;
 import ar.edu.unlu.poo.view.ConsoleGameView;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws RemoteException {
         List<Player> players = new ArrayList<>();
         players.add(new Player("J1"));
         players.add(new Player("J2"));
