@@ -1,11 +1,14 @@
 package ar.edu.unlu.poo.model;
 
 import ar.edu.unlu.poo.interfaces.IDeck;
+import ar.edu.unlu.poo.model.enums.Rank;
+import ar.edu.unlu.poo.model.enums.Suit;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.Stack;
 
-public class Deck implements IDeck {
+public class Deck implements IDeck, Serializable {
     private final Stack<Card> cards;
 
     public Deck() {

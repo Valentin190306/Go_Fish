@@ -1,7 +1,9 @@
-package ar.edu.unlu.poo.model;
+package ar.edu.unlu.poo.model.enums;
+
+import java.io.Serializable;
 
 // Enum para los valores de las cartas
-public enum Rank {
+public enum Rank implements Serializable {
     TWO("2"),
     THREE("3"),
     FOUR("4"),

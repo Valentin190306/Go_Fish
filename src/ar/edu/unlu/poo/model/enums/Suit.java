@@ -1,7 +1,9 @@
-package ar.edu.unlu.poo.model;
+package ar.edu.unlu.poo.model.enums;
+
+import java.io.Serializable;
 
 // Enum para los palos de las cartas
-public enum Suit {
+public enum Suit implements Serializable {
     HEARTS("corazones"),
     DIAMONDS("diamantes"),
     CLUBS("treboles"),

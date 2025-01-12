@@ -1,10 +1,12 @@
 package ar.edu.unlu.poo.controller;
 
 import ar.edu.unlu.poo.interfaces.*;
-import ar.edu.unlu.poo.model.GameState;
+import ar.edu.unlu.poo.model.enums.GameState;
 import ar.edu.unlu.poo.model.Player;
-import ar.edu.unlu.poo.model.Rank;
-import ar.edu.unlu.poo.model.Suit;
+import ar.edu.unlu.poo.model.enums.Rank;
+import ar.edu.unlu.poo.model.enums.Suit;
+import ar.edu.unlu.rmimvc.cliente.IControladorRemoto;
+import ar.edu.unlu.rmimvc.observer.IObservableRemoto;
 
 import java.rmi.RemoteException;
 import java.util.AbstractMap;
@@ -12,25 +14,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class GameController implements IGameController {
-    private final IGame game;
+public class GameController implements IGameController, IControladorRemoto {
+    private IGame game;
     private IGameView view;
     private final IPlayer clientPlayer;
 
     public GameController(IGame game, IPlayer clientPlayer) throws RemoteException {
-        this.game = game;
+        setModeloRemoto(game);
         this.clientPlayer = clientPlayer;
-        game.addObserver(this);
+        game.agregarObservador(this);
     }
 
     @Override
     public void setView(IGameView view) {
         this.view = view;
-    }
-
-    @Override
-    public void initializeGame() throws RemoteException {
-        game.addObserver(this);
     }
 
     @Override
@@ -71,45 +68,11 @@ public class GameController implements IGameController {
         return null;
     }
 
-    @Override
-    public void update(GameState gameState) {
-        controllerLog(gameState);
-        switch (gameState) {
-            case DEALING_CARDS -> {
-                view.notifyGameIntroduction(clientPlayer.getName());
-                showPlayersAndCards();
-                showPlayerHand();
-                handlePlayerTurn();
-            }
-            case TURN_SWITCH -> {
-                notifyTurnSwitch();
-                showPlayersAndCards();
-                showPlayerHand();
-                handlePlayerTurn();
-            }
-            case GAME_OVER -> {
-                handleGameOver();
-            }
-            case GO_FISH -> {
-                playerGoneFishing();
-            }
-            case TRANSFERRING_CARDS -> {
-                clientPlayerReceiveCards();
-            }
-            case PLAYER_COMPLETED_SET -> {
-                clientPlayerSetsInHand();
-            }
-            default -> {
-                view.notifyUnknownState();
-            }
-        }
-    }
-
     private void clientPlayerSetsInHand() {
         view.notifyAmountOfSets(clientPlayer.getScore());
     }
 
-    private void clientPlayerReceiveCards() {
+    private void clientPlayerReceiveCards() throws RemoteException {
         if (game.getCurrentPlayer() == clientPlayer) {
             List<Map.Entry<Rank, Suit>> newCards = new ArrayList<>();
             for (ICard card : clientPlayer.getTransferenceCards()) {
@@ -125,7 +88,7 @@ public class GameController implements IGameController {
         }
     }
 
-    private void playerGoneFishing() {
+    private void playerGoneFishing() throws RemoteException {
         if (game.getCurrentPlayer() == clientPlayer) {
             view.notifyClientPlayerGoneFishing();
             ICard fishedCard = clientPlayer.getTransferenceCards().get(0);
@@ -135,7 +98,7 @@ public class GameController implements IGameController {
         }
     }
 
-    private void showPlayersAndCards() {
+    private void showPlayersAndCards() throws RemoteException {
         List<Map.Entry<String, Integer>> playersCardCount = new ArrayList<>();
         for (IPlayer player : game.getPlayers()) {
             playersCardCount.add(new AbstractMap.SimpleEntry<>(player.getName(), player.getHand().size()));
@@ -143,7 +106,7 @@ public class GameController implements IGameController {
         view.showPlayersAndCards(game.getDeck().size(), playersCardCount);
     }
 
-    private void handlePlayerTurn() {
+    private void handlePlayerTurn() throws RemoteException {
         boolean isCurrentPlayer = game.getCurrentPlayer().getName().equals(clientPlayer.getName());
         view.setPlayerTurn(isCurrentPlayer);
     }
@@ -157,9 +120,9 @@ public class GameController implements IGameController {
         view.updateHand(hand);
     }
 
-    private void notifyTurnSwitch() { view.notifyTurnSwitch(game.getCurrentPlayer().getName()); }
+    private void notifyTurnSwitch() throws RemoteException { view.notifyTurnSwitch(game.getCurrentPlayer().getName()); }
 
-    private void handleGameOver() {
+    private void handleGameOver() throws RemoteException {
         view.notifyGameOver();
         List<Map.Entry<String, Integer>> scores = new ArrayList<>();
         for (IPlayer player : game.getPlayers()) {
@@ -170,5 +133,46 @@ public class GameController implements IGameController {
 
     private void controllerLog(GameState gameState) {
         System.out.println("Controller(" + clientPlayer.getName() + "): " + gameState);
+    }
+
+    @Override
+    public <T extends IObservableRemoto> void setModeloRemoto(T model) throws RemoteException {
+        this.game = (IGame) model;
+    }
+
+    @Override
+    public void actualizar(IObservableRemoto model, Object event) throws RemoteException {
+        if (event instanceof GameState gameState) {
+            controllerLog(gameState);
+            switch (gameState) {
+                case DEALING_CARDS -> {
+                    view.notifyGameIntroduction(clientPlayer.getName());
+                    showPlayersAndCards();
+                    showPlayerHand();
+                    handlePlayerTurn();
+                }
+                case TURN_SWITCH -> {
+                    notifyTurnSwitch();
+                    showPlayersAndCards();
+                    showPlayerHand();
+                    handlePlayerTurn();
+                }
+                case GAME_OVER -> {
+                    handleGameOver();
+                }
+                case GO_FISH -> {
+                    playerGoneFishing();
+                }
+                case TRANSFERRING_CARDS -> {
+                    clientPlayerReceiveCards();
+                }
+                case PLAYER_COMPLETED_SET -> {
+                    clientPlayerSetsInHand();
+                }
+                default -> {
+                    view.notifyUnknownState();
+                }
+            }
+        }
     }
 }

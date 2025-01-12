@@ -1,10 +1,13 @@
 package ar.edu.unlu.poo.model;
 
 import ar.edu.unlu.poo.interfaces.ICard;
+import ar.edu.unlu.poo.model.enums.Rank;
+import ar.edu.unlu.poo.model.enums.Suit;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Card implements ICard {
+public class Card implements ICard, Serializable {
     private final Rank rank;
     private final Suit suit;
 

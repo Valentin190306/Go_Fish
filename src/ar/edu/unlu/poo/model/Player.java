@@ -2,12 +2,14 @@ package ar.edu.unlu.poo.model;
 
 import ar.edu.unlu.poo.interfaces.ICard;
 import ar.edu.unlu.poo.interfaces.IPlayer;
+import ar.edu.unlu.poo.model.enums.Rank;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public class Player implements IPlayer {
+public class Player implements IPlayer, Serializable {
     private final String name;
     private final List<Card> hand;
     private List<Card> transferenceCards;

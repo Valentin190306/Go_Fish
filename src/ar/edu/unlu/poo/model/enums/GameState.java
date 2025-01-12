@@ -1,4 +1,4 @@
-package ar.edu.unlu.poo.model;
+package ar.edu.unlu.poo.model.enums;
 
 public enum GameState {
     DEALING_CARDS,

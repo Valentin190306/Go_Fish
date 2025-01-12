@@ -2,8 +2,8 @@ package ar.edu.unlu.poo.view;
 
 import ar.edu.unlu.poo.interfaces.IGameController;
 import ar.edu.unlu.poo.interfaces.IGameView;
-import ar.edu.unlu.poo.model.Rank;
-import ar.edu.unlu.poo.model.Suit;
+import ar.edu.unlu.poo.model.enums.Rank;
+import ar.edu.unlu.poo.model.enums.Suit;
 
 import javax.swing.*;
 import java.awt.*;

@@ -3,8 +3,9 @@ package ar.edu.unlu.poo.model;
 import ar.edu.unlu.poo.interfaces.IDeck;
 import ar.edu.unlu.poo.interfaces.IGame;
 import ar.edu.unlu.poo.interfaces.IPlayer;
-import ar.edu.unlu.poo.observer.Observer;
-import ar.edu.unlu.rmimvc.observer.IObservadorRemoto;
+
+import ar.edu.unlu.poo.model.enums.GameState;
+import ar.edu.unlu.poo.model.enums.Rank;
 import ar.edu.unlu.rmimvc.observer.ObservableRemoto;
 
 import java.rmi.RemoteException;
@@ -119,16 +120,6 @@ public class Game extends ObservableRemoto implements IGame {
 
     @Override
     public GameState getGameState() { return gameState; }
-
-    @Override
-    public void addObserver(Observer observer) throws RemoteException {
-        agregarObservador((IObservadorRemoto) observer);
-    }
-
-    @Override
-    public void removeObserver(Observer observer) throws RemoteException {
-        removerObservador((IObservadorRemoto) observer);
-    }
 
     public void gameNotifysObservers(GameState gameState) throws RemoteException {
         this.gameState = gameState;
