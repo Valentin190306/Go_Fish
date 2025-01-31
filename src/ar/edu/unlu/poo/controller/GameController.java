@@ -36,7 +36,7 @@ public class GameController implements IGameController, IControladorRemoto {
 
                 if (targetPlayer != null
                         && targetPlayer != clientPlayer
-                        && clientPlayer.hasCardOfRank(valueRequested)) {
+                        && clientPlayer.hasCardOfValue(valueRequested)) {
                     game.playTurn(valueRequested, (Player) targetPlayer);
                     isValid = true;
                 } else {
@@ -130,6 +130,7 @@ public class GameController implements IGameController, IControladorRemoto {
                     showPlayersAndCards();
                     showPlayerHand();
                     handlePlayerTurn();
+                    view.notifyPlayerAction(game.getTargetPlayer(), game.getCurrentPlayer());
                 }
                 case GAME_OVER -> {
                     handleGameOver();

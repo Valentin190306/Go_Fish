@@ -34,7 +34,7 @@ public class Player implements IPlayer, Serializable {
         hand.addAll(cards);
     }
 
-    public List<Card> removeCardsByRank(Value value) {
+    public List<Card> removeCardsByValue(Value value) {
         List<Card> cardsToRemove = new ArrayList<>();
         for (Card card : hand) {
             if (card.getRank().equals(value))
@@ -46,7 +46,7 @@ public class Player implements IPlayer, Serializable {
     }
 
     @Override
-    public boolean hasCardOfRank(Value value) {
+    public boolean hasCardOfValue(Value value) {
         return hand.stream().anyMatch(card -> card.getRank() == value);
     }
 
@@ -86,7 +86,8 @@ public class Player implements IPlayer, Serializable {
         int[] rankCounts = new int[Value.values().length];
         this.score = 0;
 
-        for (Card card : hand) rankCounts[card.getRank().ordinal()]++;
+        for (Card card : hand)
+            rankCounts[card.getRank().ordinal()]++;
 
         for (int rankCount : rankCounts) {
             if (rankCount == 4) {

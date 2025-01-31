@@ -19,7 +19,7 @@ public class Game extends ObservableRemoto implements IGame {
     private Player targetPlayer;
 
     public Game(List<Player> players) {
-        this.deck = new Deck();
+        this.deck = new DeckBuilder().getDeck();
         this.players = players;
         this.currentPlayerIndex = (int) (Math.random() * players.size());
     }
@@ -37,7 +37,7 @@ public class Game extends ObservableRemoto implements IGame {
 
     @Override
     public void playTurn(Value valueRequested, Player targetPlayer) throws RemoteException {
-        if (targetPlayer.hasCardOfRank(valueRequested)) {
+        if (targetPlayer.hasCardOfValue(valueRequested)) {
             this.targetPlayer = targetPlayer;
             transferringCardsToPlayer(valueRequested, targetPlayer);
         } else {
@@ -48,7 +48,7 @@ public class Game extends ObservableRemoto implements IGame {
 
     private void transferringCardsToPlayer(Value value, Player player) throws RemoteException {
         Player currentPlayer = players.get(currentPlayerIndex);
-        currentPlayer.addCards(player.removeCardsByRank(value));
+        currentPlayer.addCards(player.removeCardsByValue(value));
         gameNotifysObservers(GameState.TRANSFERRING_CARDS);
 
         if (player.checkForSets()) {

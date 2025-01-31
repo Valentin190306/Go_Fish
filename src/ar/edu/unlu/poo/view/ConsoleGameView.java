@@ -1,7 +1,6 @@
 package ar.edu.unlu.poo.view;
 
-import ar.edu.unlu.poo.interfaces.IGameController;
-import ar.edu.unlu.poo.interfaces.IGameView;
+import ar.edu.unlu.poo.interfaces.*;
 import ar.edu.unlu.poo.model.enums.Value;
 import ar.edu.unlu.poo.model.enums.Suit;
 
@@ -54,13 +53,13 @@ public class ConsoleGameView extends JFrame implements IGameView {
     }
 
     @Override
-    public void notifyGameIntroduction(String playerName) {
-        appendToConsole("> Bienvenido jugador " + playerName + "...");
+    public void notifyGameIntroduction(IPlayer player) {
+        appendToConsole("> Bienvenido jugador " + player.getName() + "...");
         appendToConsole("> Formato de entrada válido: <VALOR_CARTA> <NOMBRE_JUGADOR>");
     }
 
     @Override
-    public void notifyTurnSwitch(String playerName) { appendToConsole("> Turno de " + playerName + "..."); }
+    public void notifyTurnSwitch(IPlayer player) { appendToConsole("> Turno de " + player.getName() + "..."); }
 
     @Override
     public void notifyGameOver() {
@@ -68,8 +67,8 @@ public class ConsoleGameView extends JFrame implements IGameView {
     }
 
     @Override
-    public void notifyPlayerAction() {
-        appendToConsole("> Un jugador realizó una acción.");
+    public void notifyPlayerAction(IPlayer targetPlayer, IPlayer player) {
+        appendToConsole("> " + player.getName() + " le pregunta al pescador " + targetPlayer.getName() + "...");
     }
 
     @Override
@@ -82,10 +81,10 @@ public class ConsoleGameView extends JFrame implements IGameView {
     public void notifyClientPlayerGoneFishing() { appendToConsole("> Has ido a pescar..."); }
 
     @Override
-    public void notifyFishedCard(Value value, Suit suit) { appendToConsole("> Pescaste un " + value.getValue() + " de " + suit.getValue() + "..."); }
+    public void notifyFishedCard(ICard card) { appendToConsole("> Pescaste un " + card.getRank().getValue() + " de " + card.getSuit().getValue() + "..."); }
 
     @Override
-    public void notifyPlayerGoneFishing(String playerName) { appendToConsole("> " + playerName + " fue a pescar..."); }
+    public void notifyPlayerGoneFishing(IPlayer player) { appendToConsole("> " + player.getName() + " fue a pescar..."); }
 
     @Override
     public void notifyInvalidPlayer() {
@@ -109,44 +108,43 @@ public class ConsoleGameView extends JFrame implements IGameView {
     }
 
     @Override
-    public void notifyReceivedCards(List<Map.Entry<Value, Suit>> receivedCards) {
+    public void notifyReceivedCards(List<ICard> cards) {
         appendToConsole("> Cartas recibidas: ");
-        for (Map.Entry<Value, Suit> card : receivedCards) {
-            appendToConsole("\t" + card.getKey().getValue() + " de " + card.getValue().getValue());
+        for (ICard card : cards) {
+            appendToConsole("\t" + card.getRank().getValue() + " de " + card.getSuit().getValue());
         }
     }
 
     @Override
-    public void notifyLostCards(List<Map.Entry<Value, Suit>> lostCards) {
+    public void notifyLostCards(List<ICard> cards) {
         appendToConsole("> Cartas cedidas: ");
-        for (Map.Entry<Value, Suit> card : lostCards) {
-            appendToConsole("\t" + card.getKey().getValue() + " de " + card.getValue().getValue());
+        for (ICard card : cards) {
+            appendToConsole("\t" + card.getRank().getValue() + " de " + card.getSuit().getValue());
         }
     }
 
     @Override
-    public void updateHand(List<Map.Entry<Value, Suit>> hand) {
+    public void updateHand(List<ICard> hand) {
         appendToConsole("> Tu mano: ");
-        for (Map.Entry<Value, Suit> card : hand) {
-            appendToConsole("\t" + card.getKey().getValue() + " de " + card.getValue().getValue());
+        for (ICard card : hand) {
+            appendToConsole("\t" + card.getRank().getValue() + " de " + card.getSuit().getValue());
         }
     }
 
     @Override
-    public void showPlayersAndCards(int deckSize, List<Map.Entry<String, Integer>> playersAndCards) {
-        appendToConsole("> " + deckSize + " cartas en pila...");
+    public void showPlayersAndCards(IDeck deck, List<IPlayer> players) {
+        appendToConsole("> " + deck.size() + " cartas en pila...");
         appendToConsole("> Cartas en la mesa: ");
-        for (Map.Entry<String, Integer> player : playersAndCards) {
-            appendToConsole("\t" + player.getKey() + ": " + player.getValue() + " cartas");
+        for (IPlayer player : players) {
+            appendToConsole("\t" + player.getName() + ": " + player.getHand().size() + " cartas");
         }
-
     }
 
     @Override
-    public void updateScores(List<Map.Entry<String, Integer>> scores) {
+    public void updateScores(List<IPlayer> players) {
         appendToConsole("> Puntajes:");
-        for (Map.Entry<String, Integer> score : scores) {
-            appendToConsole("\t" + score.getKey() + ": " + score.getValue());
+        for (IPlayer player : players) {
+            appendToConsole("\t" + player.getName() + ": " + player.getScore());
         }
     }
 }

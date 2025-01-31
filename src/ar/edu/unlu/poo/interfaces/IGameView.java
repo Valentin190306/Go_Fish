@@ -5,7 +5,7 @@ import java.util.List;
 public interface IGameView {
     void notifyTurnSwitch(IPlayer player); // Notifica un cambio de turno
     void notifyGameOver(); // Notifica el final del juego
-    void notifyPlayerAction(); // Notifica que un jugador realizó una acción
+    void notifyPlayerAction(IPlayer targetPlayer, IPlayer player); // Notifica que un jugador realizó una acción
     void notifyInvalidInputFormat(); // Notifica que el formato de entrada es inválido
     void notifyInvalidPlayer(); // Notifica que el jugador solicitado no existe
     void notifyUnknownState(); // Notifica que el estado del juego no es reconocible
