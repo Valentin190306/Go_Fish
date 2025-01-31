@@ -2,7 +2,7 @@ package ar.edu.unlu.poo.view;
 
 import ar.edu.unlu.poo.interfaces.IGameController;
 import ar.edu.unlu.poo.interfaces.IGameView;
-import ar.edu.unlu.poo.model.enums.Rank;
+import ar.edu.unlu.poo.model.enums.Value;
 import ar.edu.unlu.poo.model.enums.Suit;
 
 import javax.swing.*;
@@ -82,7 +82,7 @@ public class ConsoleGameView extends JFrame implements IGameView {
     public void notifyClientPlayerGoneFishing() { appendToConsole("> Has ido a pescar..."); }
 
     @Override
-    public void notifyFishedCard(Rank rank, Suit suit) { appendToConsole("> Pescaste un " + rank.getValue() + " de " + suit.getValue() + "..."); }
+    public void notifyFishedCard(Value value, Suit suit) { appendToConsole("> Pescaste un " + value.getValue() + " de " + suit.getValue() + "..."); }
 
     @Override
     public void notifyPlayerGoneFishing(String playerName) { appendToConsole("> " + playerName + " fue a pescar..."); }
@@ -109,25 +109,25 @@ public class ConsoleGameView extends JFrame implements IGameView {
     }
 
     @Override
-    public void notifyReceivedCards(List<Map.Entry<Rank, Suit>> receivedCards) {
+    public void notifyReceivedCards(List<Map.Entry<Value, Suit>> receivedCards) {
         appendToConsole("> Cartas recibidas: ");
-        for (Map.Entry<Rank, Suit> card : receivedCards) {
+        for (Map.Entry<Value, Suit> card : receivedCards) {
             appendToConsole("\t" + card.getKey().getValue() + " de " + card.getValue().getValue());
         }
     }
 
     @Override
-    public void notifyLostCards(List<Map.Entry<Rank, Suit>> lostCards) {
+    public void notifyLostCards(List<Map.Entry<Value, Suit>> lostCards) {
         appendToConsole("> Cartas cedidas: ");
-        for (Map.Entry<Rank, Suit> card : lostCards) {
+        for (Map.Entry<Value, Suit> card : lostCards) {
             appendToConsole("\t" + card.getKey().getValue() + " de " + card.getValue().getValue());
         }
     }
 
     @Override
-    public void updateHand(List<Map.Entry<Rank, Suit>> hand) {
+    public void updateHand(List<Map.Entry<Value, Suit>> hand) {
         appendToConsole("> Tu mano: ");
-        for (Map.Entry<Rank, Suit> card : hand) {
+        for (Map.Entry<Value, Suit> card : hand) {
             appendToConsole("\t" + card.getKey().getValue() + " de " + card.getValue().getValue());
         }
     }

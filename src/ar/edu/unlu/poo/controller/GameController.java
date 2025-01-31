@@ -3,16 +3,11 @@ package ar.edu.unlu.poo.controller;
 import ar.edu.unlu.poo.interfaces.*;
 import ar.edu.unlu.poo.model.enums.GameState;
 import ar.edu.unlu.poo.model.Player;
-import ar.edu.unlu.poo.model.enums.Rank;
-import ar.edu.unlu.poo.model.enums.Suit;
+import ar.edu.unlu.poo.model.enums.Value;
 import ar.edu.unlu.rmimvc.cliente.IControladorRemoto;
 import ar.edu.unlu.rmimvc.observer.IObservableRemoto;
 
 import java.rmi.RemoteException;
-import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 public class GameController implements IGameController, IControladorRemoto {
     private IGame game;
@@ -36,13 +31,13 @@ public class GameController implements IGameController, IControladorRemoto {
         String[] parts = input.split(" ");
         if (parts.length == 2) {
             try {
-                Rank rankRequested = parseRank(parts[0]);
+                Value valueRequested = parseRank(parts[0]);
                 IPlayer targetPlayer = game.getPlayerByName(parts[1]);
 
                 if (targetPlayer != null
                         && targetPlayer != clientPlayer
-                        && clientPlayer.hasCardOfRank(rankRequested)) {
-                    game.playTurn(rankRequested, (Player) targetPlayer);
+                        && clientPlayer.hasCardOfRank(valueRequested)) {
+                    game.playTurn(valueRequested, (Player) targetPlayer);
                     isValid = true;
                 } else {
                     view.notifyInvalidPlayer();
@@ -58,10 +53,10 @@ public class GameController implements IGameController, IControladorRemoto {
         return isValid;
     }
 
-    private Rank parseRank(String input) {
-        for (Rank rank : Rank.values()) {
-            if (rank.getValue().equalsIgnoreCase(input)) {
-                return rank;
+    private Value parseRank(String input) {
+        for (Value value : Value.values()) {
+            if (value.getValue().equalsIgnoreCase(input)) {
+                return value;
             }
         }
         view.notifyInvalidInputFormat();
@@ -74,36 +69,23 @@ public class GameController implements IGameController, IControladorRemoto {
 
     private void clientPlayerReceiveCards() throws RemoteException {
         if (game.getCurrentPlayer() == clientPlayer) {
-            List<Map.Entry<Rank, Suit>> newCards = new ArrayList<>();
-            for (ICard card : clientPlayer.getTransferenceCards()) {
-                newCards.add(new AbstractMap.SimpleEntry<>(card.getRank(), card.getSuit()));
-            }
-            view.notifyReceivedCards(newCards);
+            view.notifyReceivedCards(clientPlayer.getTransferenceCards());
         } else if (game.getTargetPlayer() == clientPlayer) {
-            List<Map.Entry<Rank, Suit>> lostCards = new ArrayList<>();
-            for (ICard card : game.getTargetPlayer().getTransferenceCards()) {
-                lostCards.add(new AbstractMap.SimpleEntry<>(card.getRank(), card.getSuit()));
-            }
-            view.notifyLostCards(lostCards);
+            view.notifyLostCards(game.getTargetPlayer().getTransferenceCards());
         }
     }
 
     private void playerGoneFishing() throws RemoteException {
         if (game.getCurrentPlayer() == clientPlayer) {
             view.notifyClientPlayerGoneFishing();
-            ICard fishedCard = clientPlayer.getTransferenceCards().get(0);
-            view.notifyFishedCard(fishedCard.getRank(), fishedCard.getSuit());
+            view.notifyFishedCard(clientPlayer.getTransferenceCards().get(0));
         } else {
-            view.notifyPlayerGoneFishing(game.getCurrentPlayer().getName());
+            view.notifyPlayerGoneFishing(game.getCurrentPlayer());
         }
     }
 
     private void showPlayersAndCards() throws RemoteException {
-        List<Map.Entry<String, Integer>> playersCardCount = new ArrayList<>();
-        for (IPlayer player : game.getPlayers()) {
-            playersCardCount.add(new AbstractMap.SimpleEntry<>(player.getName(), player.getHand().size()));
-        }
-        view.showPlayersAndCards(game.getDeck().size(), playersCardCount);
+        view.showPlayersAndCards(game.getDeck(), game.getPlayers());
     }
 
     private void handlePlayerTurn() throws RemoteException {
@@ -112,23 +94,15 @@ public class GameController implements IGameController, IControladorRemoto {
     }
 
     private void showPlayerHand() {
-        List<Map.Entry<Rank, Suit>> hand = new ArrayList<>();
         System.out.println(clientPlayer.getName() + " : " + clientPlayer.getHand());
-        for (ICard card : clientPlayer.getHand()) {
-            hand.add(new AbstractMap.SimpleEntry<>(card.getRank(), card.getSuit()));
-        }
-        view.updateHand(hand);
+        view.updateHand(clientPlayer.getHand());
     }
 
-    private void notifyTurnSwitch() throws RemoteException { view.notifyTurnSwitch(game.getCurrentPlayer().getName()); }
+    private void notifyTurnSwitch() throws RemoteException { view.notifyTurnSwitch(game.getCurrentPlayer()); }
 
     private void handleGameOver() throws RemoteException {
         view.notifyGameOver();
-        List<Map.Entry<String, Integer>> scores = new ArrayList<>();
-        for (IPlayer player : game.getPlayers()) {
-            scores.add(new AbstractMap.SimpleEntry<>(player.getName(), player.getHand().size()));
-        }
-        view.updateScores(scores);
+        view.updateScores(game.getPlayers());
     }
 
     private void controllerLog(GameState gameState) {
@@ -146,7 +120,7 @@ public class GameController implements IGameController, IControladorRemoto {
             controllerLog(gameState);
             switch (gameState) {
                 case DEALING_CARDS -> {
-                    view.notifyGameIntroduction(clientPlayer.getName());
+                    view.notifyGameIntroduction(clientPlayer);
                     showPlayersAndCards();
                     showPlayerHand();
                     handlePlayerTurn();

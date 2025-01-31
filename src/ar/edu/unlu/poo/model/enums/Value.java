@@ -3,7 +3,7 @@ package ar.edu.unlu.poo.model.enums;
 import java.io.Serializable;
 
 // Enum para los valores de las cartas
-public enum Rank implements Serializable {
+public enum Value implements Serializable {
     TWO("2"),
     THREE("3"),
     FOUR("4"),
@@ -20,7 +20,7 @@ public enum Rank implements Serializable {
 
     private final String value;
 
-    Rank(String value) { this.value = value; }
+    Value(String value) { this.value = value; }
 
     public String getValue() { return value; }
 }

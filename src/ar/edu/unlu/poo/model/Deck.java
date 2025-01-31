@@ -1,7 +1,7 @@
 package ar.edu.unlu.poo.model;
 
 import ar.edu.unlu.poo.interfaces.IDeck;
-import ar.edu.unlu.poo.model.enums.Rank;
+import ar.edu.unlu.poo.model.enums.Value;
 import ar.edu.unlu.poo.model.enums.Suit;
 
 import java.io.Serializable;
@@ -20,8 +20,8 @@ public class Deck implements IDeck, Serializable {
     // Inicializa el mazo con las 52 combinaciones de Rank y Suit
     private void initializeDeck() {
         for (Suit suit : Suit.values()) {
-            for (Rank rank : Rank.values()) {
-                cards.push(new Card(rank, suit));
+            for (Value value : Value.values()) {
+                cards.push(new Card(value, suit));
             }
         }
     }

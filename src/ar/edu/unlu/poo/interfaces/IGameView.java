@@ -3,7 +3,7 @@ package ar.edu.unlu.poo.interfaces;
 import java.util.List;
 
 public interface IGameView {
-    void notifyTurnSwitch(String playerName); // Notifica un cambio de turno
+    void notifyTurnSwitch(IPlayer player); // Notifica un cambio de turno
     void notifyGameOver(); // Notifica el final del juego
     void notifyPlayerAction(); // Notifica que un jugador realizó una acción
     void notifyInvalidInputFormat(); // Notifica que el formato de entrada es inválido
@@ -16,7 +16,7 @@ public interface IGameView {
     void notifyLostCards(List<ICard> cards); // Notifica las cartas perdidas del jugador
     void notifyAmountOfSets(int amount); // Notifica cantidad de sets del jugador
     void notifyPlayerGoneFishing(IPlayer player); // Notifica que otro jugador pescó
-    void showPlayersAndCards(int deckSize, List<ICard> players); // Muestra los jugadores y la cantidad de cartas
+    void showPlayersAndCards(IDeck deck, List<IPlayer> players); // Muestra los jugadores y la cantidad de cartas
     void setPlayerTurn(boolean isPlayerTurn); // Indica si es el turno del jugador
     void updateHand(List<ICard> hand); // Actualiza la vista con la mano del jugador
     void updateScores(List<IPlayer> players); // Actualiza los puntajes en la vista

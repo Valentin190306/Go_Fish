@@ -2,7 +2,7 @@ package ar.edu.unlu.poo.model;
 
 import ar.edu.unlu.poo.interfaces.ICard;
 import ar.edu.unlu.poo.interfaces.IPlayer;
-import ar.edu.unlu.poo.model.enums.Rank;
+import ar.edu.unlu.poo.model.enums.Value;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -34,10 +34,10 @@ public class Player implements IPlayer, Serializable {
         hand.addAll(cards);
     }
 
-    public List<Card> removeCardsByRank(Rank rank) {
+    public List<Card> removeCardsByRank(Value value) {
         List<Card> cardsToRemove = new ArrayList<>();
         for (Card card : hand) {
-            if (card.getRank().equals(rank))
+            if (card.getRank().equals(value))
                 cardsToRemove.add(card);
         }
         hand.removeAll(cardsToRemove);
@@ -46,14 +46,14 @@ public class Player implements IPlayer, Serializable {
     }
 
     @Override
-    public boolean hasCardOfRank(Rank rank) {
-        return hand.stream().anyMatch(card -> card.getRank() == rank);
+    public boolean hasCardOfRank(Value value) {
+        return hand.stream().anyMatch(card -> card.getRank() == value);
     }
 
     public boolean checkForSets() {
         boolean areSets = false;
 
-        int[] rankCounts = new int[Rank.values().length];
+        int[] rankCounts = new int[Value.values().length];
 
         for (Card card : hand)
             rankCounts[card.getRank().ordinal()]++;
@@ -83,7 +83,7 @@ public class Player implements IPlayer, Serializable {
 
     @Override
     public int getScore() {
-        int[] rankCounts = new int[Rank.values().length];
+        int[] rankCounts = new int[Value.values().length];
         this.score = 0;
 
         for (Card card : hand) rankCounts[card.getRank().ordinal()]++;

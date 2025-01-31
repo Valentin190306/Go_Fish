@@ -5,7 +5,7 @@ import ar.edu.unlu.poo.interfaces.IGame;
 import ar.edu.unlu.poo.interfaces.IPlayer;
 
 import ar.edu.unlu.poo.model.enums.GameState;
-import ar.edu.unlu.poo.model.enums.Rank;
+import ar.edu.unlu.poo.model.enums.Value;
 import ar.edu.unlu.rmimvc.observer.ObservableRemoto;
 
 import java.rmi.RemoteException;
@@ -36,19 +36,19 @@ public class Game extends ObservableRemoto implements IGame {
     }
 
     @Override
-    public void playTurn(Rank rankRequested, Player targetPlayer) throws RemoteException {
-        if (targetPlayer.hasCardOfRank(rankRequested)) {
+    public void playTurn(Value valueRequested, Player targetPlayer) throws RemoteException {
+        if (targetPlayer.hasCardOfRank(valueRequested)) {
             this.targetPlayer = targetPlayer;
-            transferringCardsToPlayer(rankRequested, targetPlayer);
+            transferringCardsToPlayer(valueRequested, targetPlayer);
         } else {
             playerWentFishing();
         }
         nextPlayer();
     }
 
-    private void transferringCardsToPlayer(Rank rank, Player player) throws RemoteException {
+    private void transferringCardsToPlayer(Value value, Player player) throws RemoteException {
         Player currentPlayer = players.get(currentPlayerIndex);
-        currentPlayer.addCards(player.removeCardsByRank(rank));
+        currentPlayer.addCards(player.removeCardsByRank(value));
         gameNotifysObservers(GameState.TRANSFERRING_CARDS);
 
         if (player.checkForSets()) {

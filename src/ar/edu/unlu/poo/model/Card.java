@@ -1,24 +1,24 @@
 package ar.edu.unlu.poo.model;
 
 import ar.edu.unlu.poo.interfaces.ICard;
-import ar.edu.unlu.poo.model.enums.Rank;
+import ar.edu.unlu.poo.model.enums.Value;
 import ar.edu.unlu.poo.model.enums.Suit;
 
 import java.io.Serializable;
 import java.util.Objects;
 
 public class Card implements ICard, Serializable {
-    private final Rank rank;
+    private final Value value;
     private final Suit suit;
 
-    public Card(Rank rank, Suit suit) {
-        this.rank = rank;
+    public Card(Value value, Suit suit) {
+        this.value = value;
         this.suit = suit;
     }
 
     @Override
-    public Rank getRank() {
-        return rank;
+    public Value getRank() {
+        return value;
     }
 
     @Override
@@ -28,7 +28,7 @@ public class Card implements ICard, Serializable {
 
     @Override
     public String toString() {
-        return rank + " de " + suit;
+        return value + " de " + suit;
     }
 
     @Override
@@ -36,11 +36,11 @@ public class Card implements ICard, Serializable {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
         Card card = (Card) obj;
-        return rank == card.rank && suit == card.suit;
+        return value == card.value && suit == card.suit;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(rank, suit);
+        return Objects.hash(value, suit);
     }
 }
