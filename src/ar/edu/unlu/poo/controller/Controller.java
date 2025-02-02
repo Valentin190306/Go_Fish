@@ -9,12 +9,12 @@ import ar.edu.unlu.rmimvc.observer.IObservableRemoto;
 
 import java.rmi.RemoteException;
 
-public class GameController implements IGameController, IControladorRemoto {
+public class Controller implements IController, IControladorRemoto {
     private IGame game;
     private IGameView view;
     private final IPlayer clientPlayer;
 
-    public GameController(IGame game, IPlayer clientPlayer) throws RemoteException {
+    public Controller(IGame game, IPlayer clientPlayer) throws RemoteException {
         setModeloRemoto(game);
         this.clientPlayer = clientPlayer;
         game.agregarObservador(this);
@@ -36,7 +36,7 @@ public class GameController implements IGameController, IControladorRemoto {
 
                 if (targetPlayer != null
                         && targetPlayer != clientPlayer
-                        && clientPlayer.hasCardOfValue(valueRequested)) {
+                        && clientPlayer.getHand().hasCardOfValue(valueRequested)) {
                     game.playTurn(valueRequested, (Player) targetPlayer);
                     isValid = true;
                 } else {
@@ -64,21 +64,21 @@ public class GameController implements IGameController, IControladorRemoto {
     }
 
     private void clientPlayerSetsInHand() {
-        view.notifyAmountOfSets(clientPlayer.getScore());
+        view.notifyAmountOfSets(clientPlayer.getHand().getScore());
     }
 
     private void clientPlayerReceiveCards() throws RemoteException {
         if (game.getCurrentPlayer() == clientPlayer) {
-            view.notifyReceivedCards(clientPlayer.getTransferenceCards());
+            view.notifyReceivedCards(clientPlayer.getHand().getTransferenceCards());
         } else if (game.getTargetPlayer() == clientPlayer) {
-            view.notifyLostCards(game.getTargetPlayer().getTransferenceCards());
+            view.notifyLostCards(game.getTargetPlayer().getHand().getTransferenceCards());
         }
     }
 
     private void playerGoneFishing() throws RemoteException {
         if (game.getCurrentPlayer() == clientPlayer) {
             view.notifyClientPlayerGoneFishing();
-            view.notifyFishedCard(clientPlayer.getTransferenceCards().get(0));
+            view.notifyFishedCard(clientPlayer.getHand().getTransferenceCards().get(0));
         } else {
             view.notifyPlayerGoneFishing(game.getCurrentPlayer());
         }
@@ -94,8 +94,8 @@ public class GameController implements IGameController, IControladorRemoto {
     }
 
     private void showPlayerHand() {
-        System.out.println(clientPlayer.getName() + " : " + clientPlayer.getHand());
-        view.updateHand(clientPlayer.getHand());
+        System.out.println(clientPlayer.getName() + " : " + clientPlayer.getHand().toString());
+        view.updateHand(clientPlayer.getHand().getCards());
     }
 
     private void notifyTurnSwitch() throws RemoteException { view.notifyTurnSwitch(game.getCurrentPlayer()); }

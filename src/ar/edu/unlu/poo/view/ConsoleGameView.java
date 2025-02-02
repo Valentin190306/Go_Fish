@@ -1,19 +1,16 @@
 package ar.edu.unlu.poo.view;
 
 import ar.edu.unlu.poo.interfaces.*;
-import ar.edu.unlu.poo.model.enums.Value;
-import ar.edu.unlu.poo.model.enums.Suit;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
-import java.util.Map;
 
 public class ConsoleGameView extends JFrame implements IGameView {
     private final JTextArea consoleArea;
     private final JTextField inputField;
 
-    public ConsoleGameView(IGameController controller) {
+    public ConsoleGameView(IController controller) {
         controller.setView(this);
 
         setTitle("Go Fish - Terminal View");
@@ -144,7 +141,7 @@ public class ConsoleGameView extends JFrame implements IGameView {
     public void updateScores(List<IPlayer> players) {
         appendToConsole("> Puntajes:");
         for (IPlayer player : players) {
-            appendToConsole("\t" + player.getName() + ": " + player.getScore());
+            appendToConsole("\t" + player.getName() + ": " + player.getHand().getScore());
         }
     }
 }

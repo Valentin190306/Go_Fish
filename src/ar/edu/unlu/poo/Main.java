@@ -1,8 +1,8 @@
 package ar.edu.unlu.poo;
 
-import ar.edu.unlu.poo.controller.GameController;
+import ar.edu.unlu.poo.controller.Controller;
 import ar.edu.unlu.poo.interfaces.IGame;
-import ar.edu.unlu.poo.interfaces.IGameController;
+import ar.edu.unlu.poo.interfaces.IController;
 import ar.edu.unlu.poo.model.Game;
 import ar.edu.unlu.poo.model.Player;
 import ar.edu.unlu.poo.view.ConsoleGameView;
@@ -22,7 +22,7 @@ public class Main {
         IGame game = new Game(players);
 
         for (Player player : players) {
-            IGameController controller = new GameController(game, player);
+            IController controller = new Controller(game, player);
             ConsoleGameView view = new ConsoleGameView(controller);
         }
 

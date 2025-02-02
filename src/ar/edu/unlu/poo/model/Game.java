@@ -29,7 +29,7 @@ public class Game extends ObservableRemoto implements IGame {
         int initialHandSize = 7;
         for (Player player : players) {
             for (int i = 0; i < initialHandSize; i++) {
-                player.addCard(deck.drawCard());
+                player.getHand().addCard(deck.drawCard());
             }
         }
         gameNotifysObservers(GameState.DEALING_CARDS);
@@ -37,7 +37,7 @@ public class Game extends ObservableRemoto implements IGame {
 
     @Override
     public void playTurn(Value valueRequested, Player targetPlayer) throws RemoteException {
-        if (targetPlayer.hasCardOfValue(valueRequested)) {
+        if (targetPlayer.getHand().hasCardOfValue(valueRequested)) {
             this.targetPlayer = targetPlayer;
             transferringCardsToPlayer(valueRequested, targetPlayer);
         } else {
@@ -48,10 +48,10 @@ public class Game extends ObservableRemoto implements IGame {
 
     private void transferringCardsToPlayer(Value value, Player player) throws RemoteException {
         Player currentPlayer = players.get(currentPlayerIndex);
-        currentPlayer.addCards(player.removeCardsByValue(value));
+        currentPlayer.getHand().addCards(player.getHand().removeCardsByValue(value));
         gameNotifysObservers(GameState.TRANSFERRING_CARDS);
 
-        if (player.checkForSets()) {
+        if (player.getHand().checkForSets()) {
             gameNotifysObservers(GameState.PLAYER_COMPLETED_SET);
         }
     }
@@ -61,9 +61,9 @@ public class Game extends ObservableRemoto implements IGame {
         Card lastDrawnCard = deck.drawCard();
         if (lastDrawnCard != null) {
             gameNotifysObservers(GameState.GO_FISH);
-            currentPlayer.addCard(lastDrawnCard);
+            currentPlayer.getHand().addCard(lastDrawnCard);
 
-            if (currentPlayer.checkForSets()) {
+            if (currentPlayer.getHand().checkForSets()) {
                 gameNotifysObservers(GameState.PLAYER_COMPLETED_SET);
             }
         } else {

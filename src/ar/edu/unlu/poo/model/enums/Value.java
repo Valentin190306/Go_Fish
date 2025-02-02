@@ -1,9 +1,7 @@
 package ar.edu.unlu.poo.model.enums;
 
-import java.io.Serializable;
-
 // Enum para los valores de las cartas
-public enum Value implements Serializable {
+public enum Value {
     TWO("2"),
     THREE("3"),
     FOUR("4"),
