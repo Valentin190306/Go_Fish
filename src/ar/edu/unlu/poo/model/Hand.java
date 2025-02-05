@@ -101,4 +101,3 @@ public class Hand implements Serializable, IHand {
         return cards.toString();
     }
 }
-
