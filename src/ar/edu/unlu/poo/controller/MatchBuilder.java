@@ -1,7 +1,7 @@
 package ar.edu.unlu.poo.controller;
 
-public class MatchBuilder {
-    private static MatchBuilder instance = null;
+public static class MatchBuilder {
+    private MatchBuilder instance = null;
 
     public MatchBuilder() {}
 
@@ -13,5 +13,5 @@ public class MatchBuilder {
         else return instance;
     }
 
-
+    public
 }

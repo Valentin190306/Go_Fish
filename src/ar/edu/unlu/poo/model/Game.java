@@ -19,7 +19,7 @@ public class Game extends ObservableRemoto implements IGame {
     private Player targetPlayer;
 
     public Game(List<Player> players) {
-        this.deck = new DeckBuilder().getDeck();
+        this.deck = new Deck.Builder().build();
         this.players = players;
         this.currentPlayerIndex = (int) (Math.random() * players.size());
     }
