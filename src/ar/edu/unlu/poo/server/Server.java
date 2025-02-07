@@ -1,30 +1,36 @@
 package ar.edu.unlu.poo.server;
 
+import ar.edu.unlu.poo.interfaces.IGame;
+import ar.edu.unlu.poo.interfaces.IPlayer;
+import ar.edu.unlu.poo.model.Game;
+import ar.edu.unlu.poo.model.Player;
 import ar.edu.unlu.rmimvc.RMIMVCException;
 import ar.edu.unlu.rmimvc.servidor.Servidor;
 
 import javax.swing.*;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Server {
-    private static final String IP = "127.0.0.1";
-    private static final int PORT = 1234;
+    private static final String serverHost = "127.0.0.1";
+    private static final int serverPort = 1234;
 
     public static void main(String[] args) {
-        Chat modelo = new Chat();
-        Servidor servidor = new Servidor(IP, PORT);
+        IGame modelo = new Game();
+        Servidor servidor = new Servidor(serverHost, serverPort);
         try {
             servidor.iniciar(modelo);
         }catch (RemoteException e) {
         SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(
                 null,
-                "Error de conexión: \n" + e.getCause(),
+                e.getMessage(),
                 "Fallo de RED",
                 JOptionPane.ERROR_MESSAGE));
         } catch (RMIMVCException e) {
             SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(
                 null,
-                "Error al crear el objeto de acceso remoto del modelo o del controlador: \n" + e.getCause(),
+                e.getMessage(),
                 "Fallo de RMI",
                 JOptionPane.ERROR_MESSAGE));
         }

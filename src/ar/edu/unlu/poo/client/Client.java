@@ -1,6 +1,8 @@
 package ar.edu.unlu.poo.client;
 
 import ar.edu.unlu.poo.controller.Controller;
+import ar.edu.unlu.poo.interfaces.IGameView;
+import ar.edu.unlu.poo.view.ConsoleGameView;
 import ar.edu.unlu.rmimvc.RMIMVCException;
 import ar.edu.unlu.rmimvc.cliente.Cliente;
 
@@ -8,28 +10,29 @@ import javax.swing.*;
 import java.rmi.RemoteException;
 
 public class Client {
-    private static final String SERVER_IP = "127.0.0.1";
-    private static final String CLIENT_IP = "127.0.0.1";
-    private static final int SERVER_PORT = 1234;
-    private static final int CLIENT_PORT = 7490;
+    private static final String clientHost = "127.0.0.1";
+    private static final String serverHost = "127.0.0.1";
+    private static final int clientPort = 7490;
+    private static final int serverPort = 1234;
 
-    public static void main(String[] args) {
+    public static void main (String[] args) throws RemoteException {
         Controller controller = new Controller();
-        IVista vista = new VistaGrafica(controlador);
-        Cliente cliente = new Cliente(CLIENT_IP, CLIENT_PORT, SERVER_IP, SERVER_PORT);
-        vista.iniciar(); // muestra la vista gráfica
+        IGameView gameView = new ConsoleGameView(controller);
+        Cliente cliente = new Cliente(clientHost, clientPort, serverHost, serverPort);
         try {
             cliente.iniciar(controller);
+            gameView.start();
         } catch (RemoteException e) {
             SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(
                     null,
-                    "Error de conexión: \n" + e.getCause(),
+                    e.getMessage(),
                     "Fallo de RED",
                     JOptionPane.ERROR_MESSAGE));
+
         } catch (RMIMVCException e) {
             SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(
                     null,
-                    "error al crear el objeto de acceso remoto del modelo o del controlador: \n" + e.getCause(),
+                    e.getMessage(),
                     "Fallo de RMI",
                     JOptionPane.ERROR_MESSAGE));
         }

@@ -16,7 +16,7 @@ public class Card implements ICard, Serializable {
     }
 
     @Override
-    public Value getRank() {
+    public Value getNumber() {
         return value;
     }
 

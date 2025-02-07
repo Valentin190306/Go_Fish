@@ -10,10 +10,10 @@ import java.rmi.RemoteException;
 import java.util.List;
 
 public interface IGame extends IObservableRemoto {
-    void dealInitialCards() throws RemoteException;
+    void dealStartingCards() throws RemoteException;
     void playTurn(Value valueRequested, Player targetPlayer) throws RemoteException;
     boolean isGameOver() throws RemoteException;
-    IPlayer getCurrentPlayer() throws RemoteException;
+    IPlayer getCurrentPlayerPlayingTurn() throws RemoteException;
     IPlayer getTargetPlayer() throws RemoteException;
     boolean existsPlayerInGame(Player player) throws RemoteException;
     IPlayer getPlayerByName(String name) throws RemoteException;

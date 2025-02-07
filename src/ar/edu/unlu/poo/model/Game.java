@@ -13,19 +13,20 @@ import java.util.*;
 
 public class Game extends ObservableRemoto implements IGame {
     private final Deck deck;
-    private final List<Player> players;
+    private final List<Player> players = new ArrayList<>();
     private int currentPlayerIndex;
     private GameState gameState;
     private Player targetPlayer;
 
-    public Game(List<Player> players) {
+    public Game() {
+        this.gameState = GameState.FILLING_LOBBY;
         this.deck = new Deck.Builder().build();
-        this.players = players;
-        this.currentPlayerIndex = (int) (Math.random() * players.size());
+        //this.players = players;
+        //this.currentPlayerIndex = (int) (Math.random() * players.size());
     }
 
     @Override
-    public void dealInitialCards() throws RemoteException {
+    public void dealStartingCards() throws RemoteException {
         int initialHandSize = 7;
         for (Player player : players) {
             for (int i = 0; i < initialHandSize; i++) {
@@ -114,7 +115,7 @@ public class Game extends ObservableRemoto implements IGame {
     }
 
     @Override
-    public IPlayer getCurrentPlayer() {
+    public IPlayer getCurrentPlayerPlayingTurn() {
         return players.get(currentPlayerIndex);
     }
 

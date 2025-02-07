@@ -10,15 +10,11 @@ import ar.edu.unlu.rmimvc.observer.IObservableRemoto;
 import java.rmi.RemoteException;
 
 public class Controller implements IController, IControladorRemoto {
-    private IGame game;
+    private IGame model;
     private IGameView view;
-    private final IPlayer clientPlayer;
+    private IPlayer clientPlayer;
 
-    public Controller(IGame game, IPlayer clientPlayer) throws RemoteException {
-        setModeloRemoto(game);
-        this.clientPlayer = clientPlayer;
-        game.agregarObservador(this);
-    }
+    public Controller() {}
 
     @Override
     public void setView(IGameView view) {
@@ -32,12 +28,12 @@ public class Controller implements IController, IControladorRemoto {
         if (parts.length == 2) {
             try {
                 Value valueRequested = parseRank(parts[0]);
-                IPlayer targetPlayer = game.getPlayerByName(parts[1]);
+                IPlayer targetPlayer = model.getPlayerByName(parts[1]);
 
                 if (targetPlayer != null
                         && targetPlayer != clientPlayer
                         && clientPlayer.getHand().hasCardOfValue(valueRequested)) {
-                    game.playTurn(valueRequested, (Player) targetPlayer);
+                    model.playTurn(valueRequested, (Player) targetPlayer);
                     isValid = true;
                 } else {
                     view.notifyInvalidPlayer();
@@ -68,28 +64,28 @@ public class Controller implements IController, IControladorRemoto {
     }
 
     private void clientPlayerReceiveCards() throws RemoteException {
-        if (game.getCurrentPlayer() == clientPlayer) {
+        if (model.getCurrentPlayerPlayingTurn() == clientPlayer) {
             view.notifyReceivedCards(clientPlayer.getHand().getTransferenceCards());
-        } else if (game.getTargetPlayer() == clientPlayer) {
-            view.notifyLostCards(game.getTargetPlayer().getHand().getTransferenceCards());
+        } else if (model.getTargetPlayer() == clientPlayer) {
+            view.notifyLostCards(model.getTargetPlayer().getHand().getTransferenceCards());
         }
     }
 
     private void playerGoneFishing() throws RemoteException {
-        if (game.getCurrentPlayer() == clientPlayer) {
+        if (model.getCurrentPlayerPlayingTurn() == clientPlayer) {
             view.notifyClientPlayerGoneFishing();
             view.notifyFishedCard(clientPlayer.getHand().getTransferenceCards().get(0));
         } else {
-            view.notifyPlayerGoneFishing(game.getCurrentPlayer());
+            view.notifyPlayerGoneFishing(model.getCurrentPlayerPlayingTurn());
         }
     }
 
     private void showPlayersAndCards() throws RemoteException {
-        view.showPlayersAndCards(game.getDeck(), game.getPlayers());
+        view.showPlayersAndCards(model.getDeck(), model.getPlayers());
     }
 
     private void handlePlayerTurn() throws RemoteException {
-        boolean isCurrentPlayer = game.getCurrentPlayer().getName().equals(clientPlayer.getName());
+        boolean isCurrentPlayer = model.getCurrentPlayerPlayingTurn().getName().equals(clientPlayer.getName());
         view.setPlayerTurn(isCurrentPlayer);
     }
 
@@ -98,11 +94,11 @@ public class Controller implements IController, IControladorRemoto {
         view.updateHand(clientPlayer.getHand().getCards());
     }
 
-    private void notifyTurnSwitch() throws RemoteException { view.notifyTurnSwitch(game.getCurrentPlayer()); }
+    private void notifyTurnSwitch() throws RemoteException { view.notifyTurnSwitch(model.getCurrentPlayerPlayingTurn()); }
 
     private void handleGameOver() throws RemoteException {
         view.notifyGameOver();
-        view.updateScores(game.getPlayers());
+        view.updateScores(model.getPlayers());
     }
 
     private void controllerLog(GameState gameState) {
@@ -111,7 +107,7 @@ public class Controller implements IController, IControladorRemoto {
 
     @Override
     public <T extends IObservableRemoto> void setModeloRemoto(T model) throws RemoteException {
-        this.game = (IGame) model;
+        this.model = (IGame) model;
     }
 
     @Override
@@ -130,7 +126,7 @@ public class Controller implements IController, IControladorRemoto {
                     showPlayersAndCards();
                     showPlayerHand();
                     handlePlayerTurn();
-                    view.notifyPlayerAction(game.getTargetPlayer(), game.getCurrentPlayer());
+                    view.notifyPlayerAction(this.model.getTargetPlayer(), this.model.getCurrentPlayerPlayingTurn());
                 }
                 case GAME_OVER -> {
                     handleGameOver();

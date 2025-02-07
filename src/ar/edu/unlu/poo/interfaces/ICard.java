@@ -4,6 +4,15 @@ import ar.edu.unlu.poo.model.enums.Value;
 import ar.edu.unlu.poo.model.enums.Suit;
 
 public interface ICard {
-    Value getRank();
+    /**
+     * Obtener el número de la carta
+     * @return Value
+     */
+    Value getNumber();
+
+    /**
+     * Obtener el palo de la carta
+     * @return Suit
+     */
     Suit getSuit();
 }

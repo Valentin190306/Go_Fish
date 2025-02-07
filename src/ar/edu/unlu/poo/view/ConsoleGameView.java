@@ -40,7 +40,9 @@ public class ConsoleGameView extends JFrame implements IGameView {
         setLayout(new BorderLayout());
         add(scrollPane, BorderLayout.CENTER);
         add(inputField, BorderLayout.SOUTH);
+    }
 
+    public void start() {
         setVisible(true);
     }
 
@@ -78,7 +80,7 @@ public class ConsoleGameView extends JFrame implements IGameView {
     public void notifyClientPlayerGoneFishing() { appendToConsole("> Has ido a pescar..."); }
 
     @Override
-    public void notifyFishedCard(ICard card) { appendToConsole("> Pescaste un " + card.getRank().getValue() + " de " + card.getSuit().getValue() + "..."); }
+    public void notifyFishedCard(ICard card) { appendToConsole("> Pescaste un " + card.getNumber().getValue() + " de " + card.getSuit().getValue() + "..."); }
 
     @Override
     public void notifyPlayerGoneFishing(IPlayer player) { appendToConsole("> " + player.getName() + " fue a pescar..."); }
@@ -108,7 +110,7 @@ public class ConsoleGameView extends JFrame implements IGameView {
     public void notifyReceivedCards(List<ICard> cards) {
         appendToConsole("> Cartas recibidas: ");
         for (ICard card : cards) {
-            appendToConsole("\t" + card.getRank().getValue() + " de " + card.getSuit().getValue());
+            appendToConsole("\t" + card.getNumber().getValue() + " de " + card.getSuit().getValue());
         }
     }
 
@@ -116,7 +118,7 @@ public class ConsoleGameView extends JFrame implements IGameView {
     public void notifyLostCards(List<ICard> cards) {
         appendToConsole("> Cartas cedidas: ");
         for (ICard card : cards) {
-            appendToConsole("\t" + card.getRank().getValue() + " de " + card.getSuit().getValue());
+            appendToConsole("\t" + card.getNumber().getValue() + " de " + card.getSuit().getValue());
         }
     }
 
@@ -124,7 +126,7 @@ public class ConsoleGameView extends JFrame implements IGameView {
     public void updateHand(List<ICard> hand) {
         appendToConsole("> Tu mano: ");
         for (ICard card : hand) {
-            appendToConsole("\t" + card.getRank().getValue() + " de " + card.getSuit().getValue());
+            appendToConsole("\t" + card.getNumber().getValue() + " de " + card.getSuit().getValue());
         }
     }
 

@@ -24,12 +24,12 @@ public class Hand implements Serializable, IHand {
         transferenceCards = new ArrayList<>();
         transferenceCards.add(card);
         cards.add(card);
-        cards.sort(Comparator.comparing(Card::getRank));
+        cards.sort(Comparator.comparing(Card::getNumber));
     }
 
     public void addCards(List<Card> cards) {
         transferenceCards = cards;
-        transferenceCards.sort(Comparator.comparing(Card::getRank));
+        transferenceCards.sort(Comparator.comparing(Card::getNumber));
         this.cards.addAll(cards);
     }
 
@@ -40,7 +40,7 @@ public class Hand implements Serializable, IHand {
     public List<Card> removeCardsByValue(Value value) {
         List<Card> cardsToRemove = new ArrayList<>();
         for (Card card : cards) {
-            if (card.getRank().equals(value))
+            if (card.getNumber().equals(value))
                 cardsToRemove.add(card);
         }
         cards.removeAll(cardsToRemove);
@@ -50,7 +50,7 @@ public class Hand implements Serializable, IHand {
 
     @Override
     public boolean hasCardOfValue(Value value) {
-        return cards.stream().anyMatch(card -> card.getRank() == value);
+        return cards.stream().anyMatch(card -> card.getNumber() == value);
     }
 
     public boolean checkForSets() {
@@ -59,7 +59,7 @@ public class Hand implements Serializable, IHand {
         int[] rankCounts = new int[Value.values().length];
 
         for (Card card : cards)
-            rankCounts[card.getRank().ordinal()]++;
+            rankCounts[card.getNumber().ordinal()]++;
 
         for (int rankCount : rankCounts) {
             if (rankCount == 4) {
@@ -81,7 +81,7 @@ public class Hand implements Serializable, IHand {
         this.score = 0;
 
         for (Card card : cards)
-            rankCounts[card.getRank().ordinal()]++;
+            rankCounts[card.getNumber().ordinal()]++;
 
         for (int rankCount : rankCounts) {
             if (rankCount == 4) {

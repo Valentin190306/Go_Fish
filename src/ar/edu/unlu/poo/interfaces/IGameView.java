@@ -3,6 +3,7 @@ package ar.edu.unlu.poo.interfaces;
 import java.util.List;
 
 public interface IGameView {
+    void start();
     void notifyTurnSwitch(IPlayer player); // Notifica un cambio de turno
     void notifyGameOver(); // Notifica el final del juego
     void notifyPlayerAction(IPlayer targetPlayer, IPlayer player); // Notifica que un jugador realizó una acción
