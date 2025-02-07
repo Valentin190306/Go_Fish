@@ -33,8 +33,9 @@ public class Hand implements Serializable, IHand {
         this.cards.addAll(cards);
     }
 
-    public List<ICard> getCards() {
-        return Collections.singletonList((ICard) cards);
+    @Override
+    public List<Card> getCards() {
+        return cards;
     }
 
     public List<Card> removeCardsByValue(Value value) {

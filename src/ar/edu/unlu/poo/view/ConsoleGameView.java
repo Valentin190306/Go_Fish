@@ -52,6 +52,12 @@ public class ConsoleGameView extends JFrame implements IGameView {
     }
 
     @Override
+    public void notifyException(boolean onPanel, String message) {
+        if (onPanel) appendToConsole("> " + message);
+        else JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.ERROR_MESSAGE);
+    }
+
+    @Override
     public void notifyGameIntroduction(IPlayer player) {
         appendToConsole("> Bienvenido jugador " + player.getName() + "...");
         appendToConsole("> Formato de entrada válido: <VALOR_CARTA> <NOMBRE_JUGADOR>");
@@ -123,9 +129,9 @@ public class ConsoleGameView extends JFrame implements IGameView {
     }
 
     @Override
-    public void updateHand(List<ICard> hand) {
+    public void updateHand(IHand hand) {
         appendToConsole("> Tu mano: ");
-        for (ICard card : hand) {
+        for (ICard card : hand.getCards()) {
             appendToConsole("\t" + card.getNumber().getValue() + " de " + card.getSuit().getValue());
         }
     }

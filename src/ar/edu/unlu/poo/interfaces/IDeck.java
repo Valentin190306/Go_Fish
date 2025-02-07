@@ -2,7 +2,7 @@ package ar.edu.unlu.poo.interfaces;
 
 public interface IDeck {
     /**
-     * Pila de cartas vacía?
+     * Pregunta si la pila de cartas esta vacía
      * @return boolean
      */
     boolean isEmpty();

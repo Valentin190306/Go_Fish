@@ -91,7 +91,7 @@ public class Controller implements IController, IControladorRemoto {
 
     private void showPlayerHand() {
         System.out.println(clientPlayer.getName() + " : " + clientPlayer.getHand().toString());
-        view.updateHand(clientPlayer.getHand().getCards());
+        view.updateHand(clientPlayer.getHand());
     }
 
     private void notifyTurnSwitch() throws RemoteException { view.notifyTurnSwitch(model.getCurrentPlayerPlayingTurn()); }

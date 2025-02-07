@@ -3,22 +3,103 @@ package ar.edu.unlu.poo.interfaces;
 import java.util.List;
 
 public interface IGameView {
+    /**
+     * Hace visible a la vista
+     */
     void start();
-    void notifyTurnSwitch(IPlayer player); // Notifica un cambio de turno
-    void notifyGameOver(); // Notifica el final del juego
-    void notifyPlayerAction(IPlayer targetPlayer, IPlayer player); // Notifica que un jugador realizó una acción
-    void notifyInvalidInputFormat(); // Notifica que el formato de entrada es inválido
-    void notifyInvalidPlayer(); // Notifica que el jugador solicitado no existe
-    void notifyUnknownState(); // Notifica que el estado del juego no es reconocible
-    void notifyGameIntroduction(IPlayer player); // Saluda al jugador de la vista
-    void notifyClientPlayerGoneFishing(); // Notifica que un jugador pescó
-    void notifyFishedCard(ICard card); // Notifica la carta que el jugador pescó
-    void notifyReceivedCards(List<ICard> cards); // Notifica las cartas recibidas por el jugador
-    void notifyLostCards(List<ICard> cards); // Notifica las cartas perdidas del jugador
-    void notifyAmountOfSets(int amount); // Notifica cantidad de sets del jugador
-    void notifyPlayerGoneFishing(IPlayer player); // Notifica que otro jugador pescó
-    void showPlayersAndCards(IDeck deck, List<IPlayer> players); // Muestra los jugadores y la cantidad de cartas
-    void setPlayerTurn(boolean isPlayerTurn); // Indica si es el turno del jugador
-    void updateHand(List<ICard> hand); // Actualiza la vista con la mano del jugador
+
+    /**
+     * Notifica el cambio de turno
+     * @param player jugando el turno siguiente
+     */
+    void notifyTurnSwitch(IPlayer player);
+
+    /**
+     * Notifica el final del juego
+     */
+    void notifyGameOver();
+
+    /**
+     * Notifica que el jugador pregunto por una carta
+     * @param targetPlayer al que se le preguntó
+     * @param player jugando su turno
+     */
+    void notifyPlayerAction(IPlayer targetPlayer, IPlayer player);
+
+    void notifyInvalidInputFormat();
+    void notifyInvalidPlayer();
+    void notifyUnknownState();
+
+    /**
+     * Notifica el mensaje de error
+     * @param onPanel true: muestra dentro del panel; false: muestra en otro panel
+     * @param message de error
+     */
+    void notifyException(boolean onPanel, String message);
+
+    /**
+     * Saluda al jugador
+     * @param player para obtener el nombre del jugador
+     */
+    void notifyGameIntroduction(IPlayer player);
+
+    /**
+     * Notifica que el jugador local fue a pescar (recoger carta de la pila)
+     */
+    void notifyClientPlayerGoneFishing();
+
+    /**
+     * Muestra la carta pescada (recogida de la pila) por el jugador
+     * @param card para obtener el número y palo
+     */
+    void notifyFishedCard(ICard card);
+
+    /**
+     * Muestra la o las cartas obtenidas en la jugada
+     * @param cards cartas nuevas en la mano del jugador
+     */
+    void notifyReceivedCards(List<ICard> cards);
+
+    /**
+     * Muestra la o las cartas cedidas a otro jugador
+     * @param cards perdidas de la mano del jugador cliente
+     */
+    void notifyLostCards(List<ICard> cards);
+
+    /**
+     * Notifica la cantidad de conjuntos presentes en la mano del jugador (puntaje)
+     * @param amount de conjuntos
+     */
+    void notifyAmountOfSets(int amount);
+
+    /**
+     * Notifica que otro jugador fue a pescar
+     * @param player para obtener el nombre
+     */
+    void notifyPlayerGoneFishing(IPlayer player);
+
+    /**
+     * Muestra a los jugadores en la partida y la cantidad de cartas en la pila
+     * @param deck para obtener la cantidad de cartas
+     * @param players para obtener sus nombres
+     */
+    void showPlayersAndCards(IDeck deck, List<IPlayer> players);
+
+    /**
+     * Habilita al jugador a juagar su turno
+     * @param isPlayerTurn
+     */
+    void setPlayerTurn(boolean isPlayerTurn);
+
+    /**
+     * Actualiza la vista con la mano del jugador
+     * @param hand del jugador
+     */
+    void updateHand(IHand hand);
+
+    /**
+     * Actualiza los puntajes de los jugadores
+     * @param players para obtener las manos y los puntajes
+     */
     void updateScores(List<IPlayer> players); // Actualiza los puntajes en la vista
 }

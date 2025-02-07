@@ -92,7 +92,7 @@ public class Game extends ObservableRemoto implements IGame {
     }
 
     @Override
-    public boolean existsPlayerInGame(Player player) {
+    public boolean existsPlayerInGame(IPlayer player) {
         return players.contains(player);
     }
 
