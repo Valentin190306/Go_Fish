@@ -74,21 +74,18 @@ public class Game extends ObservableRemoto implements IGame {
 
     private void nextPlayer() throws RemoteException {
         currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
-        gameNotifysObservers(GameState.TURN_SWITCH);
+        if(!isGameOver()) gameNotifysObservers(GameState.TURN_SWITCH);
+    }
+
+    public boolean isGameOver() throws RemoteException {
+        boolean isOver = deck.isEmpty();
+        if (isOver) gameNotifysObservers(GameState.GAME_OVER);
+        return isOver;
     }
 
     @Override
     public IDeck getDeck() {
         return deck;
-    }
-
-    @Override
-    public boolean isGameOver() throws RemoteException {
-        boolean isOver = deck.isEmpty();
-        if (isOver) {
-            gameNotifysObservers(GameState.GAME_OVER);
-        }
-        return isOver;
     }
 
     @Override

@@ -1,16 +1,12 @@
 package ar.edu.unlu.poo.server;
 
 import ar.edu.unlu.poo.interfaces.IGame;
-import ar.edu.unlu.poo.interfaces.IPlayer;
 import ar.edu.unlu.poo.model.Game;
-import ar.edu.unlu.poo.model.Player;
 import ar.edu.unlu.rmimvc.RMIMVCException;
 import ar.edu.unlu.rmimvc.servidor.Servidor;
 
 import javax.swing.*;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Server {
     private static final String serverHost = "127.0.0.1";

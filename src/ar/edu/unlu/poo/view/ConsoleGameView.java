@@ -52,12 +52,6 @@ public class ConsoleGameView extends JFrame implements IGameView {
     }
 
     @Override
-    public void notifyException(boolean onPanel, String message) {
-        if (onPanel) appendToConsole("> " + message);
-        else JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.ERROR_MESSAGE);
-    }
-
-    @Override
     public void notifyGameIntroduction(IPlayer player) {
         appendToConsole("> Bienvenido jugador " + player.getName() + "...");
         appendToConsole("> Formato de entrada válido: <VALOR_CARTA> <NOMBRE_JUGADOR>");

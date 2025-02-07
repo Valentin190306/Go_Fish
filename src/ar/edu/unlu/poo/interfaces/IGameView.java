@@ -31,13 +31,6 @@ public interface IGameView {
     void notifyUnknownState();
 
     /**
-     * Notifica el mensaje de error
-     * @param onPanel true: muestra dentro del panel; false: muestra en otro panel
-     * @param message de error
-     */
-    void notifyException(boolean onPanel, String message);
-
-    /**
      * Saluda al jugador
      * @param player para obtener el nombre del jugador
      */

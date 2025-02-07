@@ -25,13 +25,6 @@ public interface IGame extends IObservableRemoto {
     void playTurn(Value valueRequested, Player targetPlayer) throws RemoteException;
 
     /**
-     * Pregunta si se terminó la partida
-     * @return boolean
-     * @throws RemoteException a manejarse por el controlador o la vista
-     */
-    boolean isGameOver() throws RemoteException;
-
-    /**
      * Obtiene el jugador jugando el turno en un momento dado
      * @return jugador usando el turno
      * @throws RemoteException a manejarse por el controlador o la vista
@@ -47,7 +40,7 @@ public interface IGame extends IObservableRemoto {
 
     /**
      * Pregunta si existe un jugador en la lista de jugadores
-     * @param player
+     * @param player buscado
      * @return boolean
      * @throws RemoteException a manejarse por el controlador o la vista
      */
