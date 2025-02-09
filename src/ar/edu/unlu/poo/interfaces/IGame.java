@@ -10,11 +10,8 @@ import java.rmi.RemoteException;
 import java.util.List;
 
 public interface IGame extends IObservableRemoto {
-    /**
-     * Se reparten las cartas a los juagadores
-     * @throws RemoteException a manejarse por el controlador o la vista
-     */
-    void dealStartingCards() throws RemoteException;
+
+    void start() throws RemoteException;
 
     /**
      * El juego realiza la jugada del jugador en turno
@@ -39,20 +36,11 @@ public interface IGame extends IObservableRemoto {
     IPlayer getTargetPlayer() throws RemoteException;
 
     /**
-     * Pregunta si existe un jugador en la lista de jugadores
-     * @param player buscado
-     * @return boolean
-     * @throws RemoteException a manejarse por el controlador o la vista
+     *
+     * @param name
+     * @return
      */
-    boolean existsPlayerInGame(IPlayer player) throws RemoteException;
-
-    /**
-     * Obtiene un jugador buscado por su nombre
-     * @param name nombre del jugador
-     * @return jugador buscado
-     * @throws RemoteException a manejarse por el controlador o la vista
-     */
-    IPlayer getPlayerByName(String name) throws RemoteException;
+    IPlayer getPlayerCalled(String name);
 
     /**
      * Obtiene la lista de jugadores en la partida
@@ -66,6 +54,21 @@ public interface IGame extends IObservableRemoto {
      * @return valor enumerado
      */
     GameState getGameState();
+
+    /**
+     *
+     * @param name
+     * @return
+     * @throws RemoteException
+     */
+    int addPlayer(String name) throws RemoteException;
+
+    /**
+     *
+     * @param ID
+     * @throws RemoteException
+     */
+    void removePlayer(int ID) throws RemoteException;
 
     /**
      * Obtiene la pila de cartas de la partida

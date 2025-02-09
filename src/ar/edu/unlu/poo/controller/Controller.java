@@ -28,7 +28,7 @@ public class Controller implements IController, IControladorRemoto {
         if (parts.length == 2) {
             try {
                 Value valueRequested = parseRank(parts[0]);
-                IPlayer targetPlayer = model.getPlayerByName(parts[1]);
+                IPlayer targetPlayer = model.getPlayerCalled(parts[1]);
 
                 if (targetPlayer != null
                         && targetPlayer != clientPlayer
@@ -115,7 +115,7 @@ public class Controller implements IController, IControladorRemoto {
         if (event instanceof GameState gameState) {
             controllerLog(gameState);
             switch (gameState) {
-                case DEALING_CARDS -> {
+                case READY -> {
                     view.notifyGameIntroduction(clientPlayer);
                     showPlayersAndCards();
                     showPlayerHand();

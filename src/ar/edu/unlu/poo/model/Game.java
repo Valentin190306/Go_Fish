@@ -21,19 +21,27 @@ public class Game extends ObservableRemoto implements IGame {
     public Game() {
         this.gameState = GameState.FILLING_LOBBY;
         this.deck = new Deck.Builder().build();
-        //this.players = players;
-        //this.currentPlayerIndex = (int) (Math.random() * players.size());
+
     }
 
     @Override
-    public void dealStartingCards() throws RemoteException {
+    public void start() throws RemoteException {
+        selectFirstPlayer();
+        dealStartingCards();
+        gameNotifysObservers(GameState.READY);
+    }
+
+    private void dealStartingCards() throws RemoteException {
         int initialHandSize = 7;
         for (Player player : players) {
             for (int i = 0; i < initialHandSize; i++) {
                 player.getHand().addCard(deck.drawCard());
             }
         }
-        gameNotifysObservers(GameState.DEALING_CARDS);
+    }
+
+    private void selectFirstPlayer() {
+        this.currentPlayerIndex = (int) (Math.random() * players.size());
     }
 
     @Override
@@ -84,13 +92,28 @@ public class Game extends ObservableRemoto implements IGame {
     }
 
     @Override
-    public IDeck getDeck() {
-        return deck;
+    public int addPlayer(String name) throws RemoteException {
+        Player player = new Player(name);
+        players.add(player);
+        if (players.size() == 4) gameNotifysObservers(GameState.FULL_LOBBY);
+        return player.getID();
     }
 
     @Override
-    public boolean existsPlayerInGame(IPlayer player) {
-        return players.contains(player);
+    public void removePlayer(int ID) throws RemoteException {
+        players.remove(getPlayerByID(ID));
+        if (players.size() < 4) gameNotifysObservers(GameState.GAME_OVER);
+    }
+
+    public Player getPlayerByID(int ID) {
+        for (Player player : players)
+            if (player.getID() == ID) return player;
+        return null;
+    }
+
+    @Override
+    public IDeck getDeck() {
+        return deck;
     }
 
     @Override
@@ -99,8 +122,8 @@ public class Game extends ObservableRemoto implements IGame {
     }
 
     @Override
-    public IPlayer getPlayerByName(String name) {
-        for (Player player : players) {
+    public IPlayer getPlayerCalled(String name) {
+        for (IPlayer player : players) {
             if (player.getName().equals(name)) return player;
         }
         return null;
