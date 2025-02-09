@@ -22,6 +22,12 @@ public class Controller implements IController, IControladorRemoto {
     }
 
     @Override
+    public void setClientPlayer(String name) throws RemoteException {
+        this.clientPlayer = new Player(name);
+        model.addPlayer(name);
+    }
+
+    @Override
     public boolean handlePlayerInput(String input) {
         boolean isValid = false;
         String[] parts = input.split(" ");
@@ -115,6 +121,12 @@ public class Controller implements IController, IControladorRemoto {
         if (event instanceof GameState gameState) {
             controllerLog(gameState);
             switch (gameState) {
+                case FILLING_LOBBY -> {
+
+                }
+                case FULL_LOBBY -> {
+
+                }
                 case READY -> {
                     view.notifyGameIntroduction(clientPlayer);
                     showPlayersAndCards();
