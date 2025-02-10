@@ -1,20 +1,18 @@
 package ar.edu.unlu.poo.view;
 
 import ar.edu.unlu.poo.controller.Controller;
-import ar.edu.unlu.poo.interfaces.IGameView;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class MenuWithJMenuBar extends JFrame implements ActionListener {
+public class GameWindow extends JFrame implements ActionListener {
     private JButton continueGameButton, newGameButton, changeNameButton, changeViewButton;
     private final Controller controller;
 
-    public MenuWithJMenuBar(Controller controller) {
+    public GameWindow(Controller controller) {
         this.controller = controller;
-        controller.setView(this);
 
         setTitle("Menú del Juego");
         setSize(400, 300);
@@ -29,7 +27,7 @@ public class MenuWithJMenuBar extends JFrame implements ActionListener {
     private JMenuBar createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
 
-        JMenu gameMenu = new JMenu("Opciones");
+        JMenu gameMenu = new JMenu("Jugar");
         JMenu confMenu = new JMenu("Vista");
 
         JMenuItem menuContinue = new JMenuItem("Continuar partida");
@@ -66,10 +64,7 @@ public class MenuWithJMenuBar extends JFrame implements ActionListener {
         }
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            MenuWithJMenuBar frame = new MenuWithJMenuBar();
-            frame.setVisible(true);
-        });
+    public void start() {
+        this.setVisible(true);
     }
 }
