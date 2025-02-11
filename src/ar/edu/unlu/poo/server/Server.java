@@ -18,17 +18,19 @@ public class Server {
         try {
             servidor.iniciar(modelo);
         }catch (RemoteException e) {
-        SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(
-                null,
-                e.getMessage(),
-                "Fallo de RED",
-                JOptionPane.ERROR_MESSAGE));
+            SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(
+                    null,
+                    e.getMessage(),
+                    "Fallo de RED",
+                    JOptionPane.ERROR_MESSAGE));
+            e.printStackTrace();
         } catch (RMIMVCException e) {
             SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(
                 null,
                 e.getMessage(),
                 "Fallo de RMI",
                 JOptionPane.ERROR_MESSAGE));
+            e.printStackTrace();
         }
     }
 }

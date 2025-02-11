@@ -1,20 +1,24 @@
 package ar.edu.unlu.poo.view;
 
 import ar.edu.unlu.poo.controller.Controller;
+import ar.edu.unlu.poo.interfaces.IGameView;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.rmi.RemoteException;
 
 public class GameWindow extends JFrame implements ActionListener {
-    private JButton continueGameButton, newGameButton, changeNameButton, changeViewButton;
+    private JFrame contentFrame;
     private final Controller controller;
+    private String playerName = "guest";
+    private IGameView gameView;
 
     public GameWindow(Controller controller) {
         this.controller = controller;
 
-        setTitle("Menú del Juego");
+        setTitle("Go Fish app");
         setSize(400, 300);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -33,21 +37,46 @@ public class GameWindow extends JFrame implements ActionListener {
         JMenuItem menuContinue = new JMenuItem("Continuar partida");
         JMenuItem menuNew = new JMenuItem("Nueva partida");
         JMenuItem menuChangeName = new JMenuItem("Cambiar nombre");
-        JMenuItem menuChangeView = new JMenuItem("Seleccionar vista");
+        JMenu menuChangeView = new JMenu("Seleccionar vista");
+
+        JMenuItem menuConsoleView = new JMenuItem("Consola");
+        JMenuItem menuGraphicView = new JMenuItem("Gráfico");
 
         gameMenu.add(menuContinue);
         gameMenu.add(menuNew);
         confMenu.add(menuChangeName);
         confMenu.add(menuChangeView);
 
+        menuChangeView.add(menuConsoleView);
+        menuChangeView.add(menuGraphicView);
+
         menuBar.add(gameMenu);
         menuBar.add(confMenu);
 
         // Agregar eventos
         menuContinue.addActionListener(this);
-        menuNew.addActionListener(this);
-        menuChangeName.addActionListener(this);
-        menuChangeView.addActionListener(this);
+
+        menuNew.addActionListener(e -> {
+            contentFrame.setContentPane((Container) gameView);
+        });
+
+        menuChangeName.addActionListener(e -> {
+            String input;
+            do {
+                input = JOptionPane.showInputDialog(null, "Ingresa tu nombre:");
+                if (input == null) { // Si el usuario cancela
+                    JOptionPane.showMessageDialog(null, "Operación cancelada.");
+                    break;
+                }
+            } while (input.trim().isEmpty()); // Evita valores vacíos
+            try {
+                controller.setClientPlayer(playerName);
+            } catch (RemoteException ex) {
+                JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+        menuConsoleView.addActionListener(e -> gameView = new ConsoleGameView(controller));
 
         return menuBar;
     }

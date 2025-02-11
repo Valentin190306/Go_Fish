@@ -40,7 +40,7 @@ public interface IGame extends IObservableRemoto {
      * @param name
      * @return
      */
-    IPlayer getPlayerCalled(String name);
+    IPlayer getPlayerCalled(String name) throws RemoteException;
 
     /**
      * Obtiene la lista de jugadores en la partida
@@ -53,7 +53,7 @@ public interface IGame extends IObservableRemoto {
      * Obtiene el estado del juego
      * @return valor enumerado
      */
-    GameState getGameState();
+    GameState getGameState() throws RemoteException;
 
     /**
      *

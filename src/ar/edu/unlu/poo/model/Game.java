@@ -122,8 +122,8 @@ public class Game extends ObservableRemoto implements IGame {
     }
 
     @Override
-    public IPlayer getPlayerCalled(String name) {
-        for (IPlayer player : players) {
+    public Player getPlayerCalled(String name) throws RemoteException {
+        for (Player player : players) {
             if (player.getName().equals(name)) return player;
         }
         return null;
@@ -140,7 +140,7 @@ public class Game extends ObservableRemoto implements IGame {
     }
 
     @Override
-    public GameState getGameState() { return gameState; }
+    public GameState getGameState() throws RemoteException { return gameState; }
 
     public void gameNotifysObservers(GameState gameState) throws RemoteException {
         this.gameState = gameState;
