@@ -63,6 +63,8 @@ public interface IGame extends IObservableRemoto {
      */
     int addPlayer(String name) throws RemoteException;
 
+    int addPlayer(IPlayer player) throws RemoteException;
+
     /**
      *
      * @param ID

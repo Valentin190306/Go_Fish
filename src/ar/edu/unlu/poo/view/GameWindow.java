@@ -10,7 +10,7 @@ import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
 
 public class GameWindow extends JFrame implements ActionListener {
-    private JFrame contentFrame;
+    //private JFrame contentFrame;
     private final Controller controller;
     private String playerName = "guest";
     private IGameView gameView;
@@ -57,18 +57,18 @@ public class GameWindow extends JFrame implements ActionListener {
         menuContinue.addActionListener(this);
 
         menuNew.addActionListener(e -> {
-            contentFrame.setContentPane((Container) gameView);
+            add(new ConsoleGameView(controller));
         });
 
         menuChangeName.addActionListener(e -> {
             String input;
             do {
                 input = JOptionPane.showInputDialog(null, "Ingresa tu nombre:");
-                if (input == null) { // Si el usuario cancela
+                if (input == null) {
                     JOptionPane.showMessageDialog(null, "Operación cancelada.");
                     break;
                 }
-            } while (input.trim().isEmpty()); // Evita valores vacíos
+            } while (input.trim().isEmpty());
             try {
                 controller.setClientPlayer(playerName);
             } catch (RemoteException ex) {

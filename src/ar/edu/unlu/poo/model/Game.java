@@ -28,7 +28,6 @@ public class Game extends ObservableRemoto implements IGame {
     public void start() throws RemoteException {
         selectFirstPlayer();
         dealStartingCards();
-        gameNotifysObservers(GameState.READY);
     }
 
     private void dealStartingCards() throws RemoteException {
@@ -95,7 +94,14 @@ public class Game extends ObservableRemoto implements IGame {
     public int addPlayer(String name) throws RemoteException {
         Player player = new Player(name);
         players.add(player);
-        if (players.size() == 4) gameNotifysObservers(GameState.FULL_LOBBY);
+        if (players.size() == 4) gameNotifysObservers(GameState.READY);
+        return player.getID();
+    }
+
+    @Override
+    public int addPlayer(IPlayer player) throws RemoteException {
+        if (player instanceof  Player) players.add((Player) player);
+        if (players.size() == 4) gameNotifysObservers(GameState.READY);
         return player.getID();
     }
 

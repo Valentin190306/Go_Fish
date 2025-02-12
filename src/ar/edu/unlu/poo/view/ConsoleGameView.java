@@ -6,7 +6,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
-public class ConsoleGameView extends JFrame implements IGameView {
+public class ConsoleGameView extends JPanel implements IGameView {
     private final JTextArea consoleArea;
     private final JTextField inputField;
     private final IController controller;
@@ -15,9 +15,7 @@ public class ConsoleGameView extends JFrame implements IGameView {
         this.controller = controller;
         controller.setView(this);
 
-        setTitle("Go Fish - Terminal View");
         setSize(600, 400);
-        //setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         consoleArea = new JTextArea();
         consoleArea.setEditable(false);

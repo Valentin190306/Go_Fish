@@ -122,10 +122,8 @@ public class Controller implements IController, IControladorRemoto {
             controllerLog(gameState);
             switch (gameState) {
                 case FILLING_LOBBY -> {
-
-                }
-                case FULL_LOBBY -> {
-
+                    this.model.addPlayer(clientPlayer);
+                    showPlayersAndCards();
                 }
                 case READY -> {
                     view.notifyGameIntroduction(clientPlayer);
