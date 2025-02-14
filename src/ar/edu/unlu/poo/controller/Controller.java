@@ -12,7 +12,7 @@ import java.rmi.RemoteException;
 public class Controller implements IController, IControladorRemoto {
     private IGame model;
     private IGameView view;
-    private IPlayer clientPlayer;
+    private final IPlayer clientPlayer;
 
     public Controller() throws RemoteException {
         this.clientPlayer = new Player();
@@ -35,7 +35,7 @@ public class Controller implements IController, IControladorRemoto {
         String[] parts = input.split(" ");
         if (parts.length == 2) {
             try {
-                Value valueRequested = parseRank(parts[0]);
+                Value valueRequested = parseValue(parts[0]);
                 IPlayer targetPlayer = model.getPlayerCalled(parts[1]);
 
                 if (targetPlayer != null
@@ -57,7 +57,7 @@ public class Controller implements IController, IControladorRemoto {
         return isValid;
     }
 
-    private Value parseRank(String input) {
+    private Value parseValue(String input) {
         for (Value value : Value.values()) {
             if (value.getValue().equalsIgnoreCase(input)) {
                 return value;
@@ -123,6 +123,7 @@ public class Controller implements IController, IControladorRemoto {
                     showPlayersAndCards();
                 }
                 case READY -> {
+                    this.model.start();
                     view.notifyGameIntroduction(clientPlayer);
                     showPlayersAndCards();
                     showPlayerHand();

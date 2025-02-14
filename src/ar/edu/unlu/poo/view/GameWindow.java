@@ -42,7 +42,9 @@ public class GameWindow extends JFrame implements ActionListener {
         JButton btnChangeName = new JButton("Cambiar nombre");
         JButton btnChangeView = new JButton("Cambiar vista");
 
-        btnNewGame.addActionListener(e -> cardLayout.show(viewContainer, "ConsoleGame"));
+        btnNewGame.addActionListener(e -> {
+            cardLayout.show(viewContainer, "ConsoleGame");
+        });
 
         panel.add(btnContinue);
         panel.add(btnNewGame);

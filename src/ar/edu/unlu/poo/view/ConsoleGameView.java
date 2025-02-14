@@ -57,6 +57,8 @@ public class ConsoleGameView extends JPanel implements IGameView {
 
     @Override
     public void notifyTurnSwitch(IPlayer player) {
+        consoleArea.setText("");
+        consoleArea.setCaretPosition(0);
         appendToConsole("> Turno de " + player.getName() + "...");
     }
 

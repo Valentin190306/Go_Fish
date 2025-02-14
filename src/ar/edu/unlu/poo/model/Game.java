@@ -18,8 +18,7 @@ public class Game extends ObservableRemoto implements IGame {
     private GameState gameState;
     private Player targetPlayer;
 
-    public Game() {
-        this.gameState = GameState.FILLING_LOBBY;
+    public Game() throws RemoteException {
         this.deck = new Deck.Builder().build();
     }
 
@@ -89,28 +88,34 @@ public class Game extends ObservableRemoto implements IGame {
         return isOver;
     }
 
+    private void isGameReady() throws RemoteException {
+        if (players.size() == 4) gameNotifyObservers(GameState.READY);
+        else gameNotifyObservers(GameState.FILLING_LOBBY);
+    }
+
     @Override
     public int addPlayer(String name) throws RemoteException {
         Player player = new Player(name);
         players.add(player);
-        if (players.size() == 4) gameNotifyObservers(GameState.READY);
+        isGameReady();
         return player.getID();
     }
 
     @Override
     public int addPlayer(IPlayer player) throws RemoteException {
         if (player instanceof  Player) players.add((Player) player);
-        if (players.size() == 4) gameNotifyObservers(GameState.READY);
+        isGameReady();
         return player.getID();
     }
 
     @Override
     public void removePlayer(int ID) throws RemoteException {
-        players.remove(getPlayerByID(ID));
+        players.remove((Player) getPlayerByID(ID));
         if (players.size() < 4) gameNotifyObservers(GameState.GAME_OVER);
     }
 
-    public Player getPlayerByID(int ID) {
+    @Override
+    public IPlayer getPlayerByID(int ID) throws RemoteException {
         for (Player player : players)
             if (player.getID() == ID) return player;
         return null;

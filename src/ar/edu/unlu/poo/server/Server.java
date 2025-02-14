@@ -12,7 +12,7 @@ public class Server {
     private static final String serverHost = "127.0.0.1";
     private static final int serverPort = 1234;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws RemoteException {
         IGame modelo = new Game();
         Servidor servidor = new Servidor(serverHost, serverPort);
         try {
@@ -23,14 +23,12 @@ public class Server {
                     e.getMessage(),
                     "Fallo de RED",
                     JOptionPane.ERROR_MESSAGE));
-            e.printStackTrace();
         } catch (RMIMVCException e) {
             SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(
                 null,
                 e.getMessage(),
                 "Fallo de RMI",
                 JOptionPane.ERROR_MESSAGE));
-            e.printStackTrace();
         }
     }
 }

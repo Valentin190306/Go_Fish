@@ -72,6 +72,8 @@ public interface IGame extends IObservableRemoto {
      */
     void removePlayer(int ID) throws RemoteException;
 
+    IPlayer getPlayerByID(int ID) throws RemoteException;
+
     /**
      * Obtiene la pila de cartas de la partida
      * @return pila de cartas
