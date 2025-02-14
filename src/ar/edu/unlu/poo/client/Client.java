@@ -14,12 +14,12 @@ public class Client {
     private static final int clientPort = 0;
     private static final int serverPort = 1234;
 
-    public static void main (String[] args) {
+    public static void main (String[] args) throws RemoteException {
         Controller controller = new Controller();
         GameWindow gameWindow  = new GameWindow(controller);
-        Cliente cliente = new Cliente(clientHost, clientPort, serverHost, serverPort);
         try {
-            cliente.iniciar(controller);
+            Cliente client = new Cliente(clientHost, clientPort, serverHost, serverPort);
+            client.iniciar(controller);
             gameWindow.start();
         } catch (RemoteException e) {
             SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(

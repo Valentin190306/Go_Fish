@@ -21,7 +21,6 @@ public class Game extends ObservableRemoto implements IGame {
     public Game() {
         this.gameState = GameState.FILLING_LOBBY;
         this.deck = new Deck.Builder().build();
-
     }
 
     @Override
@@ -57,10 +56,10 @@ public class Game extends ObservableRemoto implements IGame {
     private void transferringCardsToPlayer(Value value, Player player) throws RemoteException {
         Player currentPlayer = players.get(currentPlayerIndex);
         currentPlayer.getHand().addCards(player.getHand().removeCardsByValue(value));
-        gameNotifysObservers(GameState.TRANSFERRING_CARDS);
+        gameNotifyObservers(GameState.TRANSFERRING_CARDS);
 
         if (player.getHand().checkForSets()) {
-            gameNotifysObservers(GameState.PLAYER_COMPLETED_SET);
+            gameNotifyObservers(GameState.PLAYER_COMPLETED_SET);
         }
     }
 
@@ -68,25 +67,25 @@ public class Game extends ObservableRemoto implements IGame {
         Player currentPlayer = players.get(currentPlayerIndex);
         Card lastDrawnCard = deck.drawCard();
         if (lastDrawnCard != null) {
-            gameNotifysObservers(GameState.GO_FISH);
+            gameNotifyObservers(GameState.GO_FISH);
             currentPlayer.getHand().addCard(lastDrawnCard);
 
             if (currentPlayer.getHand().checkForSets()) {
-                gameNotifysObservers(GameState.PLAYER_COMPLETED_SET);
+                gameNotifyObservers(GameState.PLAYER_COMPLETED_SET);
             }
         } else {
-            gameNotifysObservers(GameState.GAME_OVER);
+            gameNotifyObservers(GameState.GAME_OVER);
         }
     }
 
     private void nextPlayer() throws RemoteException {
         currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
-        if(!isGameOver()) gameNotifysObservers(GameState.TURN_SWITCH);
+        if(!isGameOver()) gameNotifyObservers(GameState.TURN_SWITCH);
     }
 
     public boolean isGameOver() throws RemoteException {
         boolean isOver = deck.isEmpty();
-        if (isOver) gameNotifysObservers(GameState.GAME_OVER);
+        if (isOver) gameNotifyObservers(GameState.GAME_OVER);
         return isOver;
     }
 
@@ -94,21 +93,21 @@ public class Game extends ObservableRemoto implements IGame {
     public int addPlayer(String name) throws RemoteException {
         Player player = new Player(name);
         players.add(player);
-        if (players.size() == 4) gameNotifysObservers(GameState.READY);
+        if (players.size() == 4) gameNotifyObservers(GameState.READY);
         return player.getID();
     }
 
     @Override
     public int addPlayer(IPlayer player) throws RemoteException {
         if (player instanceof  Player) players.add((Player) player);
-        if (players.size() == 4) gameNotifysObservers(GameState.READY);
+        if (players.size() == 4) gameNotifyObservers(GameState.READY);
         return player.getID();
     }
 
     @Override
     public void removePlayer(int ID) throws RemoteException {
         players.remove(getPlayerByID(ID));
-        if (players.size() < 4) gameNotifysObservers(GameState.GAME_OVER);
+        if (players.size() < 4) gameNotifyObservers(GameState.GAME_OVER);
     }
 
     public Player getPlayerByID(int ID) {
@@ -148,7 +147,7 @@ public class Game extends ObservableRemoto implements IGame {
     @Override
     public GameState getGameState() throws RemoteException { return gameState; }
 
-    public void gameNotifysObservers(GameState gameState) throws RemoteException {
+    public void gameNotifyObservers(GameState gameState) throws RemoteException {
         this.gameState = gameState;
         super.notificarObservadores(gameState);
     }

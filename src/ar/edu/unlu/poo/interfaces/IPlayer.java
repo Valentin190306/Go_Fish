@@ -10,6 +10,9 @@ public interface IPlayer extends Serializable {
     int getID();
 
     String getName();
+
+    void setName(String name);
+
     Hand getHand();
     String toString();
 }

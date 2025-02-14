@@ -14,17 +14,19 @@ public class Controller implements IController, IControladorRemoto {
     private IGameView view;
     private IPlayer clientPlayer;
 
-    public Controller() {}
+    public Controller() throws RemoteException {
+        this.clientPlayer = new Player();
+    }
+
+    @Override
+    public <T extends IObservableRemoto> void setModeloRemoto(T model) throws RemoteException {
+        this.model = (IGame) model;
+        this.model.addPlayer(clientPlayer);
+    }
 
     @Override
     public void setView(IGameView view) {
         this.view = view;
-    }
-
-    @Override
-    public void setClientPlayer(String name) throws RemoteException {
-        this.clientPlayer = new Player(name);
-        model.addPlayer(name);
     }
 
     @Override
@@ -109,11 +111,6 @@ public class Controller implements IController, IControladorRemoto {
 
     private void controllerLog(GameState gameState) {
         System.out.println("Controller(" + clientPlayer.getName() + "): " + gameState);
-    }
-
-    @Override
-    public <T extends IObservableRemoto> void setModeloRemoto(T model) throws RemoteException {
-        this.model = (IGame) model;
     }
 
     @Override
