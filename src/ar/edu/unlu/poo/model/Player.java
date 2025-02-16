@@ -10,13 +10,6 @@ public class Player implements IPlayer, Serializable {
     private String name;
     private final Hand hand;
 
-    public Player(String name) {
-        this.name = name;
-        this.ID = IDCounter;
-        IDCounter++;
-        this.hand = new Hand();
-    }
-
     public Player() {
         this.name = "guest" + IDCounter;
         this.ID = IDCounter;

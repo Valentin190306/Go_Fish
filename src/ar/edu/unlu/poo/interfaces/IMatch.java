@@ -1,5 +1,6 @@
 package ar.edu.unlu.poo.interfaces;
 
+import ar.edu.unlu.poo.model.Match;
 import ar.edu.unlu.poo.model.enums.GameState;
 import ar.edu.unlu.poo.model.Player;
 import ar.edu.unlu.poo.model.enums.Value;
@@ -9,7 +10,7 @@ import ar.edu.unlu.rmimvc.observer.IObservableRemoto;
 import java.rmi.RemoteException;
 import java.util.List;
 
-public interface IGame extends IObservableRemoto {
+public interface IMatch extends IObservableRemoto {
 
     void start() throws RemoteException;
 
@@ -41,6 +42,12 @@ public interface IGame extends IObservableRemoto {
      * @return
      */
     IPlayer getPlayerCalled(String name) throws RemoteException;
+    /*
+    int getDeckNumber();
+
+    void setDeckNumber(int deckNumber);
+    */
+
 
     /**
      * Obtiene la lista de jugadores en la partida
@@ -57,13 +64,10 @@ public interface IGame extends IObservableRemoto {
 
     /**
      *
-     * @param name
      * @return
      * @throws RemoteException
      */
-    int addPlayer(String name) throws RemoteException;
-
-    int addPlayer(IPlayer player) throws RemoteException;
+    IPlayer addPlayer() throws RemoteException;
 
     /**
      *
@@ -80,4 +84,6 @@ public interface IGame extends IObservableRemoto {
      * @throws RemoteException a manejarse por el controlador o la vista
      */
     IDeck getDeck() throws RemoteException;
+
+    void reload() throws Exception;
 }

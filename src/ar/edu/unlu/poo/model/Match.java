@@ -1,7 +1,7 @@
 package ar.edu.unlu.poo.model;
 
 import ar.edu.unlu.poo.interfaces.IDeck;
-import ar.edu.unlu.poo.interfaces.IGame;
+import ar.edu.unlu.poo.interfaces.IMatch;
 import ar.edu.unlu.poo.interfaces.IPlayer;
 
 import ar.edu.unlu.poo.model.enums.GameState;
@@ -11,21 +11,36 @@ import ar.edu.unlu.rmimvc.observer.ObservableRemoto;
 import java.rmi.RemoteException;
 import java.util.*;
 
-public class Game extends ObservableRemoto implements IGame {
-    private final Deck deck;
-    private final List<Player> players = new ArrayList<>();
+public class Match extends ObservableRemoto implements IMatch {
+    private static Match instance = null;
+
+    private Deck deck;
+    //private int deckNumber = 1;
+    private List<Player> players;
     private int currentPlayerIndex;
     private GameState gameState;
     private Player targetPlayer;
 
-    public Game() throws RemoteException {
+    public Match() throws RemoteException {
         this.deck = new Deck.Builder().build();
+        this.gameState = GameState.FILLING_LOBBY;
+        this.players = new ArrayList<>();
+    }
+
+    public static Match getInstance() throws RemoteException {
+        if (instance == null) {
+            instance = new Match();
+        }
+        return instance;
     }
 
     @Override
     public void start() throws RemoteException {
-        selectFirstPlayer();
-        dealStartingCards();
+        if (gameState == GameState.READY) {
+            this.gameState = GameState.DEALING_CARDS;
+            dealStartingCards();
+            selectFirstPlayer();
+        }
     }
 
     private void dealStartingCards() throws RemoteException {
@@ -88,24 +103,18 @@ public class Game extends ObservableRemoto implements IGame {
         return isOver;
     }
 
-    private void isGameReady() throws RemoteException {
+    private void UpdateGameStatus() throws RemoteException {
         if (players.size() == 4) gameNotifyObservers(GameState.READY);
-        else gameNotifyObservers(GameState.FILLING_LOBBY);
     }
 
     @Override
-    public int addPlayer(String name) throws RemoteException {
-        Player player = new Player(name);
-        players.add(player);
-        isGameReady();
-        return player.getID();
-    }
-
-    @Override
-    public int addPlayer(IPlayer player) throws RemoteException {
-        if (player instanceof  Player) players.add((Player) player);
-        isGameReady();
-        return player.getID();
+    public IPlayer addPlayer() throws RemoteException {
+        if (gameState != GameState.READY) {
+            Player player = new Player();
+            players.add(player);
+            UpdateGameStatus();
+            return player;
+        } else return null;
     }
 
     @Override
@@ -138,7 +147,17 @@ public class Game extends ObservableRemoto implements IGame {
         }
         return null;
     }
+    /*
+    @Override
+    public int getDeckNumber() {
+        return deckNumber;
+    }
 
+    @Override
+    public void setDeckNumber(int deckNumber) {
+        this.deckNumber = deckNumber;
+    }
+    */
     @Override
     public List<IPlayer> getPlayers() {
         return new ArrayList<>(players);
@@ -155,5 +174,14 @@ public class Game extends ObservableRemoto implements IGame {
     public void gameNotifyObservers(GameState gameState) throws RemoteException {
         this.gameState = gameState;
         super.notificarObservadores(gameState);
+    }
+
+    @Override
+    public void reload() throws Exception {
+        if (gameState == GameState.GAME_OVER) {
+            this.deck = new Deck.Builder().build();
+            this.gameState = GameState.FILLING_LOBBY;
+            this.players = new ArrayList<>();
+        } else throw new Exception();
     }
 }
