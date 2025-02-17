@@ -13,6 +13,10 @@ public interface IPlayer extends Serializable {
 
     void setName(String name);
 
+    boolean isPlaying();
+
+    void setPlaying(boolean playing);
+
     Hand getHand();
 
     String toString();

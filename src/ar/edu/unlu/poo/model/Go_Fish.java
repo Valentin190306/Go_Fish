@@ -14,7 +14,7 @@ import java.util.List;
 public class Go_Fish extends ObservableRemoto implements IGo_Fish {
     private static Go_Fish instance = null;
     private Deck deck;
-    private List<Player> players;
+    private final List<Player> players;
     private int currentPlayerIndex;
     private GameState gameState;
     private Player targetPlayer;
@@ -22,6 +22,7 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish {
     private Go_Fish() throws RemoteException {
         this.deck = new Deck.Builder().build();
         this.players = new ArrayList<>();
+        this.gameState = GameState.WAITING_PLAYERS;
     }
 
     public static IGo_Fish getInstance() throws RemoteException {
@@ -135,6 +136,18 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish {
     }
 
     @Override
+    public IPlayer addPlayer() throws RemoteException {
+        if (gameState != GameState.WAITING_PLAYERS) {
+            throw new IllegalStateException("Una partida ya ha comenzado.");
+        } if (players.size() == 7) {
+            throw new IllegalStateException("Máximo cantidad de jugadores conectados.");
+        }
+        Player newPlayer = new Player();
+        players.add(newPlayer);
+        return newPlayer;
+    }
+
+    @Override
     public void removePlayer(int ID) throws RemoteException {
         IPlayer playerToRemove = getPlayerByID(ID);
 
@@ -194,6 +207,15 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish {
     @Override
     public GameState getGameState() throws RemoteException {
         return gameState;
+    }
+
+    @Override
+    public void reload() {
+        this.deck = new Deck.Builder().build();
+        this.gameState = GameState.WAITING_PLAYERS;
+        for (Player player : players) {
+            player.setPlaying(false);
+        }
     }
 
     private void gameNotifyObservers(GameState gameState) throws RemoteException {

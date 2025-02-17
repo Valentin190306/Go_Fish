@@ -9,6 +9,7 @@ public class Player implements IPlayer, Serializable {
     private final int ID;
     private String name;
     private final Hand hand;
+    private boolean isPlaying = false;
 
     public Player() {
         this.name = "guest" + IDCounter;
@@ -30,6 +31,16 @@ public class Player implements IPlayer, Serializable {
     @Override
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public boolean isPlaying() {
+        return isPlaying;
+    }
+
+    @Override
+    public void setPlaying(boolean playing) {
+        isPlaying = playing;
     }
 
     @Override

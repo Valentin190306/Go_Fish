@@ -14,6 +14,8 @@ public interface IGo_Fish {
 
     boolean checkGameIsOver() throws RemoteException;
 
+    IPlayer addPlayer() throws RemoteException;
+
     void removePlayer(int ID) throws RemoteException;
 
     IPlayer getPlayerByID(int ID) throws RemoteException;
@@ -29,4 +31,6 @@ public interface IGo_Fish {
     IPlayer getCurrentPlayerPlayingTurn() throws RemoteException;
 
     GameState getGameState() throws RemoteException;
+
+    void reload();
 }
