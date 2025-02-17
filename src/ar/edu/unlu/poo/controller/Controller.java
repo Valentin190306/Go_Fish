@@ -39,7 +39,7 @@ public class Controller implements IController, IControladorRemoto {
                 if (targetPlayer != null
                         && targetPlayer != clientPlayer
                         && clientPlayer.getHand().hasCardOfValue(valueRequested)) {
-                    model.playTurn(valueRequested, (Player) targetPlayer);
+                    model.playTurn(valueRequested, targetPlayer);
                     isValid = true;
                 } else {
                     view.notifyInvalidPlayer();
@@ -50,7 +50,7 @@ public class Controller implements IController, IControladorRemoto {
                 throw new RuntimeException(e);
             }
         } else {
-        view.notifyInvalidInputFormat();
+            view.notifyInvalidInputFormat();
         }
         return isValid;
     }
