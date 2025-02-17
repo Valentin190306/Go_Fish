@@ -1,7 +1,5 @@
 package ar.edu.unlu.poo.server;
 
-import ar.edu.unlu.poo.interfaces.IMatch;
-import ar.edu.unlu.poo.model.Match;
 import ar.edu.unlu.rmimvc.RMIMVCException;
 import ar.edu.unlu.rmimvc.servidor.Servidor;
 
@@ -13,7 +11,7 @@ public class Server {
     private static final int serverPort = 1234;
 
     public static void main(String[] args) throws RemoteException {
-        IMatch model = new Match();
+        GameManager model = GameManager.getInstance();
         Servidor server = new Servidor(serverHost, serverPort);
         try {
             server.iniciar(model);

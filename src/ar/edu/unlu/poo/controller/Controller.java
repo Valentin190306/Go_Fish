@@ -10,7 +10,7 @@ import ar.edu.unlu.rmimvc.observer.IObservableRemoto;
 import java.rmi.RemoteException;
 
 public class Controller implements IController, IControladorRemoto {
-    private IMatch model;
+    private IGo_Fish model;
     private IGameView view;
     private IPlayer clientPlayer;
 
@@ -18,8 +18,8 @@ public class Controller implements IController, IControladorRemoto {
 
     @Override
     public <T extends IObservableRemoto> void setModeloRemoto(T model) throws RemoteException {
-        this.model = (IMatch) model;
-        this.clientPlayer = ((IMatch) model).addPlayer();
+        this.model = (IGo_Fish) model;
+
     }
 
     @Override
@@ -116,9 +116,6 @@ public class Controller implements IController, IControladorRemoto {
         if (event instanceof GameState gameState) {
             controllerLog(gameState);
             switch (gameState) {
-                case FILLING_LOBBY -> {
-                    showPlayersAndCards();
-                }
                 case READY -> {
                     this.model.start();
                     view.notifyGameIntroduction(clientPlayer);

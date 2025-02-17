@@ -14,5 +14,6 @@ public interface IPlayer extends Serializable {
     void setName(String name);
 
     Hand getHand();
+
     String toString();
 }

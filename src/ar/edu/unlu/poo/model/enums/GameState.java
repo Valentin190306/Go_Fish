@@ -1,7 +1,6 @@
 package ar.edu.unlu.poo.model.enums;
 
 public enum GameState {
-    FILLING_LOBBY,
     READY,
     DEALING_CARDS,
     GO_FISH,

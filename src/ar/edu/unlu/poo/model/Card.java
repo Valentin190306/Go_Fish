@@ -1,8 +1,8 @@
 package ar.edu.unlu.poo.model;
 
 import ar.edu.unlu.poo.interfaces.ICard;
-import ar.edu.unlu.poo.model.enums.Value;
 import ar.edu.unlu.poo.model.enums.Suit;
+import ar.edu.unlu.poo.model.enums.Value;
 
 import java.io.Serializable;
 
