@@ -26,7 +26,7 @@ public interface IGo_Fish {
 
     List<IPlayer> getPlayers();
 
-    IPlayer getCurrentPlayerPlayingTurn();
+    IPlayer getCurrentPlayerPlayingTurn() throws RemoteException;
 
     GameState getGameState() throws RemoteException;
 }

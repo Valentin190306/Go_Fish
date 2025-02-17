@@ -10,21 +10,25 @@ import ar.edu.unlu.rmimvc.observer.ObservableRemoto;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public class Go_Fish extends ObservableRemoto implements IGo_Fish {
-    private final String matchId;
+    private static Go_Fish instance = null;
     private Deck deck;
     private List<Player> players;
     private int currentPlayerIndex;
     private GameState gameState;
     private Player targetPlayer;
 
-    // Constructor: se valida que la lista no sea null.
-    public Go_Fish(String matchID) throws RemoteException {
+    private Go_Fish() throws RemoteException {
         this.deck = new Deck.Builder().build();
         this.players = new ArrayList<>();
-        this.matchId = UUID.randomUUID().toString();;
+    }
+
+    public static IGo_Fish getInstance() throws RemoteException {
+        if (instance == null) {
+            instance = new Go_Fish();
+        }
+        return instance;
     }
 
     @Override
@@ -32,7 +36,6 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish {
         if (gameState != GameState.READY) {
             throw new IllegalStateException("La partida no está lista para iniciar. Estado actual: " + gameState);
         }
-
         dealStartingCards();
         selectFirstPlayer();
         gameNotifyObservers(GameState.READY);
@@ -42,11 +45,9 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish {
         if (players.isEmpty()) {
             throw new IllegalStateException("No hay jugadores en la partida para repartir cartas.");
         }
-
         int handSize = 7 - (players.size() - 4);
         for (Player player : players) {
             for (int i = 0; i < handSize; i++) {
-
                 Card drawn = deck.drawCard();
                 if (drawn == null) {
                     throw new IllegalStateException("El mazo se quedó sin cartas durante la repartición.");
@@ -60,7 +61,6 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish {
         if (players.isEmpty()) {
             throw new IllegalStateException("No hay jugadores en la partida para seleccionar el primer turno.");
         }
-
         this.currentPlayerIndex = (int) (Math.random() * players.size());
     }
 
@@ -75,9 +75,7 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish {
         } if (targetPlayer.getHand().hasCardOfValue(valueRequested)) {
             this.targetPlayer = (Player) targetPlayer;
             transferringCardsToPlayer(valueRequested, (Player) targetPlayer);
-        } else {
-            playerWentFishing();
-        }
+        } else playerWentFishing();
 
         nextPlayer();
     }
@@ -86,14 +84,12 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish {
         if (value == null || player == null) {
             throw new IllegalArgumentException("Valor o jugador nulo no permitido.");
         }
-
         Player currentPlayer = players.get(currentPlayerIndex);
         List<Card> cardsTransferred = player.getHand().removeCardsByValue(value);
 
         if (cardsTransferred.isEmpty()) {
             throw new IllegalStateException("No se encontraron cartas para transferir.");
         }
-
         currentPlayer.getHand().addCards(cardsTransferred);
         gameNotifyObservers(GameState.TRANSFERRING_CARDS);
 
@@ -121,7 +117,6 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish {
         if (players.isEmpty()) {
             throw new IllegalStateException("No hay jugadores para pasar el turno.");
         }
-
         currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
 
         if (!checkGameIsOver()) {
@@ -136,7 +131,6 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish {
         if (deck.isEmpty()) {
             gameNotifyObservers(GameState.GAME_OVER);
         }
-
         return isOver;
     }
 
@@ -147,7 +141,6 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish {
         if (playerToRemove == null) {
             throw new IllegalArgumentException("No existe un jugador con el ID: " + ID);
         }
-
         players.remove((Player) playerToRemove);
 
         if (players.size() < 4) {
@@ -157,10 +150,9 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish {
 
     @Override
     public IPlayer getPlayerByID(int ID) throws RemoteException {
-        for (Player player : players) {
+        for (Player player : players){
             if (player.getID() == ID) return player;
         }
-
         return null;
     }
 
@@ -179,6 +171,7 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish {
         if (name == null || name.trim().isEmpty()) {
             throw new IllegalArgumentException("El nombre del jugador no puede ser nulo o vacío.");
         }
+
         for (Player player : players) {
             if (player.getName().equals(name)) return player;
         }
@@ -191,7 +184,7 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish {
     }
 
     @Override
-    public IPlayer getCurrentPlayerPlayingTurn() {
+    public IPlayer getCurrentPlayerPlayingTurn() throws RemoteException {
         if (players.isEmpty()) {
             throw new IllegalStateException("No hay jugadores en la partida.");
         }
