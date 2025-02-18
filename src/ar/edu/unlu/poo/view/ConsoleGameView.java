@@ -73,8 +73,8 @@ public class ConsoleGameView extends JPanel implements IGameView {
     }
 
     @Override
-    public void notifyInvalidInputFormat() {
-        appendToConsole("!> Formato inválido. Use: <RANGO> <NOMBRE_JUGADOR>");
+    public void handleException(Exception e) {
+        appendToConsole("!> " + e.getMessage());
     }
 
     @Override
@@ -95,16 +95,6 @@ public class ConsoleGameView extends JPanel implements IGameView {
     @Override
     public void notifyPlayerGoneFishing(IPlayer player) {
         appendToConsole("> " + player.getName() + " fue a pescar...");
-    }
-
-    @Override
-    public void notifyInvalidPlayer() {
-        appendToConsole("!> Jugador no encontrado.");
-    }
-
-    @Override
-    public void notifyUnknownState() {
-        appendToConsole("!> Estado desconocido del juego.");
     }
 
     @Override

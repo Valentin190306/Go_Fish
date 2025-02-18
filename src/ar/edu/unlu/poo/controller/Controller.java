@@ -20,12 +20,16 @@ public class Controller implements IController, IControladorRemoto {
     @Override
     public <T extends IObservableRemoto> void setModeloRemoto(T model) throws RemoteException {
         this.model = (IGo_Fish) model;
-        this.clientPlayer = ((IGo_Fish) model).addPlayer();
     }
 
     @Override
     public void setView(IGameView view) {
         this.view = view;
+    }
+
+    @Override
+    public void playerIsReady() {
+        clientPlayer.setPlaying(true);
     }
 
     @Override
@@ -43,15 +47,15 @@ public class Controller implements IController, IControladorRemoto {
                     model.playTurn(valueRequested, targetPlayer);
                     isValid = true;
                 } else {
-                    view.notifyInvalidPlayer();
+                    view.handleException(new Exception("Jugador inexistente"));
                 }
             } catch (IllegalArgumentException e) {
-                view.notifyInvalidInputFormat();
+                view.handleException(e);
             } catch (RemoteException e) {
                 throw new RuntimeException(e);
             }
         } else {
-            view.notifyInvalidInputFormat();
+            view.handleException(new Exception("Formato inválido. Use: <RANGO> <NOMBRE_JUGADOR>"));
         }
         return isValid;
     }
@@ -62,7 +66,7 @@ public class Controller implements IController, IControladorRemoto {
                 return value;
             }
         }
-        view.notifyInvalidInputFormat();
+        view.handleException(new Exception("Rango inválido. Use: <RANGO> <NOMBRE_JUGADOR>"));
         return null;
     }
 
@@ -108,44 +112,43 @@ public class Controller implements IController, IControladorRemoto {
         view.updateScores(model.getPlayers());
     }
 
-    private void controllerLog(GameState gameState) {
-        System.out.println("Controller(" + clientPlayer.getName() + "): " + gameState);
-    }
-
     @Override
-    public void actualizar(IObservableRemoto model, Object event) throws RemoteException {
+    public void actualizar(IObservableRemoto model, Object event) {
         if (event instanceof GameState gameState) {
-            controllerLog(gameState);
-            switch (gameState) {
-                case READY -> {
-                    this.model.start();
-                    view.notifyGameIntroduction(clientPlayer);
-                    showPlayersAndCards();
-                    showPlayerHand();
-                    handlePlayerTurn();
+            try {
+                switch (gameState) {
+                    case READY -> {
+                        this.model.start();
+                        view.notifyGameIntroduction(clientPlayer);
+                        showPlayersAndCards();
+                        showPlayerHand();
+                        handlePlayerTurn();
+                    }
+                    case TURN_SWITCH -> {
+                        notifyTurnSwitch();
+                        showPlayersAndCards();
+                        showPlayerHand();
+                        handlePlayerTurn();
+                        view.notifyPlayerAction(this.model.getTargetPlayer(), this.model.getCurrentPlayerPlayingTurn());
+                    }
+                    case GAME_OVER -> {
+                        handleGameOver();
+                    }
+                    case GO_FISH -> {
+                        playerGoneFishing();
+                    }
+                    case TRANSFERRING_CARDS -> {
+                        clientPlayerReceiveCards();
+                    }
+                    case PLAYER_COMPLETED_SET -> {
+                        clientPlayerSetsInHand();
+                    }
+                    default -> {
+                        view.handleException(new Exception(""));
+                    }
                 }
-                case TURN_SWITCH -> {
-                    notifyTurnSwitch();
-                    showPlayersAndCards();
-                    showPlayerHand();
-                    handlePlayerTurn();
-                    view.notifyPlayerAction(this.model.getTargetPlayer(), this.model.getCurrentPlayerPlayingTurn());
-                }
-                case GAME_OVER -> {
-                    handleGameOver();
-                }
-                case GO_FISH -> {
-                    playerGoneFishing();
-                }
-                case TRANSFERRING_CARDS -> {
-                    clientPlayerReceiveCards();
-                }
-                case PLAYER_COMPLETED_SET -> {
-                    clientPlayerSetsInHand();
-                }
-                default -> {
-                    view.notifyUnknownState();
-                }
+            } catch (RemoteException re) {
+                view.handleException(re);
             }
         }
     }
