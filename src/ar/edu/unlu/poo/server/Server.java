@@ -16,7 +16,7 @@ public class Server {
         IGo_Fish model = Go_Fish.getInstance();
         Servidor server = new Servidor(serverHost, serverPort);
         try {
-            server.iniciar((Go_Fish) model);
+            server.iniciar(model);
         }catch (RemoteException e) {
             SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(
                     null,

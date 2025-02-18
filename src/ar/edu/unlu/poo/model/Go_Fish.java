@@ -170,12 +170,12 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish {
     }
 
     @Override
-    public IDeck getDeck() {
+    public IDeck getDeck() throws RemoteException{
         return deck;
     }
 
     @Override
-    public IPlayer getTargetPlayer() {
+    public IPlayer getTargetPlayer() throws RemoteException{
         return targetPlayer;
     }
 
@@ -192,7 +192,7 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish {
     }
 
     @Override
-    public List<IPlayer> getPlayers() {
+    public List<IPlayer> getPlayers() throws RemoteException {
         return new ArrayList<>(players);
     }
 
@@ -210,7 +210,7 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish {
     }
 
     @Override
-    public void reload() {
+    public void reload() throws RemoteException {
         this.deck = new Deck.Builder().build();
         this.gameState = GameState.WAITING_PLAYERS;
         for (Player player : players) {
