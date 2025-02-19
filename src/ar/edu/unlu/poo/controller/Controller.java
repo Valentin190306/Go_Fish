@@ -1,14 +1,13 @@
 package ar.edu.unlu.poo.controller;
 
 import ar.edu.unlu.poo.interfaces.*;
-import ar.edu.unlu.poo.model.Go_Fish;
 import ar.edu.unlu.poo.model.enums.GameState;
-import ar.edu.unlu.poo.model.Player;
 import ar.edu.unlu.poo.model.enums.Value;
 import ar.edu.unlu.rmimvc.cliente.IControladorRemoto;
 import ar.edu.unlu.rmimvc.observer.IObservableRemoto;
 
 import java.rmi.RemoteException;
+import java.util.List;
 
 public class Controller implements IController, IControladorRemoto {
     private IGo_Fish model;
@@ -20,20 +19,35 @@ public class Controller implements IController, IControladorRemoto {
     @Override
     public <T extends IObservableRemoto> void setModeloRemoto(T model) throws RemoteException {
         this.model = (IGo_Fish) model;
+        this.clientPlayer = ((IGo_Fish) model).addPlayer();
     }
 
     @Override
-    public void setView(IGameView view) {
+    public void setView(IGameView view) throws IllegalArgumentException {
+        if (view == null) {
+            throw new IllegalArgumentException("La vista no puede ser nula");
+        }
         this.view = view;
     }
 
     @Override
-    public void playerIsReady() {
+    public void playerIsReady() throws IllegalArgumentException {
+        if (clientPlayer == null) {
+            throw new IllegalStateException("El jugador cliente no ha sido asignado");
+        }
         clientPlayer.setPlaying(true);
     }
 
     @Override
-    public boolean handlePlayerInput(String input) {
+    public List<IPlayer> getPlayerList() throws RemoteException {
+        return model.getPlayers();
+    }
+
+    @Override
+    public boolean handlePlayerInput(String input) throws IllegalArgumentException {
+        if (input == null || input.isBlank()) {
+            throw new IllegalArgumentException("La entrada del jugador no puede estar vacía");
+        }
         boolean isValid = false;
         String[] parts = input.split(" ");
         if (parts.length == 2) {
@@ -47,7 +61,7 @@ public class Controller implements IController, IControladorRemoto {
                     model.playTurn(valueRequested, targetPlayer);
                     isValid = true;
                 } else {
-                    view.handleException(new Exception("Jugador inexistente"));
+                    throw new IllegalArgumentException("Jugador inexistente o movimiento inválido");
                 }
             } catch (IllegalArgumentException e) {
                 view.handleException(e);
@@ -55,19 +69,18 @@ public class Controller implements IController, IControladorRemoto {
                 throw new RuntimeException(e);
             }
         } else {
-            view.handleException(new Exception("Formato inválido. Use: <RANGO> <NOMBRE_JUGADOR>"));
+            throw new IllegalArgumentException("Formato inválido. Use: <RANGO> <NOMBRE_JUGADOR>");
         }
         return isValid;
     }
 
-    private Value parseValue(String input) {
+    private Value parseValue(String input) throws IllegalArgumentException {
         for (Value value : Value.values()) {
             if (value.getValue().equalsIgnoreCase(input)) {
                 return value;
             }
         }
-        view.handleException(new Exception("Rango inválido. Use: <RANGO> <NOMBRE_JUGADOR>"));
-        return null;
+        throw new IllegalArgumentException("Rango inválido. Use: <RANGO> <NOMBRE_JUGADOR>");
     }
 
     private void clientPlayerSetsInHand() {
@@ -105,7 +118,9 @@ public class Controller implements IController, IControladorRemoto {
         view.updateHand(clientPlayer.getHand());
     }
 
-    private void notifyTurnSwitch() throws RemoteException { view.notifyTurnSwitch(model.getCurrentPlayerPlayingTurn()); }
+    private void notifyTurnSwitch() throws RemoteException {
+        view.notifyTurnSwitch(model.getCurrentPlayerPlayingTurn());
+    }
 
     private void handleGameOver() throws RemoteException {
         view.notifyGameOver();
@@ -131,21 +146,11 @@ public class Controller implements IController, IControladorRemoto {
                         handlePlayerTurn();
                         view.notifyPlayerAction(this.model.getTargetPlayer(), this.model.getCurrentPlayerPlayingTurn());
                     }
-                    case GAME_OVER -> {
-                        handleGameOver();
-                    }
-                    case GO_FISH -> {
-                        playerGoneFishing();
-                    }
-                    case TRANSFERRING_CARDS -> {
-                        clientPlayerReceiveCards();
-                    }
-                    case PLAYER_COMPLETED_SET -> {
-                        clientPlayerSetsInHand();
-                    }
-                    default -> {
-                        view.handleException(new Exception(""));
-                    }
+                    case GAME_OVER -> handleGameOver();
+                    case GO_FISH -> playerGoneFishing();
+                    case TRANSFERRING_CARDS -> clientPlayerReceiveCards();
+                    case PLAYER_COMPLETED_SET -> clientPlayerSetsInHand();
+                    default -> throw new IllegalArgumentException("Estado de juego desconocido");
                 }
             } catch (RemoteException re) {
                 view.handleException(re);
