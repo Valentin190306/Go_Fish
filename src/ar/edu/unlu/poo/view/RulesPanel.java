@@ -49,14 +49,15 @@ public class RulesPanel extends JPanel {
 
     private static JTextArea getJTextArea() {
         JTextArea rulesText = new JTextArea();
-        rulesText.setText("Reglas del Juego:\n\n" +
-                "1. Cada jugador recibe 7 cartas (o 5 si hay más de 3 jugadores).\n" +
-                "2. En su turno, un jugador pide una carta a otro jugador.\n" +
-                "3. Si el jugador tiene la carta solicitada, debe entregarla.\n" +
-                "4. Si no la tiene, el jugador que pidió debe tomar una carta del mazo (Go Fish).\n" +
-                "5. El objetivo es formar conjuntos de 4 cartas del mismo valor.\n" +
-                "6. El juego continúa hasta que no haya más cartas.\n" +
-                "7. Gana el jugador con más conjuntos completados.\n");
+        rulesText.setText("""                
+                1. Cada jugador recibe 7 cartas (o 5 si hay más de 3 jugadores).
+                2. En su turno, un jugador pide una carta a otro jugador.
+                3. Si el jugador tiene la carta solicitada, debe entregarla.
+                4. Si no la tiene, el jugador que pidió debe tomar una carta del mazo (Go Fish).
+                5. El objetivo es formar conjuntos de 4 cartas del mismo valor.
+                6. El juego continúa hasta que no haya más cartas.
+                7. Gana el jugador con más conjuntos completados.
+                """);
         rulesText.setWrapStyleWord(true);
         rulesText.setLineWrap(true);
         rulesText.setEditable(false);

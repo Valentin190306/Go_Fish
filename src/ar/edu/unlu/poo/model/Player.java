@@ -12,7 +12,7 @@ public class Player implements IPlayer, Serializable {
     private boolean isPlaying = false;
 
     public Player() {
-        this.name = "guest" + IDCounter;
+        this.name = "Guest" + IDCounter;
         this.ID = IDCounter;
         IDCounter++;
         this.hand = new Hand();

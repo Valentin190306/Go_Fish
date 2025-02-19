@@ -1,6 +1,7 @@
 package ar.edu.unlu.poo.view;
 
-import ar.edu.unlu.poo.controller.Controller;
+import ar.edu.unlu.poo.interfaces.IController;
+import ar.edu.unlu.poo.interfaces.IGameView;
 
 import javax.swing.*;
 import java.awt.*;
@@ -8,12 +9,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class GameWindow extends JFrame implements ActionListener {
-    private final Controller controller;
-    private String playerName = "Guest";
+    private IController controller;
+    private IGameView gameView;
+    private String playerName = null;
     private JPanel viewContainer;
     private CardLayout cardLayout;
 
-    public GameWindow(Controller controller) {
+    public GameWindow(IController controller) {
         this.controller = controller;
         setTitle("Go Fish");
         setSize(800, 600);
@@ -56,6 +58,16 @@ public class GameWindow extends JFrame implements ActionListener {
         JButton btnRules = createStyledButton("Reglas");
 
         btnNewGame.addActionListener(e -> cardLayout.show(viewContainer, "ConsoleGame"));
+
+        btnChangeName.addActionListener(e -> {
+            playerName = JOptionPane.showInputDialog(this,
+                    "Ingrese su nombre",
+                    "Nombre del jugador",
+                    JOptionPane.QUESTION_MESSAGE);
+        });
+
+        btnChangeView.addActionListener(e -> this.gameView = popSelectGameview());
+
         btnRules.addActionListener(e -> cardLayout.show(viewContainer, "Rules"));
 
         gbc.gridwidth = 1;
@@ -86,6 +98,34 @@ public class GameWindow extends JFrame implements ActionListener {
         button.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
         return button;
     }
+
+    private IGameView popSelectGameview() {
+        String[] options = {"Consola", "Gráfica"};
+        JComboBox<String> comboBox = new JComboBox<>(options);
+
+        int result = JOptionPane.showConfirmDialog(null,
+                comboBox,
+                "Selecciona un estilo de vista",
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.PLAIN_MESSAGE);
+
+        try {
+            if (result == JOptionPane.OK_OPTION) {
+                String selectedItem = (String) comboBox.getSelectedItem();
+                if ("Consola".equals(selectedItem)) {
+                    return new ConsoleGameView(controller);
+                } else if ("Gráfica".equals(selectedItem)) {
+                    return new GraphicGameView(controller);
+                }
+            }
+        } catch (NullPointerException ne) {
+            JOptionPane.showMessageDialog(null,
+                    "Selección invalida",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+        return this.gameView;
+    }
 /*
     private JMenuBar createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
@@ -99,6 +139,7 @@ public class GameWindow extends JFrame implements ActionListener {
         return menuBar;
     }
 */
+
     @Override
     public void actionPerformed(ActionEvent e) {
         // Lógica para manejar acciones del menú
