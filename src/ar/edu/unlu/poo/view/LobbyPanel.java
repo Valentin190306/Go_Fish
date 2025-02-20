@@ -1,16 +1,23 @@
 package ar.edu.unlu.poo.view;
 
+import ar.edu.unlu.poo.interfaces.IController;
+
 import javax.swing.*;
 import java.awt.*;
 
 public class LobbyPanel extends JPanel {
+    private GameWindow gameWindow;
+    private IController controller;
     private DefaultListModel<String> playerListModel;
     private JList<String> playerList;
     private JButton btnVotePlay;
     private int votes = 0;
-    private int requiredVotes = 2; // Modifica según el mínimo necesario para empezar
+    private int requiredVotes = 4;
+    private boolean hasVoted = false;
 
-    public LobbyPanel() {
+    public LobbyPanel(GameWindow gameWindow, IController controller) {
+        this.gameWindow = gameWindow;
+        this.controller = controller;
         setLayout(new BorderLayout());
         setBackground(new Color(50, 50, 50));
 
@@ -49,10 +56,13 @@ public class LobbyPanel extends JPanel {
         playerListModel.removeElement(playerName);
     }
 
-    // Contar votos y empezar si es necesario
     private void voteToStartGame() {
-        votes++;
+        if (hasVoted) return;
+
+        hasVoted = true;
         btnVotePlay.setText("Votos: " + votes + "/" + requiredVotes);
+        btnVotePlay.setEnabled(false);
+
         if (votes >= requiredVotes) {
             startGame();
         }

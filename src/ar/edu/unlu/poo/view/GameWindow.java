@@ -22,17 +22,15 @@ public class GameWindow extends JFrame implements ActionListener {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        // Configurar contenedor de vistas con CardLayout
         cardLayout = new CardLayout();
         viewContainer = new JPanel(cardLayout);
 
-        // Agregar las vistas
         viewContainer.add(createMenuPanel(), "Menu");
+        viewContainer.add(new LobbyPanel(this, controller), "Lobby");
         viewContainer.add(new ConsoleGameView(controller), "ConsoleGame");
         viewContainer.add(new RulesPanel(this), "Rules");
 
         add(viewContainer, BorderLayout.CENTER);
-        //setJMenuBar(createMenuBar());
     }
 
     private JPanel createMenuPanel() {
@@ -57,7 +55,10 @@ public class GameWindow extends JFrame implements ActionListener {
         JButton btnChangeView = createStyledButton("Cambiar Vista");
         JButton btnRules = createStyledButton("Reglas");
 
-        btnNewGame.addActionListener(e -> cardLayout.show(viewContainer, "ConsoleGame"));
+        btnNewGame.addActionListener(e -> {
+            configureController();
+            cardLayout.show(viewContainer, "Lobby");
+        });
 
         btnChangeName.addActionListener(e -> {
             playerName = JOptionPane.showInputDialog(this,
@@ -66,7 +67,7 @@ public class GameWindow extends JFrame implements ActionListener {
                     JOptionPane.QUESTION_MESSAGE);
         });
 
-        btnChangeView.addActionListener(e -> this.gameView = popSelectGameview());
+        btnChangeView.addActionListener(e -> this.gameView = popSelectGameView());
 
         btnRules.addActionListener(e -> cardLayout.show(viewContainer, "Rules"));
 
@@ -89,6 +90,10 @@ public class GameWindow extends JFrame implements ActionListener {
         return panel;
     }
 
+    private void configureController() {
+
+    }
+
     private JButton createStyledButton(String text) {
         JButton button = new JButton(text);
         button.setFont(new Font("Arial", Font.PLAIN, 16));
@@ -99,7 +104,7 @@ public class GameWindow extends JFrame implements ActionListener {
         return button;
     }
 
-    private IGameView popSelectGameview() {
+    private IGameView popSelectGameView() {
         String[] options = {"Consola", "Gráfica"};
         JComboBox<String> comboBox = new JComboBox<>(options);
 
@@ -126,19 +131,6 @@ public class GameWindow extends JFrame implements ActionListener {
         }
         return this.gameView;
     }
-/*
-    private JMenuBar createMenuBar() {
-        JMenuBar menuBar = new JMenuBar();
-        JMenu gameMenu = new JMenu("Jugar");
-        JMenuItem menuNew = new JMenuItem("Nueva Partida");
-
-        menuNew.addActionListener(e -> cardLayout.show(viewContainer, "ConsoleGame"));
-
-        gameMenu.add(menuNew);
-        menuBar.add(gameMenu);
-        return menuBar;
-    }
-*/
 
     @Override
     public void actionPerformed(ActionEvent e) {
