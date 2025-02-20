@@ -31,6 +31,16 @@ public class Controller implements IController, IControladorRemoto {
     }
 
     @Override
+    public boolean isClientPLayerPLying() {
+        return clientPlayer.isPlaying();
+    }
+
+    @Override
+    public void setClientPlayerName(String playerName) {
+        clientPlayer.setName(playerName);
+    }
+
+    @Override
     public void playerIsReady() throws IllegalArgumentException {
         if (clientPlayer == null) {
             throw new IllegalStateException("El jugador cliente no ha sido asignado");

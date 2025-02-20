@@ -5,6 +5,10 @@ import java.util.List;
 
 public interface IController {
 
+    boolean isClientPLayerPLying();
+
+    void setClientPlayerName(String playerName);
+
     void playerIsReady();
 
     List<IPlayer> getPlayerList() throws RemoteException;
