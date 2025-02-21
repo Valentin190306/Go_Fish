@@ -50,6 +50,23 @@ public class Player implements IPlayer, Serializable {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        Player player = (Player) obj;
+        return ID == player.ID;
+    }
+
+    @Override
+    public int hashCode() {
+        return Integer.hashCode(ID);
+    }
+
+    @Override
     public String toString() {
         return "Player{" +
                 "name='" + name + '\'' +

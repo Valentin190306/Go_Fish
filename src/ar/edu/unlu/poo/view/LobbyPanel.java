@@ -23,7 +23,7 @@ public class LobbyPanel extends JPanel implements ILobby {
         setBackground(new Color(50, 50, 50));
 
         // Título del panel
-        JLabel title = new JLabel("Lobby", SwingConstants.CENTER);
+        JLabel title = new JLabel("Sala de espera", SwingConstants.CENTER);
         title.setFont(new Font("Arial", Font.BOLD, 24));
         title.setForeground(Color.WHITE);
         add(title, BorderLayout.NORTH);

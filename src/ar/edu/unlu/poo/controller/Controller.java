@@ -20,7 +20,16 @@ public class Controller implements IController, IControladorRemoto {
     @Override
     public <T extends IObservableRemoto> void setModeloRemoto(T model) throws RemoteException {
         this.model = (IGo_Fish) model;
-        this.clientPlayer = ((IGo_Fish) model).addPlayer();
+    }
+
+    @Override
+    public void connectPlayer() throws RemoteException {
+        this.clientPlayer = model.addPlayer();
+    }
+
+    @Override
+    public void disconnectPlayer() throws RemoteException {
+        model.removePlayer(clientPlayer);
     }
 
     @Override
@@ -135,6 +144,7 @@ public class Controller implements IController, IControladorRemoto {
         if (event instanceof GameState gameState) {
             try {
                 switch (gameState) {
+                    case NEW_STATUS_PLAYER -> lobby.updatePlayerList(this.model.getPlayers());
                     case READY -> {
                         this.model.start();
                         view.notifyGameIntroduction(clientPlayer);

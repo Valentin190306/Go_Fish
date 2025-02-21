@@ -15,7 +15,7 @@ import java.util.List;
 public class Go_Fish extends ObservableRemoto implements IGo_Fish {
     private static Go_Fish instance = null;
     private Deck deck;
-    private final List<Player> players;
+    private final ArrayList<Player> players;
     private int currentPlayerIndex;
     private GameState gameState;
     private Player targetPlayer;
@@ -139,27 +139,24 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish {
 
     @Override
     public IPlayer addPlayer() throws RemoteException {
-        if (gameState != GameState.AWAITING_PLAYERS) {
+        if (gameState.ordinal() >= GameState.READY.ordinal()) {
             throw new IllegalStateException("Una partida ya ha comenzado.");
         } if (players.size() == 7) {
             throw new IllegalStateException("Máximo cantidad de jugadores conectados.");
         }
         Player newPlayer = new Player();
         players.add(newPlayer);
+        gameNotifyObservers(GameState.NEW_STATUS_PLAYER);
         return newPlayer;
     }
 
     @Override
-    public void removePlayer(int ID) throws RemoteException {
-        IPlayer playerToRemove = getPlayerByID(ID);
-
-        if (playerToRemove == null) {
-            throw new IllegalArgumentException("No existe un jugador con el ID: " + ID);
-        }
-        players.remove((Player) playerToRemove);
-
-        if (players.size() < 4) {
-            gameNotifyObservers(GameState.GAME_OVER);
+    public void removePlayer(IPlayer clientPlayer) throws RemoteException {
+        for (Player player : players) {
+            if (player.equals(clientPlayer)) {
+                player.setPlayerState(PlayerState.READY);
+                gameNotifyObservers(GameState.NEW_STATUS_PLAYER);
+            }
         }
     }
 
@@ -172,8 +169,13 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish {
     }
 
     @Override
-    public void setPlayerReady(Player player) {
-        player.setPlayerState(PlayerState.READY);
+    public void setPlayerReady(Player clientPlayer) throws RemoteException {
+        for (Player player : players) {
+            if (player.equals(clientPlayer)) {
+                player.setPlayerState(PlayerState.READY);
+                gameNotifyObservers(GameState.NEW_STATUS_PLAYER);
+            }
+        }
     }
 
     @Override
@@ -199,7 +201,7 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish {
     }
 
     @Override
-    public List<IPlayer> getPlayers() throws RemoteException {
+    public ArrayList<IPlayer> getPlayers() throws RemoteException {
         return new ArrayList<>(players);
     }
 

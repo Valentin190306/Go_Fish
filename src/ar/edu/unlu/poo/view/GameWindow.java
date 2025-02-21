@@ -5,10 +5,11 @@ import ar.edu.unlu.poo.interfaces.IGameView;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.rmi.RemoteException;
 
-public class GameWindow extends JFrame implements ActionListener {
+public class GameWindow extends JFrame{
     private IController controller;
     private IGameView gameView;
     private String playerName = null;
@@ -21,17 +22,44 @@ public class GameWindow extends JFrame implements ActionListener {
 
         setTitle("Go Fish");
         setSize(800, 600);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                int confirm = JOptionPane.showConfirmDialog(null,
+                        "¿Seguro que quieres salir?", "Confirmar salida",
+                        JOptionPane.YES_NO_OPTION);
+
+                if (confirm == JOptionPane.YES_OPTION) {
+                    System.out.println("Guardando datos...");
+                    try {
+                        controller.disconnectPlayer();
+                    } catch (RemoteException ex) {
+                        JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                } else {
+                    setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE); // Cancela
+                }
+            }
+        });
+
         setLocationRelativeTo(null);
 
         cardLayout = new CardLayout();
         viewContainer = new JPanel(cardLayout);
 
         viewContainer.add(createMenuPanel(), "Menu");
-        viewContainer.add(new LobbyPanel(this, controller), "Lobby");
+        viewContainer.add(createLobbyPanel(), "Lobby");
         viewContainer.add(new RulesPanel(this), "Rules");
 
         add(viewContainer, BorderLayout.CENTER);
+    }
+
+    private LobbyPanel createLobbyPanel() {
+        LobbyPanel lobbyPanel = new LobbyPanel(this, controller);
+        controller.setLobby(lobbyPanel);
+        return lobbyPanel;
     }
 
     private JPanel createMenuPanel() {
@@ -92,9 +120,17 @@ public class GameWindow extends JFrame implements ActionListener {
     }
 
     private void configureControllerAndView() {
-        controller.setView(this.gameView);
-        controller.setClientPlayerName(playerName);
-        viewContainer.add((Component) gameView, "Vista");
+        try {
+            controller.connectPlayer();
+            controller.setView(this.gameView);
+            controller.getClientPlayer().setName(playerName);
+            viewContainer.add((Component) gameView, "Vista");
+        } catch (RemoteException re) {
+            JOptionPane.showMessageDialog(this,
+                    re.getMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private JButton createStyledButton(String text) {
@@ -133,11 +169,6 @@ public class GameWindow extends JFrame implements ActionListener {
                     JOptionPane.ERROR_MESSAGE);
         }
         return this.gameView;
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        // Lógica para manejar acciones del menú
     }
 
     public void showMenu() {

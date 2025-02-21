@@ -13,6 +13,10 @@ public interface IController {
 
     boolean handlePlayerInput(String input);
 
+    void connectPlayer() throws RemoteException;
+
+    void disconnectPlayer() throws RemoteException;
+
     void setView(IGameView view);
 }
 

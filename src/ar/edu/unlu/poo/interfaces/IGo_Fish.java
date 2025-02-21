@@ -6,7 +6,7 @@ import ar.edu.unlu.poo.model.enums.Value;
 import ar.edu.unlu.rmimvc.observer.IObservableRemoto;
 
 import java.rmi.RemoteException;
-import java.util.List;
+import java.util.ArrayList;
 
 public interface IGo_Fish extends IObservableRemoto {
     void start() throws RemoteException;
@@ -17,11 +17,11 @@ public interface IGo_Fish extends IObservableRemoto {
 
     IPlayer addPlayer() throws RemoteException;
 
-    void removePlayer(int ID) throws RemoteException;
+    void removePlayer(IPlayer player) throws RemoteException;
 
     IPlayer getPlayerByID(int ID) throws RemoteException;
 
-    void setPlayerReady(Player player);
+    void setPlayerReady(Player player) throws RemoteException;
 
     IDeck getDeck() throws RemoteException;
 
@@ -29,7 +29,7 @@ public interface IGo_Fish extends IObservableRemoto {
 
     Player getPlayerCalled(String name) throws RemoteException;
 
-    List<IPlayer> getPlayers() throws RemoteException;
+    ArrayList<IPlayer> getPlayers() throws RemoteException;
 
     IPlayer getCurrentPlayerPlayingTurn() throws RemoteException;
 
