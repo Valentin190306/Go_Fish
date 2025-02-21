@@ -4,6 +4,7 @@ import ar.edu.unlu.poo.interfaces.IDeck;
 import ar.edu.unlu.poo.interfaces.IGo_Fish;
 import ar.edu.unlu.poo.interfaces.IPlayer;
 import ar.edu.unlu.poo.model.enums.GameState;
+import ar.edu.unlu.poo.model.enums.PlayerState;
 import ar.edu.unlu.poo.model.enums.Value;
 import ar.edu.unlu.rmimvc.observer.ObservableRemoto;
 
@@ -22,7 +23,7 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish {
     private Go_Fish() throws RemoteException {
         this.deck = new Deck.Builder().build();
         this.players = new ArrayList<>();
-        this.gameState = GameState.WAITING_PLAYERS;
+        this.gameState = GameState.AWAITING_PLAYERS;
     }
 
     public static IGo_Fish getInstance() throws RemoteException {
@@ -55,6 +56,7 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish {
                 }
                 player.getHand().addCard(drawn);
             }
+            player.setPlayerState(PlayerState.PLAYING);
         }
     }
 
@@ -137,7 +139,7 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish {
 
     @Override
     public IPlayer addPlayer() throws RemoteException {
-        if (gameState != GameState.WAITING_PLAYERS) {
+        if (gameState != GameState.AWAITING_PLAYERS) {
             throw new IllegalStateException("Una partida ya ha comenzado.");
         } if (players.size() == 7) {
             throw new IllegalStateException("Máximo cantidad de jugadores conectados.");
@@ -167,6 +169,11 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish {
             if (player.getID() == ID) return player;
         }
         return null;
+    }
+
+    @Override
+    public void setPlayerReady(Player player) {
+        player.setPlayerState(PlayerState.READY);
     }
 
     @Override
@@ -212,9 +219,9 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish {
     @Override
     public void reload() throws RemoteException {
         this.deck = new Deck.Builder().build();
-        this.gameState = GameState.WAITING_PLAYERS;
+        this.gameState = GameState.AWAITING_PLAYERS;
         for (Player player : players) {
-            player.setPlaying(false);
+            player.setPlayerState(PlayerState.READY);
         }
     }
 

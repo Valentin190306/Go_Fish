@@ -1,6 +1,7 @@
 package ar.edu.unlu.poo.model;
 
 import ar.edu.unlu.poo.interfaces.IPlayer;
+import ar.edu.unlu.poo.model.enums.PlayerState;
 
 import java.io.Serializable;
 
@@ -9,7 +10,7 @@ public class Player implements IPlayer, Serializable {
     private final int ID;
     private String name;
     private final Hand hand;
-    private boolean isPlaying = false;
+    private PlayerState playerState = PlayerState.WAITING;
 
     public Player() {
         this.name = "Guest" + IDCounter;
@@ -34,13 +35,13 @@ public class Player implements IPlayer, Serializable {
     }
 
     @Override
-    public boolean isPlaying() {
-        return isPlaying;
+    public PlayerState getPlayerState() {
+        return playerState;
     }
 
     @Override
-    public void setPlaying(boolean playing) {
-        isPlaying = playing;
+    public void setPlayerState(PlayerState playerState) {
+        this.playerState = playerState;
     }
 
     @Override

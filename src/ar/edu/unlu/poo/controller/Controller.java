@@ -12,6 +12,7 @@ import java.util.List;
 public class Controller implements IController, IControladorRemoto {
     private IGo_Fish model;
     private IGameView view;
+    private ILobby lobby;
     private IPlayer clientPlayer;
 
     public Controller() throws RemoteException {}
@@ -31,21 +32,13 @@ public class Controller implements IController, IControladorRemoto {
     }
 
     @Override
-    public boolean isClientPLayerPLying() {
-        return clientPlayer.isPlaying();
+    public IPlayer getClientPlayer() {
+        return this.clientPlayer;
     }
 
     @Override
-    public void setClientPlayerName(String playerName) {
-        clientPlayer.setName(playerName);
-    }
-
-    @Override
-    public void playerIsReady() throws IllegalArgumentException {
-        if (clientPlayer == null) {
-            throw new IllegalStateException("El jugador cliente no ha sido asignado");
-        }
-        clientPlayer.setPlaying(true);
+    public void setLobby(ILobby lobby) {
+        this.lobby = lobby;
     }
 
     @Override

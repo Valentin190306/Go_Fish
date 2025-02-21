@@ -21,6 +21,8 @@ public interface IGo_Fish extends IObservableRemoto {
 
     IPlayer getPlayerByID(int ID) throws RemoteException;
 
+    void setPlayerReady(Player player);
+
     IDeck getDeck() throws RemoteException;
 
     IPlayer getTargetPlayer() throws RemoteException;

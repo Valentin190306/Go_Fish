@@ -1,6 +1,7 @@
 package ar.edu.unlu.poo.interfaces;
 
 import ar.edu.unlu.poo.model.Hand;
+import ar.edu.unlu.poo.model.enums.PlayerState;
 import ar.edu.unlu.poo.model.enums.Value;
 
 import java.io.Serializable;
@@ -13,9 +14,9 @@ public interface IPlayer extends Serializable {
 
     void setName(String name);
 
-    boolean isPlaying();
+    PlayerState getPlayerState();
 
-    void setPlaying(boolean playing);
+    void setPlayerState(PlayerState playerState);
 
     Hand getHand();
 

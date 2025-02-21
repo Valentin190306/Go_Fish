@@ -1,19 +1,20 @@
 package ar.edu.unlu.poo.view;
 
 import ar.edu.unlu.poo.interfaces.IController;
+import ar.edu.unlu.poo.interfaces.ILobby;
+import ar.edu.unlu.poo.interfaces.IPlayer;
+import ar.edu.unlu.poo.model.enums.PlayerState;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.util.ArrayList;
 
-public class LobbyPanel extends JPanel {
-    private GameWindow gameWindow;
-    private IController controller;
-    private DefaultListModel<String> playerListModel;
-    private JList<String> playerList;
-    private JButton btnVotePlay;
-    private int votes = 0;
-    private int requiredVotes = 4;
-    private boolean hasVoted = false;
+public class LobbyPanel extends JPanel implements ILobby {
+    private final GameWindow gameWindow;
+    private final IController controller;
+    private final DefaultTableModel tableModel;
+    private final JButton btnVotePlay;
 
     public LobbyPanel(GameWindow gameWindow, IController controller) {
         this.gameWindow = gameWindow;
@@ -27,13 +28,14 @@ public class LobbyPanel extends JPanel {
         title.setForeground(Color.WHITE);
         add(title, BorderLayout.NORTH);
 
-        // Lista de jugadores conectados
-        playerListModel = new DefaultListModel<>();
-        playerList = new JList<>(playerListModel);
-        playerList.setBackground(new Color(30, 30, 30));
-        playerList.setForeground(Color.WHITE);
-        playerList.setFont(new Font("Arial", Font.PLAIN, 16));
-        add(new JScrollPane(playerList), BorderLayout.CENTER);
+        // Tabla de jugadores con estado de voto
+        tableModel = new DefaultTableModel(new Object[]{"Jugador", "Estado"}, 0);
+        JTable playerTable = new JTable(tableModel);
+        playerTable.setBackground(new Color(30, 30, 30));
+        playerTable.setForeground(Color.WHITE);
+        playerTable.setFont(new Font("Arial", Font.PLAIN, 16));
+        playerTable.setEnabled(false);
+        add(new JScrollPane(playerTable), BorderLayout.CENTER);
 
         // Botón para votar "Jugar"
         btnVotePlay = new JButton("Votar para Jugar");
@@ -44,33 +46,24 @@ public class LobbyPanel extends JPanel {
         add(btnVotePlay, BorderLayout.SOUTH);
     }
 
-    // Agregar un nuevo jugador a la lista
-    public void addPlayer(String playerName) {
-        if (!playerListModel.contains(playerName)) {
-            playerListModel.addElement(playerName);
-        }
-    }
-
-    // Remover un jugador (por desconexión)
-    public void removePlayer(String playerName) {
-        playerListModel.removeElement(playerName);
-    }
-
     private void voteToStartGame() {
-        if (hasVoted) return;
-
-        hasVoted = true;
-        btnVotePlay.setText("Votos: " + votes + "/" + requiredVotes);
+        if (controller.getClientPlayer().toString().equals("READY")) return;
         btnVotePlay.setEnabled(false);
-
-        if (votes >= requiredVotes) {
-            startGame();
-        }
+        controller.getClientPlayer().setPlayerState(PlayerState.READY);
     }
 
-    // Acción para iniciar el juego (esto debe integrarse con la lógica del servidor)
-    private void startGame() {
-        JOptionPane.showMessageDialog(this, "¡El juego va a comenzar!");
-        // Aquí podrías notificar al servidor para empezar la partida
+    @Override
+    public void updatePlayerList(ArrayList<IPlayer> players) {
+        SwingUtilities.invokeLater(() -> {
+            tableModel.setRowCount(0);
+            for (IPlayer player : players) {
+                tableModel.addRow(new Object[]{player.getName(), player.getPlayerState().toString()});
+            }
+        });
+    }
+
+    @Override
+    public void switchToGameView() {
+        gameWindow.startGame();
     }
 }

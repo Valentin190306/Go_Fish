@@ -17,6 +17,8 @@ public class GameWindow extends JFrame implements ActionListener {
 
     public GameWindow(IController controller) {
         this.controller = controller;
+        this.gameView = new ConsoleGameView(controller);
+
         setTitle("Go Fish");
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -27,7 +29,6 @@ public class GameWindow extends JFrame implements ActionListener {
 
         viewContainer.add(createMenuPanel(), "Menu");
         viewContainer.add(new LobbyPanel(this, controller), "Lobby");
-        viewContainer.add(new ConsoleGameView(controller), "ConsoleGame");
         viewContainer.add(new RulesPanel(this), "Rules");
 
         add(viewContainer, BorderLayout.CENTER);
@@ -56,7 +57,7 @@ public class GameWindow extends JFrame implements ActionListener {
         JButton btnRules = createStyledButton("Reglas");
 
         btnNewGame.addActionListener(e -> {
-            configureController();
+            configureControllerAndView();
             cardLayout.show(viewContainer, "Lobby");
         });
 
@@ -90,8 +91,10 @@ public class GameWindow extends JFrame implements ActionListener {
         return panel;
     }
 
-    private void configureController() {
-
+    private void configureControllerAndView() {
+        controller.setView(this.gameView);
+        controller.setClientPlayerName(playerName);
+        viewContainer.add((Component) gameView, "Vista");
     }
 
     private JButton createStyledButton(String text) {
@@ -139,6 +142,10 @@ public class GameWindow extends JFrame implements ActionListener {
 
     public void showMenu() {
         cardLayout.show(viewContainer, "Menu");
+    }
+
+    public void startGame() {
+        cardLayout.show(viewContainer, "");
     }
 
     public void start() {
