@@ -34,14 +34,13 @@ public class Player implements IPlayer, Serializable {
         this.name = name;
     }
 
-    @Override
-    public PlayerState getPlayerState() {
-        return playerState;
+    public void setPlayerState(PlayerState playerState) {
+        this.playerState = playerState;
     }
 
     @Override
-    public void setPlayerState(PlayerState playerState) {
-        this.playerState = playerState;
+    public PlayerState getPlayerState() {
+        return playerState;
     }
 
     @Override

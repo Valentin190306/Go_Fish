@@ -7,6 +7,8 @@ public interface IController {
 
     IPlayer getClientPlayer();
 
+    void setClientPlayerReady() throws RemoteException;
+
     void setLobby(ILobby lobby);
 
     List<IPlayer> getPlayerList() throws RemoteException;

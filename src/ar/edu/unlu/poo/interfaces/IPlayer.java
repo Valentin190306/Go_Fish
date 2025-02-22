@@ -16,8 +16,6 @@ public interface IPlayer extends Serializable {
 
     PlayerState getPlayerState();
 
-    void setPlayerState(PlayerState playerState);
-
     Hand getHand();
 
     String toString();

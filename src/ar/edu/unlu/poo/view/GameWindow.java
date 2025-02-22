@@ -10,11 +10,11 @@ import java.awt.event.WindowEvent;
 import java.rmi.RemoteException;
 
 public class GameWindow extends JFrame{
-    private IController controller;
+    private final IController controller;
     private IGameView gameView;
     private String playerName = null;
-    private JPanel viewContainer;
-    private CardLayout cardLayout;
+    private final JPanel viewContainer;
+    private final CardLayout cardLayout;
 
     public GameWindow(IController controller) {
         this.controller = controller;
@@ -90,7 +90,7 @@ public class GameWindow extends JFrame{
         });
 
         btnChangeName.addActionListener(e -> {
-            playerName = JOptionPane.showInputDialog(this,
+            this.playerName = JOptionPane.showInputDialog(this,
                     "Ingrese su nombre",
                     "Nombre del jugador",
                     JOptionPane.QUESTION_MESSAGE);
@@ -176,7 +176,7 @@ public class GameWindow extends JFrame{
     }
 
     public void startGame() {
-        cardLayout.show(viewContainer, "");
+        cardLayout.show(viewContainer, "View");
     }
 
     public void start() {

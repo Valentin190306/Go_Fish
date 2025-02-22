@@ -1,6 +1,7 @@
 package ar.edu.unlu.poo.controller;
 
 import ar.edu.unlu.poo.interfaces.*;
+import ar.edu.unlu.poo.model.Player;
 import ar.edu.unlu.poo.model.enums.GameState;
 import ar.edu.unlu.poo.model.enums.Value;
 import ar.edu.unlu.rmimvc.cliente.IControladorRemoto;
@@ -43,6 +44,11 @@ public class Controller implements IController, IControladorRemoto {
     @Override
     public IPlayer getClientPlayer() {
         return this.clientPlayer;
+    }
+
+    @Override
+    public void setClientPlayerReady() throws RemoteException {
+        model.setPlayerReady((Player) clientPlayer);
     }
 
     @Override

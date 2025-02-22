@@ -152,12 +152,11 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish {
 
     @Override
     public void removePlayer(IPlayer clientPlayer) throws RemoteException {
-        for (Player player : players) {
-            if (player.equals(clientPlayer)) {
-                player.setPlayerState(PlayerState.READY);
-                gameNotifyObservers(GameState.NEW_STATUS_PLAYER);
-            }
+        if (!players.contains((Player) clientPlayer)) {
+            throw new RuntimeException("No existe el jugador a remover.");
         }
+        players.remove((Player) clientPlayer);
+        gameNotifyObservers(GameState.NEW_STATUS_PLAYER);
     }
 
     @Override
@@ -173,9 +172,9 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish {
         for (Player player : players) {
             if (player.equals(clientPlayer)) {
                 player.setPlayerState(PlayerState.READY);
-                gameNotifyObservers(GameState.NEW_STATUS_PLAYER);
             }
         }
+        gameNotifyObservers(GameState.NEW_STATUS_PLAYER);
     }
 
     @Override
@@ -223,6 +222,7 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish {
         this.deck = new Deck.Builder().build();
         this.gameState = GameState.AWAITING_PLAYERS;
         for (Player player : players) {
+            player.getHand().clear();
             player.setPlayerState(PlayerState.READY);
         }
     }

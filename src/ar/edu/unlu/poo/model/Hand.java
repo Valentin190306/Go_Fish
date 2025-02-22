@@ -32,6 +32,10 @@ public class Hand implements Serializable, IHand {
         this.cards.addAll(cards);
     }
 
+    public void clear() {
+        cards.clear();
+    }
+
     @Override
     public List<Card> getCards() {
         return cards;

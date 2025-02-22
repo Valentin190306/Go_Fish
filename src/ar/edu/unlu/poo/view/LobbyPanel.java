@@ -3,7 +3,6 @@ package ar.edu.unlu.poo.view;
 import ar.edu.unlu.poo.interfaces.IController;
 import ar.edu.unlu.poo.interfaces.ILobby;
 import ar.edu.unlu.poo.interfaces.IPlayer;
-import ar.edu.unlu.poo.model.enums.PlayerState;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -31,7 +30,7 @@ public class LobbyPanel extends JPanel implements ILobby {
         // Tabla de jugadores con estado de voto
         tableModel = new DefaultTableModel(new Object[]{"Jugador", "Estado"}, 0);
         JTable playerTable = new JTable(tableModel);
-        playerTable.setBackground(new Color(30, 30, 30));
+        playerTable.setBackground(Color.DARK_GRAY);
         playerTable.setForeground(Color.WHITE);
         playerTable.setFont(new Font("Arial", Font.PLAIN, 16));
         playerTable.setEnabled(false);
@@ -49,7 +48,14 @@ public class LobbyPanel extends JPanel implements ILobby {
     private void voteToStartGame() {
         if (controller.getClientPlayer().toString().equals("READY")) return;
         btnVotePlay.setEnabled(false);
-        controller.getClientPlayer().setPlayerState(PlayerState.READY);
+        try {
+            controller.setClientPlayerReady();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+                    e.getMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     @Override
