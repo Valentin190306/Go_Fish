@@ -40,7 +40,7 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish {
         }
         dealStartingCards();
         selectFirstPlayer();
-        gameNotifyObservers(GameState.READY);
+        this.gameState = GameState.WAITING_ACTION;
     }
 
     private void dealStartingCards() throws RemoteException {
@@ -142,12 +142,25 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish {
         if (gameState.ordinal() >= GameState.READY.ordinal()) {
             throw new IllegalStateException("Una partida ya ha comenzado.");
         } if (players.size() == 7) {
-            throw new IllegalStateException("Máximo cantidad de jugadores conectados.");
+            throw new IllegalStateException("Máxima cantidad de jugadores conectados.");
         }
         Player newPlayer = new Player();
         players.add(newPlayer);
         gameNotifyObservers(GameState.NEW_STATUS_PLAYER);
+        arePlayersReadyCheck();
         return newPlayer;
+    }
+
+    private void arePlayersReadyCheck() throws RemoteException {
+        boolean areReady = true;
+
+        for (Player player : players) {
+            if (!player.getPlayerState().equals(PlayerState.READY)) {
+                areReady = false;
+                break;
+            }
+        }
+        if (areReady) gameNotifyObservers(GameState.READY);
     }
 
     @Override

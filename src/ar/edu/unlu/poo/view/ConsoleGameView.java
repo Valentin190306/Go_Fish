@@ -1,6 +1,7 @@
 package ar.edu.unlu.poo.view;
 
 import ar.edu.unlu.poo.interfaces.*;
+import ar.edu.unlu.rmimvc.RMIMVCException;
 
 import javax.swing.*;
 import java.awt.*;
@@ -34,8 +35,12 @@ public class ConsoleGameView extends JPanel implements IGameView {
 
     private void processInput() {
         String input = inputField.getText().trim();
-        if (!input.isEmpty() && controller.handlePlayerInput(input)) {
-            inputField.setText("");
+        try {
+            if (!input.isEmpty() && controller.handlePlayerInput(input)) {
+                inputField.setText("");
+            }
+        } catch (Exception e) {
+            handleException(e);
         }
     }
 
@@ -74,7 +79,14 @@ public class ConsoleGameView extends JPanel implements IGameView {
 
     @Override
     public void handleException(Exception e) {
-        appendToConsole("!> " + e.getMessage());
+        if (e instanceof RMIMVCException) {
+            JOptionPane.showMessageDialog(null,
+                    e.getMessage(),
+                    "RMI Error",
+                    JOptionPane.ERROR_MESSAGE);
+        } else {
+            appendToConsole("!> " + e.getMessage());
+        }
     }
 
     @Override

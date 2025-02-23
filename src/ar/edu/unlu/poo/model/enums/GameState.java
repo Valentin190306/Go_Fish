@@ -3,8 +3,8 @@ package ar.edu.unlu.poo.model.enums;
 public enum GameState {
     AWAITING_PLAYERS,
     NEW_STATUS_PLAYER,
-    FULL_LOBBY,
     READY,
+    WAITING_ACTION,
     GO_FISH,
     TRANSFERRING_CARDS,
     PLAYER_COMPLETED_SET,

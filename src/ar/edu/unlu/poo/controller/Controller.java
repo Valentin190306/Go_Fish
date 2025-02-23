@@ -105,44 +105,71 @@ public class Controller implements IController, IControladorRemoto {
         view.notifyAmountOfSets(clientPlayer.getHand().getScore());
     }
 
-    private void clientPlayerReceiveCards() throws RemoteException {
-        if (model.getCurrentPlayerPlayingTurn() == clientPlayer) {
-            view.notifyReceivedCards(clientPlayer.getHand().getTransferenceCards());
-        } else if (model.getTargetPlayer() == clientPlayer) {
-            view.notifyLostCards(model.getTargetPlayer().getHand().getTransferenceCards());
+    private void clientPlayerReceiveCards() {
+        try {
+            if (model.getCurrentPlayerPlayingTurn() == clientPlayer) {
+                view.notifyReceivedCards(clientPlayer.getHand().getTransferenceCards());
+            } else if (model.getTargetPlayer() == clientPlayer) {
+                view.notifyLostCards(model.getTargetPlayer().getHand().getTransferenceCards());
+            }
+        } catch (Exception e) {
+            view.handleException(e);
         }
     }
 
-    private void playerGoneFishing() throws RemoteException {
-        if (model.getCurrentPlayerPlayingTurn() == clientPlayer) {
-            view.notifyClientPlayerGoneFishing();
-            view.notifyFishedCard(clientPlayer.getHand().getTransferenceCards().get(0));
-        } else {
-            view.notifyPlayerGoneFishing(model.getCurrentPlayerPlayingTurn());
+    private void playerGoneFishing() {
+        try {
+            if (model.getCurrentPlayerPlayingTurn() == clientPlayer) {
+                view.notifyClientPlayerGoneFishing();
+                view.notifyFishedCard(clientPlayer.getHand().getTransferenceCards().get(0));
+            } else {
+                view.notifyPlayerGoneFishing(model.getCurrentPlayerPlayingTurn());
+            }
+        } catch (Exception e) {
+            view.handleException(e);
         }
     }
 
-    private void showPlayersAndCards() throws RemoteException {
-        view.showPlayersAndCards(model.getDeck(), model.getPlayers());
+    private void showPlayersAndCards() {
+        try {
+            view.showPlayersAndCards(model.getDeck(), model.getPlayers());
+        } catch (Exception e) {
+            view.handleException(e);
+        }
     }
 
     private void handlePlayerTurn() throws RemoteException {
-        boolean isCurrentPlayer = model.getCurrentPlayerPlayingTurn().getName().equals(clientPlayer.getName());
-        view.setPlayerTurn(isCurrentPlayer);
+        try {
+            boolean isCurrentPlayer = model.getCurrentPlayerPlayingTurn().equals(clientPlayer);
+            view.setPlayerTurn(isCurrentPlayer);
+        } catch (Exception e) {
+            view.handleException(e);
+        }
     }
 
     private void showPlayerHand() {
-        System.out.println(clientPlayer.getName() + " : " + clientPlayer.getHand().toString());
-        view.updateHand(clientPlayer.getHand());
+        try {
+            view.updateHand(clientPlayer.getHand());
+        } catch (Exception e) {
+            view.handleException(e);
+        }
     }
 
     private void notifyTurnSwitch() throws RemoteException {
-        view.notifyTurnSwitch(model.getCurrentPlayerPlayingTurn());
+        try {
+            view.notifyTurnSwitch(model.getCurrentPlayerPlayingTurn());
+        } catch (Exception e) {
+            view.handleException(e);
+        }
     }
 
     private void handleGameOver() throws RemoteException {
-        view.notifyGameOver();
-        view.updateScores(model.getPlayers());
+        try {
+            view.notifyGameOver();
+            view.updateScores(model.getPlayers());
+        } catch (Exception e) {
+            view.handleException(e);
+        }
     }
 
     @Override
@@ -152,6 +179,8 @@ public class Controller implements IController, IControladorRemoto {
                 switch (gameState) {
                     case NEW_STATUS_PLAYER -> lobby.updatePlayerList(this.model.getPlayers());
                     case READY -> {
+                        lobby.switchToGameView();
+                        view.start();
                         this.model.start();
                         view.notifyGameIntroduction(clientPlayer);
                         showPlayersAndCards();
