@@ -13,9 +13,11 @@ public interface IController {
 
     List<IPlayer> getPlayerList() throws RemoteException;
 
+    void disconnect() throws RemoteException;
+
     boolean handlePlayerInput(String input);
 
-    void connectPlayer() throws RemoteException;
+    void connect() throws RemoteException;
 
     void disconnectPlayer() throws RemoteException;
 

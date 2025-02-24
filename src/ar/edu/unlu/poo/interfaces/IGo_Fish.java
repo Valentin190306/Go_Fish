@@ -4,6 +4,7 @@ import ar.edu.unlu.poo.model.Player;
 import ar.edu.unlu.poo.model.enums.GameState;
 import ar.edu.unlu.poo.model.enums.Value;
 import ar.edu.unlu.rmimvc.observer.IObservableRemoto;
+import ar.edu.unlu.rmimvc.observer.IObservadorRemoto;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -18,6 +19,8 @@ public interface IGo_Fish extends IObservableRemoto {
     IPlayer addPlayer() throws RemoteException;
 
     void removePlayer(IPlayer player) throws RemoteException;
+
+    void disconnectPlayer(IObservadorRemoto controller, IPlayer player) throws RemoteException;
 
     IPlayer getPlayerByID(int ID) throws RemoteException;
 

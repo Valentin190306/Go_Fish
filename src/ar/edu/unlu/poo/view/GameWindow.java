@@ -9,7 +9,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.rmi.RemoteException;
 
-public class GameWindow extends JFrame{
+public class GameWindow extends JFrame {
     private final IController controller;
     private IGameView gameView;
     private String playerName = null;
@@ -33,13 +33,17 @@ public class GameWindow extends JFrame{
                 if (confirm == JOptionPane.YES_OPTION) {
                     System.out.println("Guardando datos...");
                     try {
-                        controller.disconnectPlayer();
+                        if (controller.getClientPlayer() != null) {
+                            controller.disconnect();
+                        }
                     } catch (RemoteException ex) {
-                        JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(null,
+                                ex.getMessage(),
+                                "Error",
+                                JOptionPane.ERROR_MESSAGE);
                     }
-                    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                } else {
-                    setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE); // Cancela
+                    dispose();
+                    System.exit(0);
                 }
             }
         });
@@ -90,13 +94,20 @@ public class GameWindow extends JFrame{
         });
 
         btnChangeName.addActionListener(e -> {
-            this.playerName = JOptionPane.showInputDialog(this,
+            String newName = JOptionPane.showInputDialog(this,
                     "Ingrese su nombre",
                     "Nombre del jugador",
                     JOptionPane.QUESTION_MESSAGE);
+            if (newName != null && !newName.trim().isEmpty()) {
+                this.playerName = newName;
+            }
         });
 
-        btnChangeView.addActionListener(e -> this.gameView = popSelectGameView());
+        btnChangeView.addActionListener(e -> {
+            this.gameView = popSelectGameView();
+            viewContainer.add((Component) gameView, "View");
+            cardLayout.show(viewContainer, "View");
+        });
 
         btnRules.addActionListener(e -> cardLayout.show(viewContainer, "Rules"));
 
@@ -121,10 +132,13 @@ public class GameWindow extends JFrame{
 
     private void configureControllerAndView() {
         try {
-            controller.connectPlayer();
+            controller.connect();
             controller.setView(this.gameView);
-            controller.getClientPlayer().setName(playerName);
-            viewContainer.add((Component) gameView, "Vista");
+
+            if (playerName != null) {
+                controller.getClientPlayer().setName(playerName);
+            }
+            viewContainer.add((Component) gameView, "View");
         } catch (RemoteException re) {
             JOptionPane.showMessageDialog(this,
                     re.getMessage(),
@@ -164,7 +178,7 @@ public class GameWindow extends JFrame{
             }
         } catch (NullPointerException ne) {
             JOptionPane.showMessageDialog(null,
-                    "Selección invalida",
+                    "Selección inválida",
                     "Error",
                     JOptionPane.ERROR_MESSAGE);
         }
@@ -176,7 +190,11 @@ public class GameWindow extends JFrame{
     }
 
     public void startGame() {
-        cardLayout.show(viewContainer, "View");
+        if (gameView != null) {
+            cardLayout.show(viewContainer, "View");
+        } else {
+            JOptionPane.showMessageDialog(this, "No hay una vista de juego disponible", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     public void start() {

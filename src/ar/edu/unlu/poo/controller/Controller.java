@@ -11,10 +11,10 @@ import java.rmi.RemoteException;
 import java.util.List;
 
 public class Controller implements IController, IControladorRemoto {
-    private IGo_Fish model;
-    private IGameView view;
-    private ILobby lobby;
-    private IPlayer clientPlayer;
+    private IGo_Fish model = null;
+    private IGameView view = null;
+    private ILobby lobby = null;
+    private IPlayer clientPlayer = null;
 
     public Controller() throws RemoteException {}
 
@@ -24,7 +24,7 @@ public class Controller implements IController, IControladorRemoto {
     }
 
     @Override
-    public void connectPlayer() throws RemoteException {
+    public void connect() throws RemoteException {
         this.clientPlayer = model.addPlayer();
     }
 
@@ -59,6 +59,11 @@ public class Controller implements IController, IControladorRemoto {
     @Override
     public List<IPlayer> getPlayerList() throws RemoteException {
         return model.getPlayers();
+    }
+
+    @Override
+    public void disconnect() throws RemoteException {
+        model.disconnectPlayer(this, clientPlayer);
     }
 
     @Override
@@ -179,6 +184,7 @@ public class Controller implements IController, IControladorRemoto {
                 switch (gameState) {
                     case NEW_STATUS_PLAYER -> lobby.updatePlayerList(this.model.getPlayers());
                     case READY -> {
+                        System.out.println("Todos los jugadores están listos. Cambiando a vista de juego...");
                         lobby.switchToGameView();
                         view.start();
                         this.model.start();

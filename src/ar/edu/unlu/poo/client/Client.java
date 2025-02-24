@@ -27,12 +27,14 @@ public class Client {
                     e.getMessage(),
                     "Fallo de RED",
                     JOptionPane.ERROR_MESSAGE));
+            System.exit(1);
         } catch (RMIMVCException e) {
             SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(
                     null,
                     e.getMessage(),
                     "Fallo de RMI",
                     JOptionPane.ERROR_MESSAGE));
+            System.exit(1);
         }
     }
 }
