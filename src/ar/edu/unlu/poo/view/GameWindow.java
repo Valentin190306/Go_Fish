@@ -136,7 +136,7 @@ public class GameWindow extends JFrame {
             controller.setView(this.gameView);
 
             if (playerName != null) {
-                controller.getClientPlayer().setName(playerName);
+                controller.changeClientPlayerName(playerName);
             }
             viewContainer.add((Component) gameView, "View");
         } catch (RemoteException re) {

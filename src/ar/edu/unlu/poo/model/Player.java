@@ -13,7 +13,7 @@ public class Player implements IPlayer, Serializable {
     private PlayerState playerState = PlayerState.WAITING;
 
     public Player() {
-        this.name = "Guest" + IDCounter;
+        this.name = "Player" + IDCounter;
         this.ID = IDCounter;
         IDCounter++;
         this.hand = new Hand();
@@ -29,7 +29,6 @@ public class Player implements IPlayer, Serializable {
         return name;
     }
 
-    @Override
     public void setName(String name) {
         this.name = name;
     }

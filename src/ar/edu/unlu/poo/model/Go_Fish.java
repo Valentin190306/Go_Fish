@@ -145,6 +145,18 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish {
         return isOver;
     }
 
+    private void arePlayersReadyCheck() throws RemoteException {
+        boolean areReady = true;
+
+        for (Player player : players) {
+            if (!player.getPlayerState().equals(PlayerState.READY)) {
+                areReady = false;
+                break;
+            }
+        }
+        if (areReady) gameNotifyObservers(GameState.READY);
+    }
+
     @Override
     public IPlayer addPlayer() throws RemoteException {
         if (gameState.ordinal() >= GameState.READY.ordinal()) {
@@ -156,18 +168,6 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish {
         players.add(newPlayer);
         gameNotifyObservers(GameState.NEW_STATUS_PLAYER);
         return newPlayer;
-    }
-
-    private void arePlayersReadyCheck() throws RemoteException {
-        boolean areReady = true;
-
-        for (Player player : players) {
-            if (!player.getPlayerState().equals(PlayerState.READY)) {
-                areReady = false;
-                break;
-            }
-        }
-        if (areReady) gameNotifyObservers(GameState.READY);
     }
 
     @Override
@@ -196,6 +196,17 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish {
             if (player.getID() == ID) return player;
         }
         return null;
+    }
+
+    @Override
+    public IPlayer configPlayerName(IPlayer player, String name) throws RemoteException{
+        for (Player modifiedPlayer : players) {
+            if (modifiedPlayer.equals(player)) {
+                modifiedPlayer.setName(name);
+                return modifiedPlayer;
+            }
+        }
+        throw new IllegalArgumentException("El jugador no se encuentra registrado en el modelo.");
     }
 
     @Override

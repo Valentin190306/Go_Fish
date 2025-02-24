@@ -43,7 +43,12 @@ public class Controller implements IController, IControladorRemoto {
 
     @Override
     public IPlayer getClientPlayer() {
-        return this.clientPlayer;
+        return clientPlayer;
+    }
+
+    @Override
+    public void changeClientPlayerName(String name) throws RemoteException{
+        this.clientPlayer = model.configPlayerName(clientPlayer, name);
     }
 
     @Override
@@ -184,7 +189,6 @@ public class Controller implements IController, IControladorRemoto {
                 switch (gameState) {
                     case NEW_STATUS_PLAYER -> lobby.updatePlayerList(this.model.getPlayers());
                     case READY -> {
-                        System.out.println("Todos los jugadores están listos. Cambiando a vista de juego...");
                         lobby.switchToGameView();
                         view.start();
                         this.model.start();
