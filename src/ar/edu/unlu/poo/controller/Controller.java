@@ -14,7 +14,7 @@ public class Controller implements IController, IControladorRemoto {
     private IGo_Fish model = null;
     private IGameView view = null;
     private ILobby lobby = null;
-    private IPlayer clientPlayer = null;
+    private IPlayer clientPlayer;
 
     public Controller() throws RemoteException {}
 
@@ -30,7 +30,7 @@ public class Controller implements IController, IControladorRemoto {
 
     @Override
     public void disconnectPlayer() throws RemoteException {
-        model.removePlayer(clientPlayer);
+        model.disconnectPlayer(this, (Player) clientPlayer);
     }
 
     @Override
@@ -48,7 +48,7 @@ public class Controller implements IController, IControladorRemoto {
 
     @Override
     public void changeClientPlayerName(String name) throws RemoteException{
-        this.clientPlayer = model.configPlayerName(clientPlayer, name);
+        model.configPlayerName((Player) clientPlayer, name);
     }
 
     @Override
@@ -68,7 +68,7 @@ public class Controller implements IController, IControladorRemoto {
 
     @Override
     public void disconnect() throws RemoteException {
-        model.disconnectPlayer(this, clientPlayer);
+        model.disconnectPlayer(this, (Player) clientPlayer);
     }
 
     @Override
@@ -85,8 +85,8 @@ public class Controller implements IController, IControladorRemoto {
 
                 if (targetPlayer != null
                         && targetPlayer != clientPlayer
-                        && clientPlayer.getHand().hasCardOfValue(valueRequested)) {
-                    model.playTurn(valueRequested, targetPlayer);
+                        && model.getPlayer((Player) clientPlayer).getHand().hasCardOfValue(valueRequested)) {
+                    model.playTurn(valueRequested, (Player) targetPlayer);
                     isValid = true;
                 } else {
                     throw new IllegalArgumentException("Jugador inexistente o movimiento inválido");
@@ -159,6 +159,7 @@ public class Controller implements IController, IControladorRemoto {
 
     private void showPlayerHand() {
         try {
+            clientPlayer = model.getPlayer((Player) clientPlayer);
             view.updateHand(clientPlayer.getHand());
         } catch (Exception e) {
             view.handleException(e);
@@ -201,8 +202,8 @@ public class Controller implements IController, IControladorRemoto {
                         notifyTurnSwitch();
                         showPlayersAndCards();
                         showPlayerHand();
-                        handlePlayerTurn();
                         view.notifyPlayerAction(this.model.getTargetPlayer(), this.model.getCurrentPlayerPlayingTurn());
+                        handlePlayerTurn();
                     }
                     case GAME_OVER -> handleGameOver();
                     case GO_FISH -> playerGoneFishing();

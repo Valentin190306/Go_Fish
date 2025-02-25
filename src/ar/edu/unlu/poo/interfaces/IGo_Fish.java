@@ -12,27 +12,27 @@ import java.util.ArrayList;
 public interface IGo_Fish extends IObservableRemoto {
     void start() throws RemoteException;
 
-    void playTurn(Value valueRequested, IPlayer targetPlayer) throws RemoteException;
+    void playTurn(Value valueRequested, Player targetPlayer) throws RemoteException;
 
     boolean checkGameIsOver() throws RemoteException;
 
     IPlayer addPlayer() throws RemoteException;
 
-    void removePlayer(IPlayer player) throws RemoteException;
+    void removePlayer(IPlayer clientPlayer) throws RemoteException;
 
-    void disconnectPlayer(IObservadorRemoto controller, IPlayer player) throws RemoteException;
+    void disconnectPlayer(IObservadorRemoto controller, Player player) throws RemoteException;
 
-    IPlayer getPlayerByID(int ID) throws RemoteException;
+    void configPlayerName(Player remotePlayer, String name) throws RemoteException;
 
-    IPlayer configPlayerName(IPlayer player, String name) throws RemoteException;
+    IPlayer getPlayer(Player remotePlayer) throws RemoteException;
 
-    void setPlayerReady(Player player) throws RemoteException;
+    void setPlayerReady(Player remotePlayer) throws RemoteException;
 
     IDeck getDeck() throws RemoteException;
 
     IPlayer getTargetPlayer() throws RemoteException;
 
-    Player getPlayerCalled(String name) throws RemoteException;
+    IPlayer getPlayerCalled(String name) throws RemoteException;
 
     ArrayList<IPlayer> getPlayers() throws RemoteException;
 

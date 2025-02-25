@@ -6,7 +6,7 @@ import ar.edu.unlu.poo.model.enums.PlayerState;
 import java.io.Serializable;
 
 public class Player implements IPlayer, Serializable {
-    private static int IDCounter = 1;
+    private static int IDCounter = 0;
     private final int ID;
     private String name;
     private final Hand hand;
