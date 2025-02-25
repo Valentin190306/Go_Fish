@@ -39,7 +39,7 @@ public class Deck implements IDeck, Serializable {
     }
 
     public static class Builder {
-        private Stack<Card> cards = new Stack<>();
+        private final Stack<Card> cards = new Stack<>();
 
         public void addAllCards() {
             for (Suit suit : Suit.values()) {
