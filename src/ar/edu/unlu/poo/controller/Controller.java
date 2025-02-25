@@ -112,15 +112,24 @@ public class Controller implements IController, IControladorRemoto {
     }
 
     private void clientPlayerSetsInHand() {
-        view.notifyAmountOfSets(clientPlayer.getHand().getScore());
+        try {
+            view.notifyAmountOfSets(model.getPlayer((Player) clientPlayer)
+                    .getHand()
+                    .getScore());
+        } catch (Exception e) {
+            view.handleException(e);
+        }
     }
 
     private void clientPlayerReceiveCards() {
         try {
-            if (model.getCurrentPlayerPlayingTurn() == clientPlayer) {
-                view.notifyReceivedCards(clientPlayer.getHand().getTransferenceCards());
-            } else if (model.getTargetPlayer() == clientPlayer) {
-                view.notifyLostCards(model.getTargetPlayer().getHand().getTransferenceCards());
+            if (model.getCurrentPlayerPlayingTurn().equals(clientPlayer)) {
+                view.notifyReceivedCards(model.getPlayer((Player) clientPlayer)
+                        .getHand()
+                        .getTransferenceCards());
+            } else if (model.getTargetPlayer().equals(clientPlayer)) {
+                view.notifyLostCards(model.getTargetPlayer().getHand()
+                        .getTransferenceCards());
             }
         } catch (Exception e) {
             view.handleException(e);
@@ -129,9 +138,12 @@ public class Controller implements IController, IControladorRemoto {
 
     private void playerGoneFishing() {
         try {
-            if (model.getCurrentPlayerPlayingTurn() == clientPlayer) {
+            if (model.getCurrentPlayerPlayingTurn().equals(clientPlayer)) {
                 view.notifyClientPlayerGoneFishing();
-                view.notifyFishedCard(clientPlayer.getHand().getTransferenceCards().get(0));
+                view.notifyFishedCard(model.getPlayer((Player) clientPlayer)
+                        .getHand()
+                        .getTransferenceCards()
+                        .get(0));
             } else {
                 view.notifyPlayerGoneFishing(model.getCurrentPlayerPlayingTurn());
             }
@@ -150,8 +162,8 @@ public class Controller implements IController, IControladorRemoto {
 
     private void handlePlayerTurn() throws RemoteException {
         try {
-            boolean isCurrentPlayer = model.getCurrentPlayerPlayingTurn().equals(clientPlayer);
-            view.setPlayerTurn(isCurrentPlayer);
+            boolean clientIsCurrentPlayer = model.getCurrentPlayerPlayingTurn().equals(clientPlayer);
+            view.setPlayerTurn(clientIsCurrentPlayer);
         } catch (Exception e) {
             view.handleException(e);
         }
@@ -193,7 +205,7 @@ public class Controller implements IController, IControladorRemoto {
                         lobby.switchToGameView();
                         view.start();
                         this.model.start();
-                        view.notifyGameIntroduction(clientPlayer);
+                        view.notifyGameIntroduction(this.model.getPlayer((Player) clientPlayer));
                         showPlayersAndCards();
                         showPlayerHand();
                         handlePlayerTurn();
@@ -202,13 +214,19 @@ public class Controller implements IController, IControladorRemoto {
                         notifyTurnSwitch();
                         showPlayersAndCards();
                         showPlayerHand();
-                        view.notifyPlayerAction(this.model.getTargetPlayer(), this.model.getCurrentPlayerPlayingTurn());
                         handlePlayerTurn();
+                        view.notifyPlayerAction(this.model.getTargetPlayer(), this.model.getCurrentPlayerPlayingTurn());
                     }
                     case GAME_OVER -> handleGameOver();
-                    case GO_FISH -> playerGoneFishing();
-                    case TRANSFERRING_CARDS -> clientPlayerReceiveCards();
-                    case PLAYER_COMPLETED_SET -> clientPlayerSetsInHand();
+                    case GO_FISH -> {
+                        playerGoneFishing();
+                    }
+                    case TRANSFERRING_CARDS -> {
+                        clientPlayerReceiveCards();
+                    }
+                    case PLAYER_COMPLETED_SET -> {
+                        clientPlayerSetsInHand();
+                    }
                     default -> throw new IllegalArgumentException("Estado de juego desconocido");
                 }
             } catch (RemoteException re) {
