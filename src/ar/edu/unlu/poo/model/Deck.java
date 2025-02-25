@@ -6,6 +6,7 @@ import ar.edu.unlu.poo.model.enums.Value;
 
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.List;
 import java.util.Stack;
 
 public class Deck implements IDeck, Serializable {
@@ -17,6 +18,10 @@ public class Deck implements IDeck, Serializable {
 
     public void shuffle() {
         Collections.shuffle(cards);
+    }
+
+    public void addCardsBack(List<Card> cards) {
+        this.cards.addAll(cards);
     }
 
     public Card drawCard() {

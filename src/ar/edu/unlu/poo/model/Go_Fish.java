@@ -93,15 +93,14 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish, Serializable 
             playerWentFishing();
         }
         nextPlayer();
+        playerGotSets();
     }
 
     private void transferringCardsToPlayer(Value value, Player player) throws RemoteException {
         Player currentPlayer = players.get(currentPlayerIndex);
         List<Card> cardsTransferred = player.getHand().removeCardsByValue(value);
         currentPlayer.getHand().addCards(cardsTransferred);
-
         gameNotifyObservers(GameState.TRANSFERRING_CARDS);
-        playerGotSets();
     }
 
     private void playerWentFishing() throws RemoteException {
@@ -111,7 +110,6 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish, Serializable 
         if (lastDrawnCard != null) {
             currentPlayer.getHand().addCard(lastDrawnCard);
             gameNotifyObservers(GameState.GO_FISH);
-            playerGotSets();
         }
         checkGameIsOver();
     }
@@ -147,7 +145,9 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish, Serializable 
         boolean areReady = true;
 
         for (Player player : players) {
-            if (!player.getPlayerState().equals(PlayerState.READY)) {
+            if (!player
+                    .getPlayerState()
+                    .equals(PlayerState.READY)) {
                 areReady = false;
                 break;
             }
@@ -174,6 +174,8 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish, Serializable 
         if (removedIndex < 0) {
             throw new IllegalArgumentException("No existe el jugador a remover.");
         }
+        deck.addCardsBack(clientPlayer.getHand().getCards());
+        deck.shuffle();
         players.remove(removedIndex);
 
         if (removedIndex <= currentPlayerIndex && currentPlayerIndex > 0) {
@@ -181,6 +183,9 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish, Serializable 
         }
         if (gameState.ordinal() < GameState.READY.ordinal()) {
             gameNotifyObservers(GameState.NEW_STATUS_PLAYER);
+        }
+        if (players.isEmpty()) {
+            reload();
         }
     }
 
@@ -272,9 +277,11 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish, Serializable 
     public void reload() throws RemoteException {
         this.deck = new Deck.Builder().build();
         this.gameState = GameState.AWAITING_PLAYERS;
-        for (Player player : players) {
-            player.getHand().clear();
-            player.setPlayerState(PlayerState.READY);
+        if (!players.isEmpty()) {
+            for (Player player : players) {
+                player.getHand().clear();
+                player.setPlayerState(PlayerState.READY);
+            }
         }
     }
 

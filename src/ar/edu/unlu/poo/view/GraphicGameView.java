@@ -27,7 +27,7 @@ public class GraphicGameView implements IGameView {
     }
 
     @Override
-    public void notifyPlayerAction(IPlayer targetPlayer, IPlayer player) {
+    public void notifyPlayerAction(IPlayer targetPlayer, IPlayer player, boolean isPlayerTurn) {
 
     }
 

@@ -5,6 +5,8 @@ import ar.edu.unlu.rmimvc.RMIMVCException;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.util.List;
 
 public class ConsoleGameView extends JPanel implements IGameView {
@@ -28,9 +30,26 @@ public class ConsoleGameView extends JPanel implements IGameView {
         inputField = new JTextField();
         inputField.setFont(new Font("Monospaced", Font.PLAIN, 12));
         inputField.setBackground(Color.DARK_GRAY);
-        inputField.setForeground(Color.GREEN);
         inputField.addActionListener(e -> processInput());
         add(inputField, BorderLayout.SOUTH);
+
+        inputField.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                if(inputField.getText().equals("<VALOR_CARTA> <NOMBRE_JUGADOR>")) {
+                    inputField.setText("");
+                    inputField.setForeground(Color.GREEN);
+                }
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                if(inputField.getText().isEmpty()) {
+                    inputField.setForeground(Color.GRAY);
+                    inputField.setText("<VALOR_CARTA> <NOMBRE_JUGADOR>");
+                }
+            }
+        });
     }
 
     private void processInput() {
@@ -44,8 +63,8 @@ public class ConsoleGameView extends JPanel implements IGameView {
         }
     }
 
-    public void appendToConsole(String message) {
-        consoleArea.append(message + "\n");
+    public void appendToConsole(String text) {
+        consoleArea.append(text + "\n\n");
         consoleArea.setCaretPosition(consoleArea.getDocument().getLength());
     }
 
@@ -57,25 +76,29 @@ public class ConsoleGameView extends JPanel implements IGameView {
     @Override
     public void notifyGameIntroduction(IPlayer player) {
         appendToConsole("> Bienvenido jugador " + player.getName() + "...");
-        appendToConsole("> Formato de entrada válido: <VALOR_CARTA> <NOMBRE_JUGADOR>");
     }
 
     @Override
     public void notifyTurnSwitch(IPlayer player) {
         consoleArea.setText("");
         consoleArea.setCaretPosition(0);
-        appendToConsole("> Turno de " + player.getName() + "...");
+        appendToConsole("> Turno de " + player.getName());
     }
 
     @Override
     public void notifyGameOver() {
-        appendToConsole("> El juego ha terminado. ¡Gracias por jugar!");
+        appendToConsole("> No hay mas cartas en estas aguas...\n> El juego ha terminado.");
     }
 
     @Override
-    public void notifyPlayerAction(IPlayer targetPlayer, IPlayer player) {
-        appendToConsole("> " + player.getName() + " le pregunta a " + targetPlayer.getName() + "...");
+    public void notifyPlayerAction(IPlayer targetPlayer, IPlayer player, boolean isPlayerTurn) {
+        String[] vocabulary = {"reclama", "pide", "exige", "suplica", "mendiga"};
+        String expresion = vocabulary[(int)(Math.random() * vocabulary.length)];
+        appendToConsole(isPlayerTurn
+                ? "> Le " + expresion + "s cartas a " + targetPlayer.getName() + "..."
+                : "> " + player.getName() + " " + expresion + " cartas a " + targetPlayer.getName() + "...");
     }
+
 
     @Override
     public void handleException(Exception e) {
@@ -113,7 +136,7 @@ public class ConsoleGameView extends JPanel implements IGameView {
     public void setPlayerTurn(boolean isPlayerTurn) {
         inputField.setEnabled(isPlayerTurn);
         appendToConsole("__________________________________________________");
-        appendToConsole(isPlayerTurn ? "> Es tu turno. Haz tu movimiento." : "> Esperando el turno del oponente...");
+        appendToConsole(isPlayerTurn ? "> Es tu turno. Haz tu jugada." : "> Esperando el turno del oponente...");
     }
 
     @Override

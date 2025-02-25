@@ -195,6 +195,17 @@ public class Controller implements IController, IControladorRemoto {
         }
     }
 
+    private void notifyPlayerAction() {
+        try {
+            boolean clientIsCurrentPlayer = model.getCurrentPlayerPlayingTurn().equals(clientPlayer);
+            view.notifyPlayerAction(model.getTargetPlayer(),
+                    model.getCurrentPlayerPlayingTurn(),
+                    clientIsCurrentPlayer);
+        } catch (Exception e) {
+            view.handleException(e);
+        }
+    }
+
     @Override
     public void actualizar(IObservableRemoto model, Object event) {
         if (event instanceof GameState gameState) {
@@ -211,20 +222,21 @@ public class Controller implements IController, IControladorRemoto {
                         handlePlayerTurn();
                     }
                     case TURN_SWITCH -> {
-                        notifyTurnSwitch();
                         showPlayersAndCards();
                         showPlayerHand();
                         handlePlayerTurn();
-                        view.notifyPlayerAction(this.model.getTargetPlayer(), this.model.getCurrentPlayerPlayingTurn());
                     }
                     case GAME_OVER -> handleGameOver();
                     case GO_FISH -> {
+                        notifyPlayerAction();
                         playerGoneFishing();
                     }
                     case TRANSFERRING_CARDS -> {
+                        notifyPlayerAction();
                         clientPlayerReceiveCards();
                     }
                     case PLAYER_COMPLETED_SET -> {
+                        notifyTurnSwitch();
                         clientPlayerSetsInHand();
                     }
                     default -> throw new IllegalArgumentException("Estado de juego desconocido");
