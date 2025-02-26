@@ -8,7 +8,9 @@ import ar.edu.unlu.poo.view.LobbyPanel;
 import ar.edu.unlu.rmimvc.cliente.IControladorRemoto;
 import ar.edu.unlu.rmimvc.observer.IObservableRemoto;
 
+import java.io.IOException;
 import java.rmi.RemoteException;
+import java.util.HashMap;
 import java.util.List;
 
 public class Controller implements IController, IControladorRemoto {
@@ -25,8 +27,21 @@ public class Controller implements IController, IControladorRemoto {
     }
 
     @Override
+    public void setView(IGameView view) throws IllegalArgumentException {
+        if (view == null) {
+            throw new IllegalArgumentException("La vista no puede ser nula");
+        }
+        this.view = view;
+    }
+
+    @Override
+    public void setLobby(LobbyPanel lobby) {
+        this.lobby = lobby;
+    }
+
+    @Override
     public void connect() throws RemoteException {
-        this.clientPlayer = model.addPlayer();
+        this.clientPlayer = model.connectPlayer();
     }
 
     @Override
@@ -35,11 +50,8 @@ public class Controller implements IController, IControladorRemoto {
     }
 
     @Override
-    public void setView(IGameView view) throws IllegalArgumentException {
-        if (view == null) {
-            throw new IllegalArgumentException("La vista no puede ser nula");
-        }
-        this.view = view;
+    public HashMap<String, Integer> getScores() throws IOException, ClassNotFoundException {
+        return model.getScoreList();
     }
 
     @Override
@@ -55,11 +67,6 @@ public class Controller implements IController, IControladorRemoto {
     @Override
     public void setClientPlayerReady() throws RemoteException {
         model.setPlayerReady((Player) clientPlayer);
-    }
-
-    @Override
-    public void setLobby(LobbyPanel lobby) {
-        this.lobby = lobby;
     }
 
     @Override
@@ -163,7 +170,9 @@ public class Controller implements IController, IControladorRemoto {
 
     private void handlePlayerTurn() throws RemoteException {
         try {
-            boolean clientIsCurrentPlayer = model.getCurrentPlayerPlayingTurn().equals(clientPlayer);
+            boolean clientIsCurrentPlayer = model
+                    .getCurrentPlayerPlayingTurn()
+                    .equals(clientPlayer);
             view.setPlayerTurn(clientIsCurrentPlayer);
         } catch (Exception e) {
             view.handleException(e);
@@ -198,7 +207,9 @@ public class Controller implements IController, IControladorRemoto {
 
     private void notifyPlayerAction() {
         try {
-            boolean clientIsCurrentPlayer = model.getCurrentPlayerPlayingTurn().equals(clientPlayer);
+            boolean clientIsCurrentPlayer = model
+                    .getCurrentPlayerPlayingTurn()
+                    .equals(clientPlayer);
             view.notifyPlayerAction(model.getTargetPlayer(),
                     model.getCurrentPlayerPlayingTurn(),
                     clientIsCurrentPlayer);

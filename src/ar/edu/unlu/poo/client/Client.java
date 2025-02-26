@@ -21,18 +21,11 @@ public class Client {
             Cliente client = new Cliente(clientHost, clientPort, serverHost, serverPort);
             client.iniciar(controller);
             gameWindow.start();
-        } catch (RemoteException e) {
+        } catch (RemoteException | RMIMVCException e) {
             SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(
                     null,
                     e.getMessage(),
-                    "Fallo de RED",
-                    JOptionPane.ERROR_MESSAGE));
-            System.exit(1);
-        } catch (RMIMVCException e) {
-            SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(
-                    null,
-                    e.getMessage(),
-                    "Fallo de RMI",
+                    "Error",
                     JOptionPane.ERROR_MESSAGE));
             System.exit(1);
         }

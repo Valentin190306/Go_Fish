@@ -1,8 +1,6 @@
 package ar.edu.unlu.poo.server;
 
-import ar.edu.unlu.poo.interfaces.IGameManager;
 import ar.edu.unlu.poo.interfaces.IGo_Fish;
-import ar.edu.unlu.poo.model.GameManager;
 import ar.edu.unlu.poo.model.Go_Fish;
 import ar.edu.unlu.rmimvc.RMIMVCException;
 import ar.edu.unlu.rmimvc.servidor.Servidor;
@@ -14,12 +12,13 @@ import java.rmi.RemoteException;
 public class Server {
     private static final String serverHost = "127.0.0.1";
     private static final int serverPort = 1234;
+    private static final String filePath = System.getProperty("user.dir") + File.separator + "Highscores.dat";
 
     public static void main(String[] args) throws RemoteException {
+
         Servidor server = new Servidor(serverHost, serverPort);
         try {
-            String filePath = System.getProperty("user.dir") + File.separator + "match.dat";
-            IGameManager model = GameManager.getInstance();
+            IGo_Fish model = Go_Fish.getInstance();
             model.setFilePath(filePath);
             server.iniciar(model);
         } catch (RemoteException | RMIMVCException e) {

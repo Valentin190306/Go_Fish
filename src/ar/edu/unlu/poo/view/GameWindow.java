@@ -82,16 +82,18 @@ public class GameWindow extends JFrame {
         gbc.gridwidth = 2;
         panel.add(title, gbc);
 
-        JButton btnContinue = createStyledButton("Continuar Partida");
-        JButton btnNewGame = createStyledButton("Nueva Partida");
+        JButton btnPlayGame = createStyledButton("Jugar");
+        JButton btnScores = createStyledButton("Puntajes históricos");
         JButton btnChangeName = createStyledButton("Cambiar Nombre");
         JButton btnChangeView = createStyledButton("Cambiar Vista");
         JButton btnRules = createStyledButton("Reglas");
 
-        btnNewGame.addActionListener(e -> {
+        btnPlayGame.addActionListener(e -> {
             configureControllerAndView();
             showCard("Lobby");
         });
+
+        btnScores.addActionListener(e -> {});
 
         btnChangeName.addActionListener(e -> {
             String newName = JOptionPane.showInputDialog(this,
@@ -106,17 +108,16 @@ public class GameWindow extends JFrame {
         btnChangeView.addActionListener(e -> {
             this.gameView = popSelectGameView();
             viewContainer.add((Component) gameView, "View");
-            showCard("View");
         });
 
         btnRules.addActionListener(e -> showCard("Rules"));
 
         gbc.gridwidth = 1;
         gbc.gridy = 1;
-        panel.add(btnContinue, gbc);
+        panel.add(btnPlayGame, gbc);
 
         gbc.gridy = 2;
-        panel.add(btnNewGame, gbc);
+        panel.add(btnScores, gbc);
 
         gbc.gridy = 3;
         panel.add(btnChangeName, gbc);
@@ -185,51 +186,8 @@ public class GameWindow extends JFrame {
         return this.gameView;
     }
 
-    // Método que muestra la vista correspondiente y actualiza el JMenuBar
     private void showCard(String cardName) {
         cardLayout.show(viewContainer, cardName);
-        updateMenuBar(cardName);
-    }
-
-    // Se asigna el JMenuBar solo en la vista de juego ("View")
-    private void updateMenuBar(String cardName) {
-        if ("View".equals(cardName)) {
-            setJMenuBar(createGameMenuBar());
-        } else {
-            setJMenuBar(null);
-        }
-        revalidate();
-        repaint();
-    }
-
-    // Menú simple de ejemplo para la vista de juego
-    private JMenuBar createGameMenuBar() {
-        JMenuBar menuBar = new JMenuBar();
-        JMenu fileMenu = new JMenu("Archivo");
-        JMenuItem exitItem = new JMenuItem("Salir");
-        exitItem.addActionListener(e -> {
-            int confirm = JOptionPane.showConfirmDialog(this,
-                    "¿Seguro que deseas salir?",
-                    "Confirmar salida",
-                    JOptionPane.YES_NO_OPTION);
-            if (confirm == JOptionPane.YES_OPTION) {
-                try {
-                    if (controller.getClientPlayer() != null) {
-                        controller.disconnect();
-                    }
-                } catch (RemoteException ex) {
-                    JOptionPane.showMessageDialog(this,
-                            ex.getMessage(),
-                            "Error",
-                            JOptionPane.ERROR_MESSAGE);
-                }
-                dispose();
-                System.exit(0);
-            }
-        });
-        fileMenu.add(exitItem);
-        menuBar.add(fileMenu);
-        return menuBar;
     }
 
     public void showMenu() {
@@ -240,7 +198,10 @@ public class GameWindow extends JFrame {
         if (gameView != null) {
             showCard("View");
         } else {
-            JOptionPane.showMessageDialog(this, "No hay una vista de juego disponible", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this,
+                    "No hay una vista de juego disponible",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 

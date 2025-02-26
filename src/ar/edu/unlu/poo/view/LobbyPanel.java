@@ -8,7 +8,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class LobbyPanel extends JPanel {
+public class LobbyPanel extends JPanel implements ar.edu.unlu.poo.interfaces.ILobby {
     private final IController controller;
     private final DefaultTableModel tableModel;
     private final JButton btnVotePlay;
@@ -55,6 +55,7 @@ public class LobbyPanel extends JPanel {
         }
     }
 
+    @Override
     public void updatePlayerList(ArrayList<IPlayer> players) {
         SwingUtilities.invokeLater(() -> {
             tableModel.setRowCount(0);

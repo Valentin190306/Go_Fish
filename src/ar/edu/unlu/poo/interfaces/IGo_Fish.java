@@ -3,21 +3,29 @@ package ar.edu.unlu.poo.interfaces;
 import ar.edu.unlu.poo.model.Player;
 import ar.edu.unlu.poo.model.enums.GameState;
 import ar.edu.unlu.poo.model.enums.Value;
+import ar.edu.unlu.rmimvc.observer.IObservableRemoto;
 import ar.edu.unlu.rmimvc.observer.IObservadorRemoto;
 
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
-public interface IGo_Fish {
+public interface IGo_Fish extends IObservableRemoto {
+
+    String getFilePath() throws RemoteException;
+
+    void setFilePath(String filePath) throws RemoteException;
+
     void start() throws RemoteException;
 
     void playTurn(Value valueRequested, Player targetPlayer) throws RemoteException;
 
     boolean checkGameIsOver() throws RemoteException;
 
-    IPlayer addPlayer() throws RemoteException;
-
     void removePlayer(IPlayer clientPlayer) throws RemoteException;
+
+    IPlayer connectPlayer() throws RemoteException;
 
     void disconnectPlayer(IObservadorRemoto controller, Player player) throws RemoteException;
 
@@ -25,19 +33,19 @@ public interface IGo_Fish {
 
     IPlayer getPlayer(Player remotePlayer) throws RemoteException;
 
+    IPlayer getPlayerCalled(String name) throws RemoteException;
+
     void setPlayerReady(Player remotePlayer) throws RemoteException;
 
     IDeck getDeck() throws RemoteException;
 
     IPlayer getTargetPlayer() throws RemoteException;
 
-    IPlayer getPlayerCalled(String name) throws RemoteException;
-
     ArrayList<IPlayer> getPlayers() throws RemoteException;
 
     IPlayer getCurrentPlayerPlayingTurn() throws RemoteException;
 
-    GameState getGameState() throws RemoteException;
+    HashMap<String, Integer> getScoreList() throws IOException, ClassNotFoundException;
 
     void reload() throws RemoteException;
 }
