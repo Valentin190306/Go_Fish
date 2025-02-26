@@ -3,13 +3,12 @@ package ar.edu.unlu.poo.interfaces;
 import ar.edu.unlu.poo.model.Player;
 import ar.edu.unlu.poo.model.enums.GameState;
 import ar.edu.unlu.poo.model.enums.Value;
-import ar.edu.unlu.rmimvc.observer.IObservableRemoto;
 import ar.edu.unlu.rmimvc.observer.IObservadorRemoto;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
-public interface IGo_Fish extends IObservableRemoto {
+public interface IGo_Fish {
     void start() throws RemoteException;
 
     void playTurn(Value valueRequested, Player targetPlayer) throws RemoteException;

@@ -1,6 +1,8 @@
 package ar.edu.unlu.poo.server;
 
+import ar.edu.unlu.poo.interfaces.IGameManager;
 import ar.edu.unlu.poo.interfaces.IGo_Fish;
+import ar.edu.unlu.poo.model.GameManager;
 import ar.edu.unlu.poo.model.Go_Fish;
 import ar.edu.unlu.rmimvc.RMIMVCException;
 import ar.edu.unlu.rmimvc.servidor.Servidor;
@@ -17,7 +19,8 @@ public class Server {
         Servidor server = new Servidor(serverHost, serverPort);
         try {
             String filePath = System.getProperty("user.dir") + File.separator + "match.dat";
-            IGo_Fish model = Go_Fish.getInstance();
+            IGameManager model = GameManager.getInstance();
+            model.setFilePath(filePath);
             server.iniciar(model);
         } catch (RemoteException | RMIMVCException e) {
             SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(
