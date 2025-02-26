@@ -1,5 +1,7 @@
 package ar.edu.unlu.poo.interfaces;
 
+import ar.edu.unlu.poo.view.LobbyPanel;
+
 import java.rmi.RemoteException;
 import java.util.List;
 
@@ -11,7 +13,7 @@ public interface IController {
 
     void setClientPlayerReady() throws RemoteException;
 
-    void setLobby(ILobby lobby);
+    void setLobby(LobbyPanel lobby);
 
     List<IPlayer> getPlayerList() throws RemoteException;
 

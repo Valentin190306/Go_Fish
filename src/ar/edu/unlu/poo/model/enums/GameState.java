@@ -1,6 +1,7 @@
 package ar.edu.unlu.poo.model.enums;
 
 public enum GameState {
+    RESTORING_MATCH,
     AWAITING_PLAYERS,
     NEW_STATUS_PLAYER,
     READY,

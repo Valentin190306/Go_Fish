@@ -10,11 +10,13 @@ import java.awt.event.FocusEvent;
 import java.util.List;
 
 public class ConsoleGameView extends JPanel implements IGameView {
+    private final GameWindow gameWindow;
     private final JTextArea consoleArea;
     private final JTextField inputField;
     private final IController controller;
 
-    public ConsoleGameView(IController controller) {
+    public ConsoleGameView(GameWindow gameWindow, IController controller) {
+        this.gameWindow = gameWindow;
         this.controller = controller;
         controller.setView(this);
         setSize(600, 400);
@@ -30,6 +32,7 @@ public class ConsoleGameView extends JPanel implements IGameView {
         inputField = new JTextField();
         inputField.setFont(new Font("Monospaced", Font.PLAIN, 12));
         inputField.setBackground(Color.DARK_GRAY);
+        inputField.setForeground(Color.GREEN);
         inputField.addActionListener(e -> processInput());
         add(inputField, BorderLayout.SOUTH);
 
@@ -64,13 +67,14 @@ public class ConsoleGameView extends JPanel implements IGameView {
     }
 
     public void appendToConsole(String text) {
-        consoleArea.append(text + "\n\n");
+        consoleArea.append(text + "\n");
         consoleArea.setCaretPosition(consoleArea.getDocument().getLength());
     }
 
     @Override
     public void start() {
         setVisible(true);
+        gameWindow.startGame();
     }
 
     @Override

@@ -4,6 +4,7 @@ import ar.edu.unlu.poo.interfaces.*;
 import ar.edu.unlu.poo.model.Player;
 import ar.edu.unlu.poo.model.enums.GameState;
 import ar.edu.unlu.poo.model.enums.Value;
+import ar.edu.unlu.poo.view.LobbyPanel;
 import ar.edu.unlu.rmimvc.cliente.IControladorRemoto;
 import ar.edu.unlu.rmimvc.observer.IObservableRemoto;
 
@@ -13,7 +14,7 @@ import java.util.List;
 public class Controller implements IController, IControladorRemoto {
     private IGo_Fish model = null;
     private IGameView view = null;
-    private ILobby lobby = null;
+    private LobbyPanel lobby = null;
     private IPlayer clientPlayer;
 
     public Controller() throws RemoteException {}
@@ -57,7 +58,7 @@ public class Controller implements IController, IControladorRemoto {
     }
 
     @Override
-    public void setLobby(ILobby lobby) {
+    public void setLobby(LobbyPanel lobby) {
         this.lobby = lobby;
     }
 
@@ -213,7 +214,6 @@ public class Controller implements IController, IControladorRemoto {
                 switch (gameState) {
                     case NEW_STATUS_PLAYER -> lobby.updatePlayerList(this.model.getPlayers());
                     case READY -> {
-                        lobby.switchToGameView();
                         view.start();
                         this.model.start();
                         view.notifyGameIntroduction(this.model.getPlayer((Player) clientPlayer));

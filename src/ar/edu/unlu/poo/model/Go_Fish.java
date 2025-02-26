@@ -9,6 +9,7 @@ import ar.edu.unlu.poo.model.enums.Value;
 import ar.edu.unlu.rmimvc.observer.IObservadorRemoto;
 import ar.edu.unlu.rmimvc.observer.ObservableRemoto;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import java.util.List;
 
 public class Go_Fish extends ObservableRemoto implements IGo_Fish, Serializable {
     private static Go_Fish instance = null;
+    private static GameSerializer gameSerializer;
     private Deck deck;
     private final ArrayList<Player> players;
     private int currentPlayerIndex;
@@ -131,16 +133,6 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish, Serializable 
         }
     }
 
-    @Override
-    public boolean checkGameIsOver() throws RemoteException {
-        boolean isOver = deck.isEmpty();
-
-        if (deck.isEmpty()) {
-            gameNotifyObservers(GameState.GAME_OVER);
-        }
-        return isOver;
-    }
-
     private void arePlayersReadyCheck() throws RemoteException {
         boolean areReady = true;
 
@@ -153,6 +145,25 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish, Serializable 
             }
         }
         if (areReady) gameNotifyObservers(GameState.READY);
+    }
+
+    private Player playerLookUp(Player player) {
+        for (Player searchedPlayer : players) {
+            if (searchedPlayer.equals(player)) {
+                return searchedPlayer;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public boolean checkGameIsOver() throws RemoteException {
+        boolean isOver = deck.isEmpty();
+
+        if (deck.isEmpty()) {
+            gameNotifyObservers(GameState.GAME_OVER);
+        }
+        return isOver;
     }
 
     @Override
@@ -193,15 +204,6 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish, Serializable 
     public void disconnectPlayer(IObservadorRemoto controller, Player player) throws RemoteException {
         removerObservador(controller);
         removePlayer(player);
-    }
-
-    private Player playerLookUp(Player player) {
-        for (Player searchedPlayer : players) {
-            if (searchedPlayer.equals(player)) {
-                return searchedPlayer;
-            }
-        }
-        return null;
     }
 
     @Override
@@ -283,6 +285,18 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish, Serializable 
                 player.setPlayerState(PlayerState.READY);
             }
         }
+    }
+
+    @Override
+    public void saveMatch() throws IOException {
+        gameSerializer.serialize(this);
+    }
+
+    @Override
+    public void restoreMatch() throws IOException, ClassNotFoundException {
+        this.gameState = GameState.RESTORING_MATCH;
+        Go_Fish savedata = gameSerializer.deserialize();
+        ArrayList<Player> savedPlayers = savedata.getPlayers();
     }
 
     private void gameNotifyObservers(GameState gameState) throws RemoteException {

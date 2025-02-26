@@ -1,7 +1,6 @@
 package ar.edu.unlu.poo.view;
 
 import ar.edu.unlu.poo.interfaces.IController;
-import ar.edu.unlu.poo.interfaces.ILobby;
 import ar.edu.unlu.poo.interfaces.IPlayer;
 
 import javax.swing.*;
@@ -9,14 +8,12 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class LobbyPanel extends JPanel implements ILobby {
-    private final GameWindow gameWindow;
+public class LobbyPanel extends JPanel {
     private final IController controller;
     private final DefaultTableModel tableModel;
     private final JButton btnVotePlay;
 
-    public LobbyPanel(GameWindow gameWindow, IController controller) {
-        this.gameWindow = gameWindow;
+    public LobbyPanel(IController controller) {
         this.controller = controller;
         setLayout(new BorderLayout());
         setBackground(new Color(50, 50, 50));
@@ -58,7 +55,6 @@ public class LobbyPanel extends JPanel implements ILobby {
         }
     }
 
-    @Override
     public void updatePlayerList(ArrayList<IPlayer> players) {
         SwingUtilities.invokeLater(() -> {
             tableModel.setRowCount(0);
@@ -66,10 +62,5 @@ public class LobbyPanel extends JPanel implements ILobby {
                 tableModel.addRow(new Object[]{player.getName(), player.getPlayerState().toString()});
             }
         });
-    }
-
-    @Override
-    public void switchToGameView() {
-        gameWindow.startGame();
     }
 }

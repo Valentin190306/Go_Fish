@@ -18,7 +18,7 @@ public class GameWindow extends JFrame {
 
     public GameWindow(IController controller) {
         this.controller = controller;
-        this.gameView = new ConsoleGameView(controller);
+        this.gameView = new ConsoleGameView(this, controller);
 
         setTitle("Go Fish");
         setSize(800, 600);
@@ -61,7 +61,7 @@ public class GameWindow extends JFrame {
     }
 
     private LobbyPanel createLobbyPanel() {
-        LobbyPanel lobbyPanel = new LobbyPanel(this, controller);
+        LobbyPanel lobbyPanel = new LobbyPanel(controller);
         controller.setLobby(lobbyPanel);
         return lobbyPanel;
     }
@@ -90,7 +90,7 @@ public class GameWindow extends JFrame {
 
         btnNewGame.addActionListener(e -> {
             configureControllerAndView();
-            cardLayout.show(viewContainer, "Lobby");
+            showCard("Lobby");
         });
 
         btnChangeName.addActionListener(e -> {
@@ -106,10 +106,10 @@ public class GameWindow extends JFrame {
         btnChangeView.addActionListener(e -> {
             this.gameView = popSelectGameView();
             viewContainer.add((Component) gameView, "View");
-            cardLayout.show(viewContainer, "View");
+            showCard("View");
         });
 
-        btnRules.addActionListener(e -> cardLayout.show(viewContainer, "Rules"));
+        btnRules.addActionListener(e -> showCard("Rules"));
 
         gbc.gridwidth = 1;
         gbc.gridy = 1;
@@ -171,7 +171,7 @@ public class GameWindow extends JFrame {
             if (result == JOptionPane.OK_OPTION) {
                 String selectedItem = (String) comboBox.getSelectedItem();
                 if ("Consola".equals(selectedItem)) {
-                    return new ConsoleGameView(controller);
+                    return new ConsoleGameView(this, controller);
                 } else if ("Gráfica".equals(selectedItem)) {
                     return new GraphicGameView(controller);
                 }
@@ -185,13 +185,60 @@ public class GameWindow extends JFrame {
         return this.gameView;
     }
 
+    // Método que muestra la vista correspondiente y actualiza el JMenuBar
+    private void showCard(String cardName) {
+        cardLayout.show(viewContainer, cardName);
+        updateMenuBar(cardName);
+    }
+
+    // Se asigna el JMenuBar solo en la vista de juego ("View")
+    private void updateMenuBar(String cardName) {
+        if ("View".equals(cardName)) {
+            setJMenuBar(createGameMenuBar());
+        } else {
+            setJMenuBar(null);
+        }
+        revalidate();
+        repaint();
+    }
+
+    // Menú simple de ejemplo para la vista de juego
+    private JMenuBar createGameMenuBar() {
+        JMenuBar menuBar = new JMenuBar();
+        JMenu fileMenu = new JMenu("Archivo");
+        JMenuItem exitItem = new JMenuItem("Salir");
+        exitItem.addActionListener(e -> {
+            int confirm = JOptionPane.showConfirmDialog(this,
+                    "¿Seguro que deseas salir?",
+                    "Confirmar salida",
+                    JOptionPane.YES_NO_OPTION);
+            if (confirm == JOptionPane.YES_OPTION) {
+                try {
+                    if (controller.getClientPlayer() != null) {
+                        controller.disconnect();
+                    }
+                } catch (RemoteException ex) {
+                    JOptionPane.showMessageDialog(this,
+                            ex.getMessage(),
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                }
+                dispose();
+                System.exit(0);
+            }
+        });
+        fileMenu.add(exitItem);
+        menuBar.add(fileMenu);
+        return menuBar;
+    }
+
     public void showMenu() {
-        cardLayout.show(viewContainer, "Menu");
+        showCard("Menu");
     }
 
     public void startGame() {
         if (gameView != null) {
-            cardLayout.show(viewContainer, "View");
+            showCard("View");
         } else {
             JOptionPane.showMessageDialog(this, "No hay una vista de juego disponible", "Error", JOptionPane.ERROR_MESSAGE);
         }

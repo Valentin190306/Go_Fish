@@ -6,6 +6,7 @@ import ar.edu.unlu.rmimvc.RMIMVCException;
 import ar.edu.unlu.rmimvc.servidor.Servidor;
 
 import javax.swing.*;
+import java.io.File;
 import java.rmi.RemoteException;
 
 public class Server {
@@ -13,23 +14,17 @@ public class Server {
     private static final int serverPort = 1234;
 
     public static void main(String[] args) throws RemoteException {
-        IGo_Fish model = Go_Fish.getInstance();
         Servidor server = new Servidor(serverHost, serverPort);
         try {
+            String filePath = System.getProperty("user.dir") + File.separator + "match.dat";
+            IGo_Fish model = Go_Fish.getInstance();
             server.iniciar(model);
-        }catch (RemoteException e) {
+        } catch (RemoteException | RMIMVCException e) {
             SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(
                     null,
                     e.getMessage(),
-                    "Fallo de RED",
+                    "Error",
                     JOptionPane.ERROR_MESSAGE));
-            System.exit(1);
-        } catch (RMIMVCException e) {
-            SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(
-                null,
-                e.getMessage(),
-                "Fallo de RMI",
-                JOptionPane.ERROR_MESSAGE));
             System.exit(1);
         }
     }
