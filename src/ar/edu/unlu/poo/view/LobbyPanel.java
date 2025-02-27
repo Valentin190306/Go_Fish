@@ -56,7 +56,6 @@ public class LobbyPanel extends JPanel {
         }
     }
 
-    @Override
     public void updatePlayerList(ArrayList<IPlayer> players) {
         SwingUtilities.invokeLater(() -> {
             tableModel.setRowCount(0);

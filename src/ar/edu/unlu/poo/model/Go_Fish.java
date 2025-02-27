@@ -94,6 +94,7 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish, Serializable 
         } else {
             playerWentFishing();
         }
+        checkGameIsOver();
         nextPlayer();
         playerGotSets();
     }
@@ -113,7 +114,6 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish, Serializable 
             currentPlayer.getHand().addCard(lastDrawnCard);
             gameNotifyObservers(GameState.GO_FISH);
         }
-        checkGameIsOver();
     }
 
     private void playerGotSets() throws RemoteException {
@@ -127,20 +127,27 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish, Serializable 
             throw new IllegalStateException("No hay jugadores para pasar el turno.");
         }
         currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
+        gameNotifyObservers(GameState.TURN_SWITCH);
+    }
 
-        if (!checkGameIsOver()) {
-            gameNotifyObservers(GameState.TURN_SWITCH);
+    private void updateScoreData() throws RemoteException {
+        HashMap<String, Integer> scores = new HashMap<>();
+        for (Player player : players) {
+            scores.put(player.getName(), player.getHand().getScore());
+        }
+        try {
+            HighScoreSerializer.updateHighScores(scores);
+        } catch (IOException e) {
+            throw new RemoteException("Error al actualizar el registro de puntajes.");
         }
     }
 
     @Override
-    public boolean checkGameIsOver() throws RemoteException {
-        boolean isOver = deck.isEmpty();
-
+    public void checkGameIsOver() throws RemoteException {
         if (deck.isEmpty() || players.size() <= 1) {
+            updateScoreData();
             gameNotifyObservers(GameState.GAME_OVER);
         }
-        return isOver;
     }
 
     private Player playerLookUp(Player player) {
@@ -267,7 +274,7 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish, Serializable 
         }
         return players.get(currentPlayerIndex);
     }
-    
+
     @Override
     public HashMap<String, Integer> getScoreList() throws IOException, ClassNotFoundException {
         return HighScoreSerializer.sortHighScoresManual(HighScoreSerializer.deserialize());

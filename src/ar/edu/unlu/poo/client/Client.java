@@ -1,6 +1,7 @@
 package ar.edu.unlu.poo.client;
 
 import ar.edu.unlu.poo.controller.Controller;
+import ar.edu.unlu.poo.interfaces.IGameWindow;
 import ar.edu.unlu.poo.view.GameWindow;
 import ar.edu.unlu.rmimvc.RMIMVCException;
 import ar.edu.unlu.rmimvc.cliente.Cliente;
@@ -16,10 +17,10 @@ public class Client {
 
     public static void main (String[] args) throws RemoteException {
         Controller controller = new Controller();
-        GameWindow gameWindow  = new GameWindow(controller);
         try {
             Cliente client = new Cliente(clientHost, clientPort, serverHost, serverPort);
             client.iniciar(controller);
+            IGameWindow gameWindow = new GameWindow(controller);
             gameWindow.start();
         } catch (RemoteException | RMIMVCException e) {
             SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(

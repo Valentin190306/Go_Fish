@@ -21,7 +21,7 @@ public class HighScoreSerializer {
     public static LinkedHashMap<String, Integer> sortHighScoresManual(HashMap<String, Integer> scores) {
         List<Map.Entry<String, Integer>> entries = new ArrayList<>(scores.entrySet());
 
-        entries.sort(new Comparator<Map.Entry<String, Integer>>() {
+        entries.sort(new Comparator<>() {
             @Override
             public int compare(Map.Entry<String, Integer> e1, Map.Entry<String, Integer> e2) {
                 return e2.getValue().compareTo(e1.getValue());
@@ -33,5 +33,17 @@ public class HighScoreSerializer {
             sortedMap.put(entry.getKey(), entry.getValue());
         }
         return sortedMap;
+    }
+
+    public static void updateHighScores(Map<String, Integer> scores) throws IOException {
+        HashMap<String, Integer> highScores = new HashMap<>();
+
+        try {
+            highScores = deserialize();
+        } catch (IOException | ClassNotFoundException e) {
+            // Si hay un error (por ejemplo, el archivo no existe), seguimos con un mapa vacío
+        }
+        highScores.putAll(scores);
+        serialize(highScores);
     }
 }

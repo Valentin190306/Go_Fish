@@ -52,10 +52,7 @@ public class ScoresPanel extends JPanel {
         try {
             this.sortedScores = (LinkedHashMap<String, Integer>) controller.getScores();
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null,
-                    e.getMessage(),
-                    "Error",
-                    JOptionPane.ERROR_MESSAGE);
+            gameWindow.messagePopUp(e);
         }
         removeAll();
         initComponents();

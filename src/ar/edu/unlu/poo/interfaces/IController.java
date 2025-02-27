@@ -17,7 +17,7 @@ public interface IController {
 
     void setClientPlayerReady() throws RemoteException;
 
-    void setLobby(LobbyPanel lobby);
+    void setGameWindow(IGameWindow gameWindow);
 
     List<IPlayer> getPlayerList() throws RemoteException;
 

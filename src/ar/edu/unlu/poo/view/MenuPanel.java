@@ -110,11 +110,8 @@ public class MenuPanel extends JPanel {
                     return new GraphicGameView(controller);
                 }
             }
-        } catch (NullPointerException ne) {
-            JOptionPane.showMessageDialog(null,
-                    "Selección inválida",
-                    "Error",
-                    JOptionPane.ERROR_MESSAGE);
+        } catch (NullPointerException e) {
+            gameWindow.messagePopUp(e);
         }
         return gameWindow.getGameView();
     }

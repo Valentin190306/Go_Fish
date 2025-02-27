@@ -2,6 +2,7 @@ package ar.edu.unlu.poo.view;
 
 import ar.edu.unlu.poo.interfaces.IController;
 import ar.edu.unlu.poo.interfaces.IGameView;
+import ar.edu.unlu.poo.interfaces.IGameWindow;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,7 +10,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.rmi.RemoteException;
 
-public class GameWindow extends JFrame {
+public class GameWindow extends JFrame implements IGameWindow {
     private final IController controller;
     private IGameView gameView;
     private String playerName = null;
@@ -21,7 +22,9 @@ public class GameWindow extends JFrame {
 
     public GameWindow(IController controller) {
         this.controller = controller;
+        controller.setGameWindow(this);
         this.gameView = new ConsoleGameView(this, controller);
+        connectingPlayer();
 
         this.menuCard = new MenuPanel(this, controller);
         this.lobbyCard = new LobbyPanel(controller);
@@ -43,10 +46,7 @@ public class GameWindow extends JFrame {
                             controller.disconnect();
                         }
                     } catch (RemoteException ex) {
-                        JOptionPane.showMessageDialog(null,
-                                ex.getMessage(),
-                                "Error",
-                                JOptionPane.ERROR_MESSAGE);
+                        messagePopUp(ex);
                     }
                     dispose();
                     System.exit(0);
@@ -67,6 +67,21 @@ public class GameWindow extends JFrame {
         add(viewContainer, BorderLayout.CENTER);
     }
 
+    private void connectingPlayer() {
+        try {
+            controller.connect();
+        } catch (Exception e) {
+            messagePopUp(e);
+        }
+    }
+
+    public void messagePopUp(Exception e) {
+        JOptionPane.showMessageDialog(this,
+                e.getMessage(),
+                "Error",
+                JOptionPane.ERROR_MESSAGE);
+    }
+
     public IGameView getGameView() {
         return gameView;
     }
@@ -80,32 +95,31 @@ public class GameWindow extends JFrame {
         this.playerName = playerName;
     }
 
+    @Override
     public MenuPanel getMenuCard() {
         return menuCard;
     }
 
+    @Override
     public LobbyPanel getLobbyCard() {
         return lobbyCard;
     }
 
+    @Override
     public ScoresPanel getScoresCard() {
         return scoresCard;
     }
 
     public void configureControllerAndView() {
         try {
-            controller.connect();
             controller.setView(this.gameView);
 
             if (playerName != null) {
                 controller.changeClientPlayerName(playerName);
             }
             viewContainer.add((Component) gameView, "View");
-        } catch (RemoteException re) {
-            JOptionPane.showMessageDialog(this,
-                    re.getMessage(),
-                    "Error",
-                    JOptionPane.ERROR_MESSAGE);
+        } catch (RemoteException e) {
+            messagePopUp(e);
         }
     }
 
@@ -128,6 +142,7 @@ public class GameWindow extends JFrame {
         }
     }
 
+    @Override
     public void start() {
         setVisible(true);
     }
