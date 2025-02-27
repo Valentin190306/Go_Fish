@@ -11,14 +11,17 @@ import java.util.List;
 
 public class ConsoleGameView extends JPanel implements IGameView {
     private final GameWindow gameWindow;
-    private final JTextArea consoleArea;
-    private final JTextField inputField;
+    private JTextArea consoleArea;
+    private JTextField inputField;
     private final IController controller;
 
     public ConsoleGameView(GameWindow gameWindow, IController controller) {
         this.gameWindow = gameWindow;
         this.controller = controller;
         controller.setView(this);
+    }
+
+    private void initComponents() {
         setSize(600, 400);
         setLayout(new BorderLayout());
 

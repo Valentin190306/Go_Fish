@@ -1,6 +1,5 @@
 package ar.edu.unlu.poo.model.enums;
 
-// Enum para los valores de las cartas
 public enum Value {
     TWO("2"),
     THREE("3"),

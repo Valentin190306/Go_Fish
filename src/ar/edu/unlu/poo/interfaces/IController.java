@@ -1,7 +1,5 @@
 package ar.edu.unlu.poo.interfaces;
 
-import ar.edu.unlu.poo.view.LobbyPanel;
-
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.HashMap;

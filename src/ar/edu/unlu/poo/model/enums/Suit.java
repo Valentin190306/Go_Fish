@@ -1,6 +1,5 @@
 package ar.edu.unlu.poo.model.enums;
 
-// Enum para los palos de las cartas
 public enum Suit {
     HEARTS("corazones"),
     DIAMONDS("diamantes"),

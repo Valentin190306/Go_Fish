@@ -107,7 +107,7 @@ public class MenuPanel extends JPanel {
                     return new ConsoleGameView(gameWindow, controller);
                 }
                 else if ("Gráfica".equals(selectedItem)) {
-                    return new GraphicGameView(controller);
+                    return new GraphicGameView(gameWindow,controller);
                 }
             }
         } catch (NullPointerException e) {

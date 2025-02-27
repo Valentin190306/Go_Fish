@@ -2,12 +2,15 @@ package ar.edu.unlu.poo.view;
 
 import ar.edu.unlu.poo.interfaces.*;
 
+import javax.swing.*;
 import java.util.List;
 
-public class GraphicGameView implements IGameView {
+public class GraphicGameView extends JPanel implements IGameView {
+    private GameWindow gameWindow;
     private IController controller;
 
-    public GraphicGameView(IController controller) {
+    public GraphicGameView(GameWindow gameWindow, IController controller) {
+        this.gameWindow = gameWindow;
         this.controller = controller;
     }
 
