@@ -15,10 +15,17 @@ public class GameWindow extends JFrame {
     private String playerName = null;
     private final JPanel viewContainer;
     private final CardLayout cardLayout;
+    private final MenuPanel menuCard;
+    private final LobbyPanel lobbyCard;
+    private final ScoresPanel scoresCard;
 
     public GameWindow(IController controller) {
         this.controller = controller;
         this.gameView = new ConsoleGameView(this, controller);
+
+        this.menuCard = new MenuPanel(this, controller);
+        this.lobbyCard = new LobbyPanel(controller);
+        this.scoresCard = new ScoresPanel(this, controller);
 
         setTitle("Go Fish");
         setSize(800, 600);
@@ -31,7 +38,6 @@ public class GameWindow extends JFrame {
                         JOptionPane.YES_NO_OPTION);
 
                 if (confirm == JOptionPane.YES_OPTION) {
-                    System.out.println("Guardando datos...");
                     try {
                         if (controller.getClientPlayer() != null) {
                             controller.disconnect();
@@ -53,85 +59,40 @@ public class GameWindow extends JFrame {
         cardLayout = new CardLayout();
         viewContainer = new JPanel(cardLayout);
 
-        viewContainer.add(createMenuPanel(), "Menu");
-        viewContainer.add(createLobbyPanel(), "Lobby");
+        viewContainer.add(menuCard, "Menu");
+        viewContainer.add(lobbyCard, "Lobby");
+        viewContainer.add(scoresCard, "Scores");
         viewContainer.add(new RulesPanel(this), "Rules");
 
         add(viewContainer, BorderLayout.CENTER);
     }
 
-    private LobbyPanel createLobbyPanel() {
-        LobbyPanel lobbyPanel = new LobbyPanel(controller);
-        controller.setLobby(lobbyPanel);
-        return lobbyPanel;
+    public IGameView getGameView() {
+        return gameView;
     }
 
-    private JPanel createMenuPanel() {
-        JPanel panel = new JPanel();
-        panel.setLayout(new GridBagLayout());
-        panel.setBackground(new Color(50, 50, 50));
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-
-        JLabel title = new JLabel("Go Fish", SwingConstants.CENTER);
-        title.setFont(new Font("Arial", Font.BOLD, 24));
-        title.setForeground(Color.WHITE);
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.gridwidth = 2;
-        panel.add(title, gbc);
-
-        JButton btnPlayGame = createStyledButton("Jugar");
-        JButton btnScores = createStyledButton("Puntajes históricos");
-        JButton btnChangeName = createStyledButton("Cambiar Nombre");
-        JButton btnChangeView = createStyledButton("Cambiar Vista");
-        JButton btnRules = createStyledButton("Reglas");
-
-        btnPlayGame.addActionListener(e -> {
-            configureControllerAndView();
-            showCard("Lobby");
-        });
-
-        btnScores.addActionListener(e -> {});
-
-        btnChangeName.addActionListener(e -> {
-            String newName = JOptionPane.showInputDialog(this,
-                    "Ingrese su nombre",
-                    "Nombre del jugador",
-                    JOptionPane.QUESTION_MESSAGE);
-            if (newName != null && !newName.trim().isEmpty()) {
-                this.playerName = newName;
-            }
-        });
-
-        btnChangeView.addActionListener(e -> {
-            this.gameView = popSelectGameView();
-            viewContainer.add((Component) gameView, "View");
-        });
-
-        btnRules.addActionListener(e -> showCard("Rules"));
-
-        gbc.gridwidth = 1;
-        gbc.gridy = 1;
-        panel.add(btnPlayGame, gbc);
-
-        gbc.gridy = 2;
-        panel.add(btnScores, gbc);
-
-        gbc.gridy = 3;
-        panel.add(btnChangeName, gbc);
-
-        gbc.gridy = 4;
-        panel.add(btnChangeView, gbc);
-
-        gbc.gridy = 5;
-        panel.add(btnRules, gbc);
-
-        return panel;
+    public void setGameView(IGameView gameView) {
+        this.gameView = gameView;
+        viewContainer.add((Component) gameView, "View");
     }
 
-    private void configureControllerAndView() {
+    public void setPlayerName(String playerName) {
+        this.playerName = playerName;
+    }
+
+    public MenuPanel getMenuCard() {
+        return menuCard;
+    }
+
+    public LobbyPanel getLobbyCard() {
+        return lobbyCard;
+    }
+
+    public ScoresPanel getScoresCard() {
+        return scoresCard;
+    }
+
+    public void configureControllerAndView() {
         try {
             controller.connect();
             controller.setView(this.gameView);
@@ -148,45 +109,7 @@ public class GameWindow extends JFrame {
         }
     }
 
-    private JButton createStyledButton(String text) {
-        JButton button = new JButton(text);
-        button.setFont(new Font("Arial", Font.PLAIN, 16));
-        button.setBackground(new Color(70, 130, 180));
-        button.setForeground(Color.WHITE);
-        button.setFocusPainted(false);
-        button.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
-        return button;
-    }
-
-    private IGameView popSelectGameView() {
-        String[] options = {"Consola", "Gráfica"};
-        JComboBox<String> comboBox = new JComboBox<>(options);
-
-        int result = JOptionPane.showConfirmDialog(null,
-                comboBox,
-                "Selecciona un estilo de vista",
-                JOptionPane.OK_CANCEL_OPTION,
-                JOptionPane.PLAIN_MESSAGE);
-
-        try {
-            if (result == JOptionPane.OK_OPTION) {
-                String selectedItem = (String) comboBox.getSelectedItem();
-                if ("Consola".equals(selectedItem)) {
-                    return new ConsoleGameView(this, controller);
-                } else if ("Gráfica".equals(selectedItem)) {
-                    return new GraphicGameView(controller);
-                }
-            }
-        } catch (NullPointerException ne) {
-            JOptionPane.showMessageDialog(null,
-                    "Selección inválida",
-                    "Error",
-                    JOptionPane.ERROR_MESSAGE);
-        }
-        return this.gameView;
-    }
-
-    private void showCard(String cardName) {
+    public void showCard(String cardName) {
         cardLayout.show(viewContainer, cardName);
     }
 

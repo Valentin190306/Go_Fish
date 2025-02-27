@@ -50,7 +50,7 @@ public class RulesPanel extends JPanel {
     private static JTextArea getJTextArea() {
         JTextArea rulesText = new JTextArea();
         rulesText.setText("""                
-                1. Cada jugador recibe 7 cartas (o 5 si hay más de 3 jugadores).
+                1. Cada jugador recibe 7 cartas.
                 2. En su turno, un jugador pide una carta a otro jugador.
                 3. Si el jugador tiene la carta solicitada, debe entregarla.
                 4. Si no la tiene, el jugador que pidió debe tomar una carta del mazo (Go Fish).

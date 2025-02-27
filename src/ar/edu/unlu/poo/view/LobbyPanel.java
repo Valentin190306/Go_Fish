@@ -8,23 +8,25 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class LobbyPanel extends JPanel implements ar.edu.unlu.poo.interfaces.ILobby {
+public class LobbyPanel extends JPanel {
     private final IController controller;
-    private final DefaultTableModel tableModel;
-    private final JButton btnVotePlay;
+    private DefaultTableModel tableModel;
+    private JButton btnVotePlay;
 
     public LobbyPanel(IController controller) {
         this.controller = controller;
+        initComponents();
+    }
+
+    private void initComponents() {
         setLayout(new BorderLayout());
         setBackground(new Color(50, 50, 50));
 
-        // Título del panel
         JLabel title = new JLabel("Sala de espera", SwingConstants.CENTER);
         title.setFont(new Font("Arial", Font.BOLD, 24));
         title.setForeground(Color.WHITE);
         add(title, BorderLayout.NORTH);
 
-        // Tabla de jugadores con estado de voto
         tableModel = new DefaultTableModel(new Object[]{"Jugador", "Estado"}, 0);
         JTable playerTable = new JTable(tableModel);
         playerTable.setBackground(Color.DARK_GRAY);
@@ -33,7 +35,6 @@ public class LobbyPanel extends JPanel implements ar.edu.unlu.poo.interfaces.ILo
         playerTable.setEnabled(false);
         add(new JScrollPane(playerTable), BorderLayout.CENTER);
 
-        // Botón para votar "Jugar"
         btnVotePlay = new JButton("Votar para Jugar");
         btnVotePlay.setFont(new Font("Arial", Font.BOLD, 16));
         btnVotePlay.setBackground(new Color(70, 130, 180));
