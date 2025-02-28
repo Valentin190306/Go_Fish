@@ -14,12 +14,15 @@ public class ConsoleGameView extends JPanel implements IGameView {
     private final JTextArea consoleArea;
     private final JTextField inputField;
     private final IController controller;
+    private String placeholder;
+    private boolean isGameOver = false;
 
     public ConsoleGameView(GameWindow gameWindow, IController controller) {
         this.gameWindow = gameWindow;
         this.controller = controller;
         this.consoleArea = new JTextArea();
         this.inputField = new JTextField();
+        this.placeholder = "<VALOR_CARTA> <NOMBRE_JUGADOR>";
         initComponents();
     }
 
@@ -42,7 +45,7 @@ public class ConsoleGameView extends JPanel implements IGameView {
         inputField.addFocusListener(new FocusAdapter() {
             @Override
             public void focusGained(FocusEvent e) {
-                if(inputField.getText().equals("<VALOR_CARTA> <NOMBRE_JUGADOR>")) {
+                if(inputField.getText().equals(placeholder)) {
                     inputField.setText("");
                     inputField.setForeground(Color.GREEN);
                 }
@@ -52,7 +55,7 @@ public class ConsoleGameView extends JPanel implements IGameView {
             public void focusLost(FocusEvent e) {
                 if(inputField.getText().isEmpty()) {
                     inputField.setForeground(Color.GRAY);
-                    inputField.setText("<VALOR_CARTA> <NOMBRE_JUGADOR>");
+                    inputField.setText(placeholder);
                 }
             }
         });
@@ -61,11 +64,15 @@ public class ConsoleGameView extends JPanel implements IGameView {
     private void processInput() {
         String input = inputField.getText().trim();
         try {
-            if (!input.isEmpty() && controller.handlePlayerInput(input)) {
+            if (!isGameOver) {
+                if (!input.isEmpty() && controller.handlePlayerInput(input)) {
+                    inputField.setText("");
+                }
+            } else if (!input.isEmpty() && controller.handlePlayerExit(input)) {
                 inputField.setText("");
             }
-        } catch (Exception e) {
-            handleException(e);
+        } catch (Exception ex) {
+            handleException(ex);
         }
     }
 
@@ -185,5 +192,11 @@ public class ConsoleGameView extends JPanel implements IGameView {
         for (IPlayer player : players) {
             appendToConsole("\t" + player.getName() + ": " + player.getHand().getScore());
         }
+    }
+
+    @Override
+    public void spawnExitOption() {
+        this.placeholder = "Ingrese -exit- para volver al menu principal.";
+        this.isGameOver = true;
     }
 }

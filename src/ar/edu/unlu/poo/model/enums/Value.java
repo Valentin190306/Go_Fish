@@ -1,6 +1,7 @@
 package ar.edu.unlu.poo.model.enums;
 
 public enum Value {
+    ACE("as"),
     TWO("2"),
     THREE("3"),
     FOUR("4"),
@@ -12,8 +13,7 @@ public enum Value {
     TEN("10"),
     JACK("comodin"),
     QUEEN("reina"),
-    KING("rey"),
-    ACE("as");
+    KING("rey");
 
     private final String value;
 

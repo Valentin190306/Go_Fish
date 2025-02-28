@@ -73,9 +73,12 @@ public class Controller implements IController, IControladorRemoto {
     }
 
     @Override
-    public boolean handlePlayerInput(String input) throws IllegalArgumentException {
+    public boolean handlePlayerInput(String input) throws RemoteException{
         if (input == null || input.isBlank()) {
             throw new IllegalArgumentException("La entrada del jugador no puede estar vacía");
+        }
+        if (model.getGameState() == GameState.GAME_OVER) {
+            handlePlayerExit(input);
         }
         boolean isValid = false;
         String[] parts = input.split(" ");
@@ -99,6 +102,21 @@ public class Controller implements IController, IControladorRemoto {
             }
         } else {
             throw new IllegalArgumentException("Formato inválido. Use: <RANGO> <NOMBRE_JUGADOR>");
+        }
+        return isValid;
+    }
+
+    @Override
+    public boolean handlePlayerExit(String input) throws RemoteException{
+        boolean isValid = false;
+        if (input.equals("exit")) {
+            try {
+                model.setPlayerWaiting((Player) clientPlayer);
+            } catch (Exception e) {
+                view.handleException(e);
+            }
+        } else {
+            throw new IllegalArgumentException("Entrada inválida, -exit- para volver al menu principal.");
         }
         return isValid;
     }
@@ -230,7 +248,10 @@ public class Controller implements IController, IControladorRemoto {
                         showPlayerHand();
                         handlePlayerTurn();
                     }
-                    case GAME_OVER -> handleGameOver();
+                    case GAME_OVER -> {
+                        handleGameOver();
+                        view.spawnExitOption();
+                    }
                     case GO_FISH -> {
                         notifyPlayerAction();
                         playerGoneFishing();

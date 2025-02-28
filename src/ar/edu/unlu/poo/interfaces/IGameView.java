@@ -36,7 +36,5 @@ public interface IGameView {
 
     void updateScores(List<IPlayer> players);
 
-    void revalidate();
-
-    void repaint();
+    void spawnExitOption();
 }

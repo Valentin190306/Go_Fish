@@ -1,6 +1,7 @@
 package ar.edu.unlu.poo.interfaces;
 
 import ar.edu.unlu.poo.model.Player;
+import ar.edu.unlu.poo.model.enums.GameState;
 import ar.edu.unlu.poo.model.enums.Value;
 import ar.edu.unlu.rmimvc.observer.IObservableRemoto;
 import ar.edu.unlu.rmimvc.observer.IObservadorRemoto;
@@ -17,8 +18,6 @@ public interface IGo_Fish extends IObservableRemoto {
 
     void playTurn(Value valueRequested, Player targetPlayer) throws RemoteException;
 
-    void checkGameIsOver() throws RemoteException;
-
     void removePlayer(IPlayer clientPlayer) throws RemoteException;
 
     IPlayer connectPlayer() throws RemoteException;
@@ -33,6 +32,8 @@ public interface IGo_Fish extends IObservableRemoto {
 
     void setPlayerReady(Player remotePlayer) throws RemoteException;
 
+    void setPlayerWaiting(Player remotePlayer) throws RemoteException;
+
     IDeck getDeck() throws RemoteException;
 
     IPlayer getTargetPlayer() throws RemoteException;
@@ -42,6 +43,8 @@ public interface IGo_Fish extends IObservableRemoto {
     IPlayer getCurrentPlayerPlayingTurn() throws RemoteException;
 
     HashMap<String, Integer> getScoreList() throws RemoteException;
+
+    GameState getGameState() throws RemoteException;
 
     void reload() throws RemoteException;
 }

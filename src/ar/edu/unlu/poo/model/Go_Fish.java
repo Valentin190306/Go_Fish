@@ -137,10 +137,10 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish, Serializable 
         }
     }
 
-    @Override
-    public void checkGameIsOver() throws RemoteException {
+    private void checkGameIsOver() throws RemoteException {
         if (deck.isEmpty() || players.size() <= 1) {
             updateScoreData();
+            reload();
             gameNotifyObservers(GameState.GAME_OVER);
         }
     }
@@ -247,9 +247,24 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish, Serializable 
         if (player == null) {
             throw new IllegalArgumentException("Jugador inexistente o no registrado en el modelo.");
         }
+        if (player.getPlayerState() != PlayerState.WAITING) {
+            throw new RemoteException("Transición de estado inválida.");
+        }
         player.setPlayerState(PlayerState.READY);
         arePlayersReadyCheck();
         gameNotifyObservers(GameState.NEW_STATUS_PLAYER);
+    }
+
+    @Override
+    public void setPlayerWaiting(Player remotePlayer) throws RemoteException {
+        Player player = playerLookUp(remotePlayer);
+        if (player == null) {
+            throw new IllegalArgumentException("Jugador inexistente o no registrado en el modelo.");
+        }
+        if (player.getPlayerState() != PlayerState.PLAYING) {
+            throw new RemoteException("Transición de estado inválida.");
+        }
+        player.setPlayerState(PlayerState.WAITING);
     }
 
     @Override
@@ -282,6 +297,11 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish, Serializable 
         } catch (Exception e) {
             throw new RemoteException(e.getMessage());
         }
+    }
+
+    @Override
+    public GameState getGameState() throws RemoteException {
+        return gameState;
     }
 
     @Override

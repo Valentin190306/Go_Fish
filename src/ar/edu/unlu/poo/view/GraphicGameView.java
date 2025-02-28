@@ -33,6 +33,8 @@ public class GraphicGameView extends JPanel implements IGameView {
         fishermenPanel.setPreferredSize(new Dimension(400, 150));
         fishermenPanel.setBorder(BorderFactory.createEmptyBorder(50, 50, 50, 50));
 
+        fishermenPanel.setVisible(true);
+        handPanel.setVisible(true);
     }
 
     @Override
@@ -121,6 +123,11 @@ public class GraphicGameView extends JPanel implements IGameView {
 
     @Override
     public void updateScores(List<IPlayer> players) {
+
+    }
+
+    @Override
+    public void spawnExitOption() {
 
     }
 }

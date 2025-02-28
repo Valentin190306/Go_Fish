@@ -45,7 +45,7 @@ public class ScoreSerializer {
         try {
             highScores = deserialize();
         } catch (IOException | ClassNotFoundException e) {
-            // Si hay un error (por ejemplo, el archivo no existe), grabamos un mapa vacío
+            // Si hay un error (si el archivo no existe), grabamos un mapa vacío
         }
         highScores.putAll(scores);
         serialize(highScores);

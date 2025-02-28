@@ -27,8 +27,6 @@ public class FishermenPanel extends JPanel {
         add(Box.createHorizontalGlue());
         add(fisherman3);
         add(Box.createHorizontalGlue());
-
-        setVisible(true);
     }
 
     public ArrayList<FishermanButton> getButtons() {
