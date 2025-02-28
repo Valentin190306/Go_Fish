@@ -11,19 +11,26 @@ public class GraphicGameView extends JPanel implements IGameView {
     private final GameWindow gameWindow;
     private IController controller;
     private final ImageIcon background;
-    private FishermenPanel fishermenPanel;
+    private final FishermenPanel fishermenPanel;
+    private final HandPanel handPanel;
 
     public GraphicGameView(GameWindow gameWindow, IController controller) {
         this.gameWindow = gameWindow;
         this.controller = controller;
         this.background = new ImageIcon(Objects.requireNonNull(getClass().getResource("/ar/edu/unlu/poo/view/assets/backgrounds/background.png")));
         this.fishermenPanel = new FishermenPanel();
+        this.handPanel = new HandPanel();
         initComponents();
     }
 
     private void initComponents() {
         setLayout(new BorderLayout());
         add(fishermenPanel, BorderLayout.CENTER);
+        add(handPanel, BorderLayout.SOUTH);
+
+        fishermenPanel.setPreferredSize(new Dimension(400, 150));
+        fishermenPanel.setBorder(BorderFactory.createEmptyBorder(50, 50, 50, 50));
+
     }
 
     @Override
@@ -33,7 +40,6 @@ public class GraphicGameView extends JPanel implements IGameView {
             g.drawImage(background.getImage(), 0, 0, getWidth(), getHeight(), this);
         }
     }
-
 
     @Override
     public void start() {

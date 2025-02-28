@@ -1,20 +1,24 @@
 package ar.edu.unlu.poo.view;
 
 import javax.swing.*;
+import java.util.ArrayList;
 
 public class FishermenPanel extends JPanel {
-    private final FishermanButton fisherman1;
-    private final FishermanButton fisherman2;
-    private final FishermanButton fisherman3;
+    private final ArrayList<FishermanButton> buttons;
 
     public FishermenPanel() {
+        this.buttons = new ArrayList<>();
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
         setOpaque(false);
         setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        fisherman1 = new FishermanButton("/ar/edu/unlu/poo/view/assets/playerIcons/fisherman1.png", 0, 0, 100, 100);
-        fisherman2 = new FishermanButton("/ar/edu/unlu/poo/view/assets/playerIcons/fisherman2.png", 0, 0, 100, 100);
-        fisherman3 = new FishermanButton("/ar/edu/unlu/poo/view/assets/playerIcons/fisherman3.png", 0, 0, 100, 100);
+        FishermanButton fisherman1 = new FishermanButton("/ar/edu/unlu/poo/view/assets/playerIcons/fisherman1.png", "1");
+        FishermanButton fisherman2 = new FishermanButton("/ar/edu/unlu/poo/view/assets/playerIcons/fisherman2.png", "2");
+        FishermanButton fisherman3 = new FishermanButton("/ar/edu/unlu/poo/view/assets/playerIcons/fisherman3.png", "3");
+
+        buttons.add(fisherman1);
+        buttons.add(fisherman2);
+        buttons.add(fisherman3);
 
         add(Box.createHorizontalGlue());
         add(fisherman1);
@@ -25,6 +29,10 @@ public class FishermenPanel extends JPanel {
         add(Box.createHorizontalGlue());
 
         setVisible(true);
+    }
+
+    public ArrayList<FishermanButton> getButtons() {
+        return buttons;
     }
 }
 
