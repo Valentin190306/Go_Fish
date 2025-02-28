@@ -1,6 +1,8 @@
 package ar.edu.unlu.poo.view;
 
 import ar.edu.unlu.poo.interfaces.*;
+import ar.edu.unlu.poo.view.graphicViewPanels.FishermenPanel;
+import ar.edu.unlu.poo.view.graphicViewPanels.HandPanel;
 
 import javax.swing.*;
 import java.awt.*;

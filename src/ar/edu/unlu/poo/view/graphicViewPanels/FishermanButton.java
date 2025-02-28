@@ -1,4 +1,4 @@
-package ar.edu.unlu.poo.view;
+package ar.edu.unlu.poo.view.graphicViewPanels;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
