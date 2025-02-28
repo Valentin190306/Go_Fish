@@ -12,13 +12,17 @@ public class HighScoreSerializer {
         }
     }
 
-    public static HashMap<String, Integer> deserialize() throws IOException, ClassNotFoundException {
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filePath))) {
-            return (HashMap<String, Integer>) ois.readObject();
+    public static LinkedHashMap<String, Integer> deserialize() throws IOException, ClassNotFoundException {
+        File file = new File(filePath);
+        if (!file.exists() || file.length() == 0) {
+            return new LinkedHashMap<>();
+        }
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
+            return (LinkedHashMap<String, Integer>) ois.readObject();
         }
     }
 
-    public static LinkedHashMap<String, Integer> sortScores(HashMap<String, Integer> scores) {
+    public static LinkedHashMap<String, Integer> sortScores(LinkedHashMap<String, Integer> scores) {
         List<Map.Entry<String, Integer>> entries = new ArrayList<>(scores.entrySet());
 
         entries.sort(new Comparator<>() {
@@ -41,7 +45,7 @@ public class HighScoreSerializer {
         try {
             highScores = deserialize();
         } catch (IOException | ClassNotFoundException e) {
-            // Si hay un error (por ejemplo, el archivo no existe), seguimos con un mapa vacío
+            // Si hay un error (por ejemplo, el archivo no existe), grabamos un mapa vacío
         }
         highScores.putAll(scores);
         serialize(highScores);

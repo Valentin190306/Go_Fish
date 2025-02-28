@@ -44,9 +44,9 @@ public class LobbyPanel extends JPanel {
     }
 
     private void voteToStartGame() {
-        if (controller.getClientPlayer().toString().equals("READY")) return;
-        btnVotePlay.setEnabled(false);
         try {
+            if (controller.getClientPlayer().toString().equals("READY")) return;
+            btnVotePlay.setEnabled(false);
             controller.setClientPlayerReady();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this,

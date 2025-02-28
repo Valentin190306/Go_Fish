@@ -37,8 +37,7 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish, Serializable 
         this.gameState = GameState.AWAITING_PLAYERS;
     }
 
-    @Override
-    public String getFilePath() throws RemoteException {
+    public String getFilePath() {
         return HighScoreSerializer.filePath;
     }
 
@@ -253,12 +252,12 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish, Serializable 
     }
 
     @Override
-    public IDeck getDeck() throws RemoteException{
+    public IDeck getDeck() throws RemoteException {
         return deck;
     }
 
     @Override
-    public IPlayer getTargetPlayer() throws RemoteException{
+    public IPlayer getTargetPlayer() throws RemoteException {
         return targetPlayer;
     }
 

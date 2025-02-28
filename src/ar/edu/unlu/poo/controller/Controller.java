@@ -7,7 +7,6 @@ import ar.edu.unlu.poo.model.enums.Value;
 import ar.edu.unlu.rmimvc.cliente.IControladorRemoto;
 import ar.edu.unlu.rmimvc.observer.IObservableRemoto;
 
-import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.List;
@@ -34,7 +33,7 @@ public class Controller implements IController, IControladorRemoto {
     }
 
     @Override
-    public void setGameWindow(IGameWindow gameWindow) {
+    public void setGameWindow(IGameWindow gameWindow) throws RemoteException{
         this.gameWindow = gameWindow;
     }
 
@@ -44,12 +43,12 @@ public class Controller implements IController, IControladorRemoto {
     }
 
     @Override
-    public void disconnectPlayer() throws RemoteException {
+    public void disconnect() throws RemoteException {
         model.disconnectPlayer(this, (Player) clientPlayer);
     }
 
     @Override
-    public HashMap<String, Integer> getScores() throws IOException, ClassNotFoundException {
+    public HashMap<String, Integer> getScores() throws RemoteException {
         return model.getScoreList();
     }
 
@@ -71,11 +70,6 @@ public class Controller implements IController, IControladorRemoto {
     @Override
     public List<IPlayer> getPlayerList() throws RemoteException {
         return model.getPlayers();
-    }
-
-    @Override
-    public void disconnect() throws RemoteException {
-        model.disconnectPlayer(this, (Player) clientPlayer);
     }
 
     @Override
@@ -222,9 +216,7 @@ public class Controller implements IController, IControladorRemoto {
         if (event instanceof GameState gameState) {
             try {
                 switch (gameState) {
-                    case NEW_STATUS_PLAYER -> gameWindow
-                            .getLobbyCard()
-                            .updatePlayerList(this.model.getPlayers());
+                    case NEW_STATUS_PLAYER -> gameWindow.getLobbyCard().updatePlayerList(this.model.getPlayers());
                     case READY -> {
                         view.start();
                         this.model.start();

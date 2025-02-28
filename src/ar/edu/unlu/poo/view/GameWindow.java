@@ -20,11 +20,10 @@ public class GameWindow extends JFrame implements IGameWindow {
     private final LobbyPanel lobbyCard;
     private final ScoresPanel scoresCard;
 
-    public GameWindow(IController controller) {
+    public GameWindow(IController controller) throws RemoteException {
         this.controller = controller;
         controller.setGameWindow(this);
         this.gameView = new ConsoleGameView(this, controller);
-        connectingPlayer();
 
         this.menuCard = new MenuPanel(this, controller);
         this.lobbyCard = new LobbyPanel(controller);
@@ -65,18 +64,11 @@ public class GameWindow extends JFrame implements IGameWindow {
         viewContainer.add(new RulesPanel(this), "Rules");
 
         add(viewContainer, BorderLayout.CENTER);
-    }
-
-    private void connectingPlayer() {
-        try {
-            controller.connect();
-        } catch (Exception e) {
-            messagePopUp(e);
-        }
+        showMenu();
     }
 
     public void messagePopUp(Exception e) {
-        JOptionPane.showMessageDialog(this,
+        JOptionPane.showMessageDialog(null,
                 e.getMessage(),
                 "Error",
                 JOptionPane.ERROR_MESSAGE);
@@ -112,6 +104,7 @@ public class GameWindow extends JFrame implements IGameWindow {
 
     public void configureControllerAndView() {
         try {
+            controller.connect();
             controller.setView(this.gameView);
 
             if (playerName != null) {

@@ -18,7 +18,6 @@ public class ConsoleGameView extends JPanel implements IGameView {
     public ConsoleGameView(GameWindow gameWindow, IController controller) {
         this.gameWindow = gameWindow;
         this.controller = controller;
-        controller.setView(this);
     }
 
     private void initComponents() {

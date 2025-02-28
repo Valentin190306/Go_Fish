@@ -11,11 +11,9 @@ import java.rmi.RemoteException;
 public class Server {
     private static final String serverHost = "127.0.0.1";
     private static final int serverPort = 1234;
-    private static final String filePath = "src/ar/edu/unlu/poo/server/scores.dat";
-    ;
+    private static final String filePath = "/ar/edu/unlu/poo/server/scores.dat";
 
     public static void main(String[] args) {
-
         Servidor server = new Servidor(serverHost, serverPort);
         try {
             IGo_Fish model = Go_Fish.getInstance();

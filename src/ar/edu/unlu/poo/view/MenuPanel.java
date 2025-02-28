@@ -5,28 +5,32 @@ import ar.edu.unlu.poo.interfaces.IGameView;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Objects;
 
 public class MenuPanel extends JPanel {
     private final GameWindow gameWindow;
     private final IController controller;
+    private ImageIcon background;
 
     public MenuPanel(GameWindow gameWindow, IController controller) {
         this.gameWindow = gameWindow;
         this.controller = controller;
-        iniComponents();
+        this.background = new ImageIcon(Objects.requireNonNull(getClass().getResource("/ar/edu/unlu/poo/view/assets/backgrounds/background.png")));
+        initComponents();
     }
 
-    private void iniComponents() {
+    private void initComponents() {
         JPanel panel = new JPanel();
+        panel.setOpaque(false);
         panel.setLayout(new GridBagLayout());
-        panel.setBackground(new Color(50, 50, 50));
+
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
         JLabel title = new JLabel("Go Fish", SwingConstants.CENTER);
         title.setFont(new Font("Arial", Font.BOLD, 24));
-        title.setForeground(Color.WHITE);
+        title.setForeground(Color.BLACK);
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 2;
@@ -77,6 +81,15 @@ public class MenuPanel extends JPanel {
 
         gbc.gridy = 5;
         panel.add(btnRules, gbc);
+
+        this.setLayout(new BorderLayout());
+        this.add(panel, BorderLayout.CENTER);
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        g.drawImage(background.getImage(), 0, 0, getWidth(), getHeight(), this);
     }
 
     private JButton createStyledButton(String text) {

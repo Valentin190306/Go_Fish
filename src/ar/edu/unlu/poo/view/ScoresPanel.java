@@ -15,8 +15,8 @@ public class ScoresPanel extends JPanel {
     public ScoresPanel(GameWindow gameWindow, IController controller) {
         this.gameWindow = gameWindow;
         this.controller = controller;
-        updateScores();
-        initComponents();
+        this.sortedScores = new LinkedHashMap<>();
+        printScores();
     }
 
     private void initComponents() {
@@ -48,15 +48,12 @@ public class ScoresPanel extends JPanel {
         add(buttonPanel, BorderLayout.SOUTH);
     }
 
-    public void updateScores() {
+    public void printScores() {
         try {
             this.sortedScores = (LinkedHashMap<String, Integer>) controller.getScores();
         } catch (Exception e) {
             gameWindow.messagePopUp(e);
         }
-        removeAll();
         initComponents();
-        revalidate();
-        repaint();
     }
 }

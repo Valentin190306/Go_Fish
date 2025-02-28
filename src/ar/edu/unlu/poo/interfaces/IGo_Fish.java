@@ -5,14 +5,11 @@ import ar.edu.unlu.poo.model.enums.Value;
 import ar.edu.unlu.rmimvc.observer.IObservableRemoto;
 import ar.edu.unlu.rmimvc.observer.IObservadorRemoto;
 
-import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public interface IGo_Fish extends IObservableRemoto {
-
-    String getFilePath() throws RemoteException;
 
     void setFilePath(String filePath) throws RemoteException;
 
@@ -44,7 +41,7 @@ public interface IGo_Fish extends IObservableRemoto {
 
     IPlayer getCurrentPlayerPlayingTurn() throws RemoteException;
 
-    HashMap<String, Integer> getScoreList() throws IOException, ClassNotFoundException;
+    HashMap<String, Integer> getScoreList() throws RemoteException;
 
     void reload() throws RemoteException;
 }
