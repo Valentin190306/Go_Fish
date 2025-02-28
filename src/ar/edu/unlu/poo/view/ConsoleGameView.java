@@ -109,7 +109,7 @@ public class ConsoleGameView extends JPanel implements IGameView {
         String[] vocabulary = {"reclama", "pide", "exige", "suplica", "mendiga"};
         String expression = vocabulary[(int)(Math.random() * vocabulary.length)];
         appendToConsole(isPlayerTurn
-                ? "> Le " + expression + "s un " + queriedCard.getNumber() + " a " + targetPlayer.getName() + "..."
+                ? "> Le " + expression + "s un " + queriedCard.getNumber().getValue() + " a " + targetPlayer.getName() + "..."
                 : "> " + player.getName() + " " + expression + " un " + queriedCard.getNumber() + " a " + targetPlayer.getName() + "...");
     }
 

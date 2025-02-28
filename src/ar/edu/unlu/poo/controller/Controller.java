@@ -246,10 +246,11 @@ public class Controller implements IController, IControladorRemoto {
                         handlePlayerTurn();
                     }
                     case TURN_SWITCH -> {
+                        notifyTurnSwitch();
                         showPlayersAndCards();
                         showPlayerHand();
                         handlePlayerTurn();
-
+                        notifyTurnSwitch();
                     }
                     case GAME_OVER -> {
                         handleGameOver();
