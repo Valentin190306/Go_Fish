@@ -250,7 +250,6 @@ public class Controller implements IController, IControladorRemoto {
                         showPlayersAndCards();
                         showPlayerHand();
                         handlePlayerTurn();
-                        notifyTurnSwitch();
                     }
                     case GAME_OVER -> {
                         handleGameOver();
@@ -265,7 +264,6 @@ public class Controller implements IController, IControladorRemoto {
                         clientPlayerReceiveCards();
                     }
                     case PLAYER_COMPLETED_SET -> {
-                        //notifyTurnSwitch();
                         clientPlayerSetsInHand();
                     }
                     default -> throw new IllegalArgumentException("Estado de juego desconocido");
