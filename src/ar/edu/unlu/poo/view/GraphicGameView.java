@@ -3,15 +3,24 @@ package ar.edu.unlu.poo.view;
 import ar.edu.unlu.poo.interfaces.*;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.List;
 
 public class GraphicGameView extends JPanel implements IGameView {
     private GameWindow gameWindow;
     private IController controller;
+    private Image background;
 
     public GraphicGameView(GameWindow gameWindow, IController controller) {
         this.gameWindow = gameWindow;
         this.controller = controller;
+        this.background = new ImageIcon("background.png").getImage();
+        initComponents();
+    }
+
+    private void initComponents() {
+        setLayout(null);
+
     }
 
     @Override
