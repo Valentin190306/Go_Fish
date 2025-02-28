@@ -39,7 +39,7 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish, Serializable 
 
     @Override
     public void setFilePath(String filePath) throws RemoteException {
-        HighScoreSerializer.filePath = filePath;
+        ScoreSerializer.filePath = filePath;
     }
 
     @Override
@@ -131,7 +131,7 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish, Serializable 
             scores.put(player.getName(), player.getHand().getScore());
         }
         try {
-            HighScoreSerializer.updateHighScores(scores);
+            ScoreSerializer.updateHighScores(scores);
         } catch (IOException e) {
             throw new RemoteException("Error al actualizar el registro de puntajes.");
         }
@@ -278,7 +278,7 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish, Serializable 
     @Override
     public HashMap<String, Integer> getScoreList() throws RemoteException {
         try {
-            return HighScoreSerializer.sortScores(HighScoreSerializer.deserialize());
+            return ScoreSerializer.sortScores(ScoreSerializer.deserialize());
         } catch (Exception e) {
             throw new RemoteException(e.getMessage());
         }

@@ -11,5 +11,7 @@ public class HandPanel extends JPanel {
 
     }
 
-    public void
+    public void addCards() {
+
+    }
 }

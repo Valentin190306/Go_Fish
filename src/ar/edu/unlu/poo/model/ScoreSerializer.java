@@ -3,7 +3,7 @@ package ar.edu.unlu.poo.model;
 import java.io.*;
 import java.util.*;
 
-public class HighScoreSerializer {
+public class ScoreSerializer {
     static String filePath = null;
 
     public static void serialize(HashMap<String, Integer> scores) throws IOException {
