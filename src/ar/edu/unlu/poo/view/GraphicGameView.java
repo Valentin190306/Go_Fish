@@ -62,7 +62,7 @@ public class GraphicGameView extends JPanel implements IGameView {
     }
 
     @Override
-    public void notifyPlayerAction(IPlayer targetPlayer, IPlayer player, boolean isPlayerTurn) {
+    public void notifyPlayerAction(IPlayer targetPlayer, IPlayer player, ICard queriedCard, boolean isPlayerTurn) {
 
     }
 

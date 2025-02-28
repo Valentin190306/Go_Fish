@@ -218,12 +218,14 @@ public class Controller implements IController, IControladorRemoto {
 
     private void notifyPlayerAction() {
         try {
-            boolean clientIsCurrentPlayer = model
-                    .getCurrentPlayerPlayingTurn()
-                    .equals(clientPlayer);
-            view.notifyPlayerAction(model.getTargetPlayer(),
-                    model.getCurrentPlayerPlayingTurn(),
-                    clientIsCurrentPlayer);
+            if (model.getTargetPlayer() != null) {
+                boolean clientIsCurrentPlayer = model
+                        .getCurrentPlayerPlayingTurn()
+                        .equals(clientPlayer);
+                view.notifyPlayerAction(model.getTargetPlayer(),
+                        model.getCurrentPlayerPlayingTurn(), model.getQueriedCard(),
+                        clientIsCurrentPlayer);
+            }
         } catch (Exception e) {
             view.handleException(e);
         }
@@ -247,6 +249,7 @@ public class Controller implements IController, IControladorRemoto {
                         showPlayersAndCards();
                         showPlayerHand();
                         handlePlayerTurn();
+
                     }
                     case GAME_OVER -> {
                         handleGameOver();
@@ -261,7 +264,7 @@ public class Controller implements IController, IControladorRemoto {
                         clientPlayerReceiveCards();
                     }
                     case PLAYER_COMPLETED_SET -> {
-                        notifyTurnSwitch();
+                        //notifyTurnSwitch();
                         clientPlayerSetsInHand();
                     }
                     default -> throw new IllegalArgumentException("Estado de juego desconocido");

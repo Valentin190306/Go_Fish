@@ -32,6 +32,8 @@ public class GameWindow extends JFrame implements IGameWindow {
         setTitle("Go Fish");
         setSize(800, 600);
 
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {

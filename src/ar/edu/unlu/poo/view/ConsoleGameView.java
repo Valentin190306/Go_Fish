@@ -105,12 +105,12 @@ public class ConsoleGameView extends JPanel implements IGameView {
     }
 
     @Override
-    public void notifyPlayerAction(IPlayer targetPlayer, IPlayer player, boolean isPlayerTurn) {
+    public void notifyPlayerAction(IPlayer targetPlayer, IPlayer player, ICard queriedCard, boolean isPlayerTurn) {
         String[] vocabulary = {"reclama", "pide", "exige", "suplica", "mendiga"};
         String expression = vocabulary[(int)(Math.random() * vocabulary.length)];
         appendToConsole(isPlayerTurn
-                ? "> Le " + expression + "s cartas a " + targetPlayer.getName() + "..."
-                : "> " + player.getName() + " " + expression + " cartas a " + targetPlayer.getName() + "...");
+                ? "> Le " + expression + "s un " + queriedCard.getNumber() + " a " + targetPlayer.getName() + "..."
+                : "> " + player.getName() + " " + expression + " un " + queriedCard.getNumber() + " a " + targetPlayer.getName() + "...");
     }
 
 

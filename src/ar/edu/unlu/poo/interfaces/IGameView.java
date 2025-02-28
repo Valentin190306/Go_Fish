@@ -10,7 +10,7 @@ public interface IGameView {
 
     void notifyGameOver();
 
-    void notifyPlayerAction(IPlayer targetPlayer, IPlayer player, boolean isPlayerTurn);
+    void notifyPlayerAction(IPlayer targetPlayer, IPlayer player, ICard queriedCard, boolean isPlayerTurn);
 
     void handleException(Exception e);
 

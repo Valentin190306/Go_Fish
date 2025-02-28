@@ -1,10 +1,12 @@
 package ar.edu.unlu.poo.model;
 
+import ar.edu.unlu.poo.interfaces.ICard;
 import ar.edu.unlu.poo.interfaces.IDeck;
 import ar.edu.unlu.poo.interfaces.IGo_Fish;
 import ar.edu.unlu.poo.interfaces.IPlayer;
 import ar.edu.unlu.poo.model.enums.GameState;
 import ar.edu.unlu.poo.model.enums.PlayerState;
+import ar.edu.unlu.poo.model.enums.Suit;
 import ar.edu.unlu.poo.model.enums.Value;
 import ar.edu.unlu.rmimvc.observer.IObservadorRemoto;
 import ar.edu.unlu.rmimvc.observer.ObservableRemoto;
@@ -22,7 +24,8 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish, Serializable 
     private final ArrayList<Player> players;
     private int currentPlayerIndex;
     private GameState gameState;
-    private Player targetPlayer;
+    private Player targetPlayer = null;
+    private Card queriedCard = null;
 
     public static IGo_Fish getInstance() {
         if (instance == null) {
@@ -85,13 +88,14 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish, Serializable 
         }
         if (localTargetPlayer.getHand().hasCardOfValue(valueRequested)) {
             this.targetPlayer = localTargetPlayer;
+            queriedCard = new Card(valueRequested, Suit.SPADES);
             transferringCardsToPlayer(valueRequested, localTargetPlayer);
         } else {
             playerWentFishing();
         }
         checkGameIsOver();
-        nextPlayer();
         playerGotSets();
+        nextPlayer();
     }
 
     private void transferringCardsToPlayer(Value value, Player player) throws RemoteException {
@@ -165,7 +169,7 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish, Serializable 
                 break;
             }
         }
-        if (areReady && players.size() == 1) {              // Recordar preestablecerlo a 3 o 4
+        if (areReady && players.size() == 4) {              // Recordar preestablecerlo a 3 o 4
             gameNotifyObservers(GameState.READY);
         }
     }
@@ -275,6 +279,11 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish, Serializable 
     @Override
     public IPlayer getTargetPlayer() throws RemoteException {
         return targetPlayer;
+    }
+
+    @Override
+    public ICard getQueriedCard() throws RemoteException {
+        return queriedCard;
     }
 
     @Override

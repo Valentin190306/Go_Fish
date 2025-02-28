@@ -38,6 +38,8 @@ public interface IGo_Fish extends IObservableRemoto {
 
     IPlayer getTargetPlayer() throws RemoteException;
 
+    ICard getQueriedCard() throws RemoteException;
+
     ArrayList<IPlayer> getPlayers() throws RemoteException;
 
     IPlayer getCurrentPlayerPlayingTurn() throws RemoteException;
