@@ -18,7 +18,7 @@ public class HighScoreSerializer {
         }
     }
 
-    public static LinkedHashMap<String, Integer> sortHighScoresManual(HashMap<String, Integer> scores) {
+    public static LinkedHashMap<String, Integer> sortScores(HashMap<String, Integer> scores) {
         List<Map.Entry<String, Integer>> entries = new ArrayList<>(scores.entrySet());
 
         entries.sort(new Comparator<>() {

@@ -14,9 +14,9 @@ public class ScoresPanel extends JPanel {
 
     public ScoresPanel(GameWindow gameWindow, IController controller) {
         this.gameWindow = gameWindow;
-        this.controller = controller;;
-        initComponents();
+        this.controller = controller;
         updateScores();
+        initComponents();
     }
 
     private void initComponents() {

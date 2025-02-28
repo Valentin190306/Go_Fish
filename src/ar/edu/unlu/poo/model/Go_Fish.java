@@ -276,8 +276,12 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish, Serializable 
     }
 
     @Override
-    public HashMap<String, Integer> getScoreList() throws IOException, ClassNotFoundException {
-        return HighScoreSerializer.sortHighScoresManual(HighScoreSerializer.deserialize());
+    public HashMap<String, Integer> getScoreList() throws RemoteException {
+        try {
+            return HighScoreSerializer.sortScores(HighScoreSerializer.deserialize());
+        } catch (Exception e) {
+            throw new RemoteException(e.getMessage());
+        }
     }
 
     @Override
