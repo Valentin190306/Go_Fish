@@ -11,27 +11,28 @@ import java.util.List;
 
 public class ConsoleGameView extends JPanel implements IGameView {
     private final GameWindow gameWindow;
-    private JTextArea consoleArea;
-    private JTextField inputField;
+    private final JTextArea consoleArea;
+    private final JTextField inputField;
     private final IController controller;
 
     public ConsoleGameView(GameWindow gameWindow, IController controller) {
         this.gameWindow = gameWindow;
         this.controller = controller;
+        this.consoleArea = new JTextArea();
+        this.inputField = new JTextField();
+        initComponents();
     }
 
     private void initComponents() {
         setSize(600, 400);
         setLayout(new BorderLayout());
 
-        consoleArea = new JTextArea();
         consoleArea.setEditable(false);
         consoleArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
         consoleArea.setBackground(Color.BLACK);
         consoleArea.setForeground(Color.GREEN);
         add(new JScrollPane(consoleArea), BorderLayout.CENTER);
 
-        inputField = new JTextField();
         inputField.setFont(new Font("Monospaced", Font.PLAIN, 12));
         inputField.setBackground(Color.DARK_GRAY);
         inputField.setForeground(Color.GREEN);
@@ -75,8 +76,8 @@ public class ConsoleGameView extends JPanel implements IGameView {
 
     @Override
     public void start() {
+        gameWindow.showGame();
         setVisible(true);
-        gameWindow.startGame();
     }
 
     @Override

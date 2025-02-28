@@ -1,8 +1,6 @@
 package ar.edu.unlu.poo.view;
 
 import javax.swing.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 
 public class FishermenPanel extends JPanel {
     private final FishermanButton fisherman1;
@@ -10,34 +8,23 @@ public class FishermenPanel extends JPanel {
     private final FishermanButton fisherman3;
 
     public FishermenPanel() {
-        setLayout(null); // Seguimos usando layout absoluto
+        setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+        setOpaque(false);
+        setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        fisherman1 = new FishermanButton("fisherman1.png", 0, 0, 100, 100);
-        fisherman2 = new FishermanButton("fisherman2.png", 0, 0, 100, 100);
-        fisherman3 = new FishermanButton("fisherman3.png", 0, 0, 100, 100);
+        fisherman1 = new FishermanButton("/ar/edu/unlu/poo/view/assets/playerIcons/fisherman1.png", 0, 0, 100, 100);
+        fisherman2 = new FishermanButton("/ar/edu/unlu/poo/view/assets/playerIcons/fisherman2.png", 0, 0, 100, 100);
+        fisherman3 = new FishermanButton("/ar/edu/unlu/poo/view/assets/playerIcons/fisherman3.png", 0, 0, 100, 100);
 
+        add(Box.createHorizontalGlue());
         add(fisherman1);
+        add(Box.createHorizontalGlue());
         add(fisherman2);
+        add(Box.createHorizontalGlue());
         add(fisherman3);
+        add(Box.createHorizontalGlue());
 
-        // Ajustar botones cuando cambia el tamaño del panel
-        addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                repositionButtons();
-            }
-        });
-    }
-
-    private void repositionButtons() {
-        int panelWidth = getWidth();
-        int panelHeight = getHeight();
-
-        int buttonSize = Math.min(panelWidth, panelHeight) / 6; // Tamaño relativo
-
-        // Posiciones relativas
-        fisherman1.setBounds(panelWidth / 4 - buttonSize / 2, panelHeight / 2 - buttonSize / 2, buttonSize, buttonSize);
-        fisherman2.setBounds(panelWidth / 2 - buttonSize / 2, panelHeight / 2 - buttonSize / 2, buttonSize, buttonSize);
-        fisherman3.setBounds(3 * panelWidth / 4 - buttonSize / 2, panelHeight / 2 - buttonSize / 2, buttonSize, buttonSize);
+        setVisible(true);
     }
 }
+

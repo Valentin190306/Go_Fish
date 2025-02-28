@@ -37,10 +37,6 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish, Serializable 
         this.gameState = GameState.AWAITING_PLAYERS;
     }
 
-    public String getFilePath() {
-        return HighScoreSerializer.filePath;
-    }
-
     @Override
     public void setFilePath(String filePath) throws RemoteException {
         HighScoreSerializer.filePath = filePath;
@@ -169,7 +165,9 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish, Serializable 
                 break;
             }
         }
-        if (areReady) gameNotifyObservers(GameState.READY);
+        if (areReady && players.size() == 1) {              // Recordar preestablecerlo a 3 o 4
+            gameNotifyObservers(GameState.READY);
+        }
     }
 
     @Override
@@ -187,6 +185,9 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish, Serializable 
         }
         if (gameState.ordinal() < GameState.READY.ordinal()) {
             gameNotifyObservers(GameState.NEW_STATUS_PLAYER);
+        }
+        if (players.isEmpty()) {
+            reload();
         }
     }
 

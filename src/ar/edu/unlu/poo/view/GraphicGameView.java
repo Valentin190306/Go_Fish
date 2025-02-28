@@ -5,27 +5,40 @@ import ar.edu.unlu.poo.interfaces.*;
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
+import java.util.Objects;
 
 public class GraphicGameView extends JPanel implements IGameView {
-    private GameWindow gameWindow;
+    private final GameWindow gameWindow;
     private IController controller;
-    private Image background;
+    private final ImageIcon background;
+    private FishermenPanel fishermenPanel;
 
     public GraphicGameView(GameWindow gameWindow, IController controller) {
         this.gameWindow = gameWindow;
         this.controller = controller;
-        this.background = new ImageIcon("background.png").getImage();
+        this.background = new ImageIcon(Objects.requireNonNull(getClass().getResource("/ar/edu/unlu/poo/view/assets/backgrounds/background.png")));
+        this.fishermenPanel = new FishermenPanel();
         initComponents();
     }
 
     private void initComponents() {
-        setLayout(null);
-
+        setLayout(new BorderLayout());
+        add(fishermenPanel, BorderLayout.CENTER);
     }
 
     @Override
-    public void start() {
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        if (background != null) {
+            g.drawImage(background.getImage(), 0, 0, getWidth(), getHeight(), this);
+        }
+    }
 
+
+    @Override
+    public void start() {
+        gameWindow.showGame();
+        setVisible(true);
     }
 
     @Override

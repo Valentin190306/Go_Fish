@@ -34,5 +34,9 @@ public interface IGameView {
 
     void updateHand(IHand hand);
 
-    void updateScores(List<IPlayer> players); // Actualiza los puntajes en la vista
+    void updateScores(List<IPlayer> players);
+
+    void revalidate();
+
+    void repaint();
 }

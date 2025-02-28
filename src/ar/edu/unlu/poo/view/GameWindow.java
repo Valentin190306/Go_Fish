@@ -23,7 +23,7 @@ public class GameWindow extends JFrame implements IGameWindow {
     public GameWindow(IController controller) throws RemoteException {
         this.controller = controller;
         controller.setGameWindow(this);
-        this.gameView = new ConsoleGameView(this, controller);
+        this.gameView = new GraphicGameView(this, controller);
 
         this.menuCard = new MenuPanel(this, controller);
         this.lobbyCard = new LobbyPanel(controller);
@@ -124,15 +124,9 @@ public class GameWindow extends JFrame implements IGameWindow {
         showCard("Menu");
     }
 
-    public void startGame() {
-        if (gameView != null) {
-            showCard("View");
-        } else {
-            JOptionPane.showMessageDialog(this,
-                    "No hay una vista de juego disponible",
-                    "Error",
-                    JOptionPane.ERROR_MESSAGE);
-        }
+    public void showGame() {
+        lobbyCard.removeAll();
+        showCard("View");
     }
 
     @Override

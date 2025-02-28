@@ -117,10 +117,14 @@ public class MenuPanel extends JPanel {
                 String selectedItem = (String) comboBox.getSelectedItem();
 
                 if ("Consola".equals(selectedItem)) {
-                    return new ConsoleGameView(gameWindow, controller);
+                    if (!(gameWindow.getGameView() instanceof ConsoleGameView)) {
+                        return new ConsoleGameView(gameWindow, controller);
+                    }
                 }
                 else if ("Gráfica".equals(selectedItem)) {
-                    return new GraphicGameView(gameWindow,controller);
+                    if (!(gameWindow.getGameView() instanceof GraphicGameView)) {
+                        return new GraphicGameView(gameWindow, controller);
+                    }
                 }
             }
         } catch (NullPointerException e) {
