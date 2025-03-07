@@ -3,6 +3,10 @@ package ar.edu.unlu.poo.view;
 import ar.edu.unlu.poo.interfaces.IController;
 import ar.edu.unlu.poo.interfaces.IGameView;
 import ar.edu.unlu.poo.interfaces.IGameWindow;
+import ar.edu.unlu.poo.view.viewPanels.LobbyPanel;
+import ar.edu.unlu.poo.view.viewPanels.MenuPanel;
+import ar.edu.unlu.poo.view.viewPanels.RulesPanel;
+import ar.edu.unlu.poo.view.viewPanels.ScoresPanel;
 
 import javax.swing.*;
 import java.awt.*;

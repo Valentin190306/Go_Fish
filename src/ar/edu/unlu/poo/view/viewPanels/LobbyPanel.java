@@ -1,4 +1,4 @@
-package ar.edu.unlu.poo.view;
+package ar.edu.unlu.poo.view.viewPanels;
 
 import ar.edu.unlu.poo.interfaces.IController;
 import ar.edu.unlu.poo.interfaces.IPlayer;

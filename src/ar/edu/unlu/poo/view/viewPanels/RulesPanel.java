@@ -1,4 +1,6 @@
-package ar.edu.unlu.poo.view;
+package ar.edu.unlu.poo.view.viewPanels;
+
+import ar.edu.unlu.poo.view.GameWindow;
 
 import javax.swing.*;
 import java.awt.*;

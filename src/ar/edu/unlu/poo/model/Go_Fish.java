@@ -14,9 +14,7 @@ import ar.edu.unlu.rmimvc.observer.ObservableRemoto;
 import java.io.IOException;
 import java.io.Serializable;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class Go_Fish extends ObservableRemoto implements IGo_Fish, Serializable {
     private static Go_Fish instance = null;
@@ -24,6 +22,7 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish, Serializable 
     private final ArrayList<Player> players;
     private int currentPlayerIndex;
     private GameState gameState;
+    private Player currentPlayer;
     private Player targetPlayer = null;
     private Card queriedCard = null;
 
@@ -70,7 +69,8 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish, Serializable 
         if (players.isEmpty()) {
             throw new IllegalStateException("No hay jugadores en la partida para seleccionar el primer turno.");
         }
-        this.currentPlayerIndex = (int) (Math.random() * players.size());
+        currentPlayerIndex = (int) (Math.random() * players.size());
+        currentPlayer = players.get(currentPlayerIndex);
     }
 
     @Override
@@ -126,6 +126,7 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish, Serializable 
             throw new IllegalStateException("No hay jugadores para pasar el turno.");
         }
         currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
+        currentPlayer = players.get(currentPlayerIndex);
         gameNotifyObservers(GameState.TURN_SWITCH);
     }
 
@@ -296,7 +297,7 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish, Serializable 
         if (players.isEmpty()) {
             throw new IllegalStateException("No hay jugadores en la partida.");
         }
-        return players.get(currentPlayerIndex);
+        return currentPlayer;
     }
 
     @Override
@@ -315,8 +316,11 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish, Serializable 
 
     @Override
     public void reload() throws RemoteException {
-        this.deck = new Deck.Builder().build();
-        this.gameState = GameState.AWAITING_PLAYERS;
+        deck = new Deck.Builder().build();
+        gameState = GameState.AWAITING_PLAYERS;
+        currentPlayer = null;
+        targetPlayer = null;
+        queriedCard = null;
 
         for (Player player : players) {
             player.getHand().clear();
