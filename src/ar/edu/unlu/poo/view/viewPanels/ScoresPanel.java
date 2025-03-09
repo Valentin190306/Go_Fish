@@ -1,6 +1,6 @@
 package ar.edu.unlu.poo.view.viewPanels;
 
-import ar.edu.unlu.poo.interfaces.IController;
+import ar.edu.unlu.poo.interfaces.SemiController;
 import ar.edu.unlu.poo.view.GameWindow;
 
 import javax.swing.*;
@@ -10,10 +10,10 @@ import java.util.Map;
 
 public class ScoresPanel extends JPanel {
     private final GameWindow gameWindow;
-    private final IController controller;
+    private final SemiController controller;
     private LinkedHashMap<String, Integer> sortedScores;
 
-    public ScoresPanel(GameWindow gameWindow, IController controller) {
+    public ScoresPanel(GameWindow gameWindow, SemiController controller) {
         this.gameWindow = gameWindow;
         this.controller = controller;
         this.sortedScores = new LinkedHashMap<>();

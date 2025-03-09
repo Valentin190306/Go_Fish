@@ -1,6 +1,6 @@
 package ar.edu.unlu.poo.view.viewPanels;
 
-import ar.edu.unlu.poo.interfaces.IController;
+import ar.edu.unlu.poo.interfaces.SemiController;
 import ar.edu.unlu.poo.interfaces.IPlayer;
 
 import javax.swing.*;
@@ -9,11 +9,11 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class LobbyPanel extends JPanel {
-    private final IController controller;
+    private final SemiController controller;
     private final DefaultTableModel tableModel;
     private final JButton btnVotePlay;
 
-    public LobbyPanel(IController controller) {
+    public LobbyPanel(SemiController controller) {
         this.controller = controller;
         this.tableModel = new DefaultTableModel(new Object[]{"Jugador", "Estado"}, 0);
         this.btnVotePlay = new JButton("Votar para Jugar");

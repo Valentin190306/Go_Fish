@@ -6,7 +6,7 @@ import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.List;
 
-public interface IController extends IObservadorRemoto {
+public interface SemiController extends IObservadorRemoto {
 
     HashMap<String, Integer> getScores() throws RemoteException;
 

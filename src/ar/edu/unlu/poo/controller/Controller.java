@@ -1,6 +1,7 @@
 package ar.edu.unlu.poo.controller;
 
 import ar.edu.unlu.poo.interfaces.*;
+import ar.edu.unlu.poo.interfaces.SemiController;
 import ar.edu.unlu.poo.model.Player;
 import ar.edu.unlu.poo.model.enums.GameState;
 import ar.edu.unlu.poo.model.enums.Value;
@@ -11,7 +12,7 @@ import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.List;
 
-public class Controller implements IController, IControladorRemoto {
+public class Controller implements SemiController, IControladorRemoto {
     private IGo_Fish model = null;
     private IGameView view = null;
     private IGameWindow gameWindow = null;

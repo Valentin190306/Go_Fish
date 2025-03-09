@@ -1,6 +1,6 @@
 package ar.edu.unlu.poo.view;
 
-import ar.edu.unlu.poo.interfaces.IController;
+import ar.edu.unlu.poo.interfaces.SemiController;
 import ar.edu.unlu.poo.interfaces.IGameView;
 import ar.edu.unlu.poo.interfaces.IGameWindow;
 import ar.edu.unlu.poo.view.viewPanels.LobbyPanel;
@@ -15,7 +15,7 @@ import java.awt.event.WindowEvent;
 import java.rmi.RemoteException;
 
 public class GameWindow extends JFrame implements IGameWindow {
-    private final IController controller;
+    private final SemiController controller;
     private IGameView gameView;
     private String playerName = null;
     private final JPanel viewContainer;
@@ -24,7 +24,7 @@ public class GameWindow extends JFrame implements IGameWindow {
     private final LobbyPanel lobbyCard;
     private final ScoresPanel scoresCard;
 
-    public GameWindow(IController controller) throws RemoteException {
+    public GameWindow(SemiController controller) throws RemoteException {
         this.controller = controller;
         controller.setGameWindow(this);
         this.gameView = new GraphicGameView(this, controller);
