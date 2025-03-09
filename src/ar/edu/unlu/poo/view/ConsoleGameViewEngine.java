@@ -1,6 +1,7 @@
 package ar.edu.unlu.poo.view;
 
 import ar.edu.unlu.poo.interfaces.IController;
+import ar.edu.unlu.poo.model.enums.GameState;
 import ar.edu.unlu.rmimvc.RMIMVCException;
 import ar.edu.unlu.rmimvc.observer.IObservableRemoto;
 import ar.edu.unlu.rmimvc.observer.IObservadorRemoto;
@@ -103,6 +104,35 @@ public class ConsoleGameViewEngine implements IObservadorRemoto {
 
     @Override
     public void actualizar(IObservableRemoto iObservableRemoto, Object o) throws RemoteException {
-
+        if (o instanceof GameState gameState) {
+            try {
+                switch (gameState) {
+                    case AWAITING_PLAYERS -> {
+                    }
+                    case NEW_STATUS_PLAYER -> {
+                    }
+                    case READY -> {
+                    }
+                    case WAITING_ACTION -> {
+                    }
+                    case GO_FISH -> {
+                    }
+                    case TRANSFERRING_CARDS -> {
+                    }
+                    case PLAYER_COMPLETED_SET -> {
+                    }
+                    case TURN_SWITCH -> {
+                    }
+                    case GAME_OVER -> {
+                    }
+                    default -> throw new IllegalArgumentException("Estado inválido del modelo.");
+                }
+            } catch (Exception e) {
+                handleException(e);
+            }
+        }
+        else {
+            handleException(new IllegalArgumentException("Señal inválida del modelo."));
+        }
     }
 }
