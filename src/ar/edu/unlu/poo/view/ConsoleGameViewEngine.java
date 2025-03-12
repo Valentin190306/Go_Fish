@@ -1,7 +1,9 @@
 package ar.edu.unlu.poo.view;
 
 import ar.edu.unlu.poo.interfaces.*;
+import ar.edu.unlu.poo.model.Player;
 import ar.edu.unlu.poo.model.enums.GameState;
+import ar.edu.unlu.poo.model.enums.Value;
 import ar.edu.unlu.rmimvc.RMIMVCException;
 import ar.edu.unlu.rmimvc.observer.IObservableRemoto;
 import ar.edu.unlu.rmimvc.observer.IObservadorRemoto;
@@ -17,11 +19,11 @@ public class ConsoleGameViewEngine extends JPanel implements IObservadorRemoto, 
     private final GameWindow gameWindow;
     private final JTextArea consoleArea;
     private final JTextField inputField;
-    private final SemiController controller;
+    private final ISemiController controller;
     private String placeholder;
     private boolean isGameOver = false;
 
-    public ConsoleGameView(GameWindow gameWindow, SemiController controller) {
+    public ConsoleGameView(GameWindow gameWindow, ISemiController controller) {
         this.gameWindow = gameWindow;
         this.controller = controller;
         this.consoleArea = new JTextArea();

@@ -13,11 +13,11 @@ public class ConsoleGameView extends JPanel implements IGameView {
     private final GameWindow gameWindow;
     private final JTextArea consoleArea;
     private final JTextField inputField;
-    private final SemiController controller;
+    private final IController controller;
     private String placeholder;
     private boolean isGameOver = false;
 
-    public ConsoleGameView(GameWindow gameWindow, SemiController controller) {
+    public ConsoleGameView(GameWindow gameWindow, IController controller) {
         this.gameWindow = gameWindow;
         this.controller = controller;
         this.consoleArea = new JTextArea();

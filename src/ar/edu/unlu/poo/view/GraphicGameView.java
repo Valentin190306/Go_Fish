@@ -11,12 +11,12 @@ import java.util.Objects;
 
 public class GraphicGameView extends JPanel implements IGameView {
     private final GameWindow gameWindow;
-    private SemiController controller;
+    private IController controller;
     private final ImageIcon background;
     private final FishermenPanel fishermenPanel;
     private final HandPanel handPanel;
 
-    public GraphicGameView(GameWindow gameWindow, SemiController controller) {
+    public GraphicGameView(GameWindow gameWindow, IController controller) {
         this.gameWindow = gameWindow;
         this.controller = controller;
         this.background = new ImageIcon(Objects.requireNonNull(getClass().getResource("/ar/edu/unlu/poo/view/assets/backgrounds/background.png")));
