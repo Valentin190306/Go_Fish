@@ -42,7 +42,7 @@ public interface IGo_Fish extends IObservableRemoto {
 
     ArrayList<IPlayer> getPlayers() throws RemoteException;
 
-    IPlayer getCurrentPlayerPlayingTurn() throws RemoteException;
+    IPlayer getCurrentPlayerInTurn() throws RemoteException;
 
     HashMap<String, Integer> getScoreList() throws RemoteException;
 

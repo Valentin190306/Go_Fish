@@ -293,7 +293,7 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish, Serializable 
     }
 
     @Override
-    public IPlayer getCurrentPlayerPlayingTurn() throws RemoteException {
+    public IPlayer getCurrentPlayerInTurn() throws RemoteException {
         if (players.isEmpty()) {
             throw new IllegalStateException("No hay jugadores en la partida.");
         }

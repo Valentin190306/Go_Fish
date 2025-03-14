@@ -14,6 +14,8 @@ public interface ISemiController extends IObservadorRemoto {
 
     void unregisterLocalObserver(IObservadorRemoto observer);
 
+    IPlayer fetchClientPlayer() throws RemoteException;
+
     ArrayList<IPlayer> fetchPlayers() throws RemoteException;
 
     IPlayer fetchPlayer(IPlayer player) throws RemoteException;
@@ -21,6 +23,10 @@ public interface ISemiController extends IObservadorRemoto {
     ICard fetchQueriedCard() throws RemoteException;
 
     IPlayer fetchPlayingPlayer() throws RemoteException;
+
+    IPlayer fetchTargetPlayer() throws RemoteException;
+
+    IDeck fetchDeck() throws RemoteException;
 
     boolean handlePlayerInput(String input) throws RemoteException;
 

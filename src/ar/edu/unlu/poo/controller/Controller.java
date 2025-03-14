@@ -143,7 +143,7 @@ public class Controller implements IController, IControladorRemoto {
 
     private void clientPlayerReceiveCards() {
         try {
-            if (model.getCurrentPlayerPlayingTurn().equals(clientPlayer)) {
+            if (model.getCurrentPlayerInTurn().equals(clientPlayer)) {
                 view.notifyReceivedCards(model.getPlayer((Player) clientPlayer)
                         .getHand()
                         .getTransferenceCards());
@@ -158,14 +158,14 @@ public class Controller implements IController, IControladorRemoto {
 
     private void playerGoneFishing() {
         try {
-            if (model.getCurrentPlayerPlayingTurn().equals(clientPlayer)) {
+            if (model.getCurrentPlayerInTurn().equals(clientPlayer)) {
                 view.notifyClientPlayerGoneFishing();
                 view.notifyFishedCard(model.getPlayer((Player) clientPlayer)
                         .getHand()
                         .getTransferenceCards()
                         .get(0));
             } else {
-                view.notifyPlayerGoneFishing(model.getCurrentPlayerPlayingTurn());
+                view.notifyPlayerGoneFishing(model.getCurrentPlayerInTurn());
             }
         } catch (Exception e) {
             view.handleException(e);
@@ -183,7 +183,7 @@ public class Controller implements IController, IControladorRemoto {
     private void handlePlayerTurn() throws RemoteException {
         try {
             boolean clientIsCurrentPlayer = model
-                    .getCurrentPlayerPlayingTurn()
+                    .getCurrentPlayerInTurn()
                     .equals(clientPlayer);
             view.setPlayerTurn(clientIsCurrentPlayer);
         } catch (Exception e) {
@@ -202,7 +202,7 @@ public class Controller implements IController, IControladorRemoto {
 
     private void notifyTurnSwitch() throws RemoteException {
         try {
-            view.notifyTurnSwitch(model.getCurrentPlayerPlayingTurn());
+            view.notifyTurnSwitch(model.getCurrentPlayerInTurn());
         } catch (Exception e) {
             view.handleException(e);
         }
@@ -221,10 +221,10 @@ public class Controller implements IController, IControladorRemoto {
         try {
             if (model.getTargetPlayer() != null) {
                 boolean clientIsCurrentPlayer = model
-                        .getCurrentPlayerPlayingTurn()
+                        .getCurrentPlayerInTurn()
                         .equals(clientPlayer);
                 view.notifyPlayerAction(model.getTargetPlayer(),
-                        model.getCurrentPlayerPlayingTurn(), model.getQueriedCard(),
+                        model.getCurrentPlayerInTurn(), model.getQueriedCard(),
                         clientIsCurrentPlayer);
             }
         } catch (Exception e) {

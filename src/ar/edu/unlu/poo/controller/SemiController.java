@@ -1,9 +1,6 @@
 package ar.edu.unlu.poo.controller;
 
-import ar.edu.unlu.poo.interfaces.ICard;
-import ar.edu.unlu.poo.interfaces.IGo_Fish;
-import ar.edu.unlu.poo.interfaces.IPlayer;
-import ar.edu.unlu.poo.interfaces.ISemiController;
+import ar.edu.unlu.poo.interfaces.*;
 import ar.edu.unlu.poo.model.Player;
 import ar.edu.unlu.poo.model.enums.GameState;
 import ar.edu.unlu.poo.model.enums.Value;
@@ -14,7 +11,7 @@ import ar.edu.unlu.rmimvc.observer.IObservadorRemoto;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
-public class SemiController implements IControladorRemoto, IObservadorRemoto, ISemiController {
+public class SemiController implements IControladorRemoto, ISemiController {
     private IGo_Fish model;
     private final ArrayList<IObservadorRemoto> clientSideObservers;
     private IPlayer clientPlayer;
@@ -44,6 +41,12 @@ public class SemiController implements IControladorRemoto, IObservadorRemoto, IS
     }
 
     @Override
+    public IPlayer fetchClientPlayer() throws RemoteException {
+        clientPlayer = model.getPlayer((Player) clientPlayer);
+        return clientPlayer;
+    }
+
+    @Override
     public ArrayList<IPlayer> fetchPlayers() throws RemoteException {
         return model.getPlayers();
     }
@@ -60,7 +63,17 @@ public class SemiController implements IControladorRemoto, IObservadorRemoto, IS
 
     @Override
     public IPlayer fetchPlayingPlayer() throws RemoteException {
-        return model.getCurrentPlayerPlayingTurn();
+        return model.getCurrentPlayerInTurn();
+    }
+
+    @Override
+    public IPlayer fetchTargetPlayer() throws RemoteException {
+        return model.getTargetPlayer();
+    }
+
+    @Override
+    public IDeck fetchDeck() throws RemoteException {
+        return model.getDeck();
     }
 
     @Override
@@ -118,5 +131,6 @@ public class SemiController implements IControladorRemoto, IObservadorRemoto, IS
 
     @Override
     public void actualizar(IObservableRemoto iObservableRemoto, Object o) throws RemoteException {
+
     }
 }

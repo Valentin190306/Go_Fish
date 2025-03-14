@@ -1,9 +1,7 @@
 package ar.edu.unlu.poo.view;
 
 import ar.edu.unlu.poo.interfaces.*;
-import ar.edu.unlu.poo.model.Player;
 import ar.edu.unlu.poo.model.enums.GameState;
-import ar.edu.unlu.poo.model.enums.Value;
 import ar.edu.unlu.rmimvc.RMIMVCException;
 import ar.edu.unlu.rmimvc.observer.IObservableRemoto;
 import ar.edu.unlu.rmimvc.observer.IObservadorRemoto;
@@ -15,12 +13,13 @@ import java.awt.event.FocusEvent;
 import java.rmi.RemoteException;
 import java.util.List;
 
-public class ConsoleGameViewEngine extends JPanel implements IObservadorRemoto, IGameView {
-    private final GameWindow gameWindow;
-    private final JTextArea consoleArea;
-    private final JTextField inputField;
-    private final ISemiController controller;
+public class ConsoleGameViewEngine extends JPanel implements IObservadorRemoto {
+    private GameWindow gameWindow;
+    private JTextArea consoleArea;
+    private JTextField inputField;
+    private ISemiController controller;
     private String placeholder;
+    private boolean isPlayerTurn;
     private boolean isGameOver = false;
 
     public ConsoleGameView(GameWindow gameWindow, ISemiController controller) {
@@ -93,35 +92,51 @@ public class ConsoleGameViewEngine extends JPanel implements IObservadorRemoto, 
         setVisible(true);
     }
 
-    @Override
-    public void notifyGameIntroduction(IPlayer player) {
-        appendToConsole("> Bienvenido jugador " + player.getName() + "...");
+    public void notifyGameIntroduction() {
+        try {
+            appendToConsole("> Bienvenido jugador " + controller.fetchClientPlayer().getName() + "...");
+        } catch (RemoteException e) {
+            handleException(e);
+        }
     }
 
-    @Override
-    public void notifyTurnSwitch(IPlayer player) {
-        //consoleArea.setText("");
-        //consoleArea.setCaretPosition(0);
-        appendToConsole("> Turno de " + player.getName());
+    public void notifyTurnSwitch() {
+        try {
+            appendToConsole("> Turno de " + controller.fetchPlayingPlayer().getName());
+        } catch (Exception e) {
+            handleException(e);
+        }
     }
 
-    @Override
     public void notifyGameOver() {
         appendToConsole("> No hay mas cartas en estas aguas...\n> El juego ha terminado.");
     }
 
-    @Override
-    public void notifyPlayerAction(IPlayer targetPlayer, IPlayer player, ICard queriedCard, boolean isPlayerTurn) {
+    public void notifyPlayerAction() {
         String[] vocabulary = {"reclama", "pide", "exige", "suplica", "mendiga"};
-        String expression = vocabulary[(int)(Math.random() * vocabulary.length)];
-        appendToConsole(isPlayerTurn
-                ? "> Le " + expression + "s un " + queriedCard.getNumber().getValue() + " a " + targetPlayer.getName() + "..."
-                : "> " + player.getName() + " " + expression + " un " + queriedCard.getNumber() + " a " + targetPlayer.getName() + "...");
+        String expression = vocabulary[(int) (Math.random() * vocabulary.length)];
+
+        try {
+            String cardValue = controller
+                    .fetchQueriedCard()
+                    .getNumber()
+                    .getValue();
+
+            String targetPlayer = controller
+                    .fetchTargetPlayer()
+                    .getName();
+
+            String message = isPlayerTurn
+                    ? String.format("> Le %ss un %s a %s...", expression, cardValue, targetPlayer)
+                    : String.format("> %s %s un %s a %s...", controller.fetchPlayingPlayer().getName(), expression, cardValue, targetPlayer);
+
+            appendToConsole(message);
+        } catch (Exception e) {
+            handleException(e);
+        }
     }
 
-
-    @Override
-    public void handleException(Exception e) {
+    private void handleException(Exception e) {
         if (e instanceof RMIMVCException) {
             JOptionPane.showMessageDialog(null,
                     e.getMessage(),
@@ -132,84 +147,136 @@ public class ConsoleGameViewEngine extends JPanel implements IObservadorRemoto, 
         }
     }
 
-    @Override
-    public void notifyAmountOfSets(int amount) {
-        appendToConsole("> Tienes " + amount + " sets...");
+    public void notifyAmountOfSets() {
+        try {
+            appendToConsole("> Tienes " + controller.fetchDeck().size() + " sets...");
+        } catch (Exception e) {
+            handleException(e);
+        }
     }
 
-    @Override
-    public void notifyClientPlayerGoneFishing() {
+    private void notifyClientPlayerGoneFishing() {
         appendToConsole("> Has ido a pescar...");
     }
 
-    @Override
-    public void notifyFishedCard(ICard card) {
-        appendToConsole("> Pescaste un " + card.getNumber().getValue() + " de " + card.getSuit().getValue() + "...");
+    private void notifyFishedCard() {
+        try {
+            ICard fishedCard = controller.fetchClientPlayer()
+                    .getHand()
+                    .getTransferenceCards()
+                    .get(0);
+
+            appendToConsole(String.format("> Pescaste un %s de %s...", fishedCard.getNumber().getValue(), fishedCard.getSuit().getValue()));
+        } catch (Exception e) {
+            handleException(e);
+        }
     }
 
-    @Override
-    public void notifyPlayerGoneFishing(IPlayer player) {
+    private void notifyPlayerGoneFishing(IPlayer player) {
         appendToConsole("> " + player.getName() + " fue a pescar...");
     }
 
-    @Override
-    public void setPlayerTurn(boolean isPlayerTurn) {
-        inputField.setEnabled(isPlayerTurn);
+    private void setPlayerTurn() {
         appendToConsole("__________________________________________________");
         appendToConsole(isPlayerTurn ? "> Es tu turno. Haz tu jugada." : "> Esperando el turno del oponente...");
     }
 
-    @Override
-    public void notifyReceivedCards(java.util.List<ICard> cards) {
-        appendToConsole("> Cartas recibidas:");
-        for (ICard card : cards) {
-            appendToConsole("\t" + card.getNumber().getValue() + " de " + card.getSuit().getValue());
+    private void notifyReceivedCards() {
+        try {
+            List<ICard> cards = controller
+                    .fetchClientPlayer()
+                    .getHand()
+                    .getTransferenceCards();
+
+            appendToConsole("> Cartas recibidas:");
+            for (ICard card : cards) {
+                appendToConsole("\t" + card.getNumber().getValue() + " de " + card.getSuit().getValue());
+            }
+        } catch (Exception e) {
+            handleException(e);
         }
     }
 
-    @Override
-    public void notifyLostCards(java.util.List<ICard> cards) {
-        appendToConsole("> Cartas cedidas:");
-        for (ICard card : cards) {
-            appendToConsole("\t" + card.getNumber().getValue() + " de " + card.getSuit().getValue());
+    private void notifyLostCards() {
+        try {
+            List<ICard> cards = controller
+                    .fetchClientPlayer()
+                    .getHand()
+                    .getTransferenceCards();
+
+            appendToConsole("> Cartas cedidas:");
+            for (ICard card : cards) {
+                appendToConsole("\t" + card.getNumber().getValue() + " de " + card.getSuit().getValue());
+            }
+        } catch (Exception e) {
+            handleException(e);
         }
     }
 
-    @Override
-    public void updateHand(IHand hand) {
-        appendToConsole("> Tu mano:");
-        for (ICard card : hand.getCards()) {
-            appendToConsole("\t" + card.getNumber().getValue() + " de " + card.getSuit().getValue());
+    private void updateHand() {
+        try {
+            List<ICard> cards = controller
+                    .fetchClientPlayer()
+                    .getHand()
+                    .getTransferenceCards();
+
+            appendToConsole("> Tu mano:");
+            for (ICard card : cards) {
+                appendToConsole("\t" + card.getNumber().getValue() + " de " + card.getSuit().getValue());
+            }
+        } catch (Exception e) {
+            handleException(e);
         }
     }
 
-    @Override
-    public void showPlayersAndCards(IDeck deck, java.util.List<IPlayer> players) {
-        appendToConsole("> " + deck.size() + " cartas en pila...");
-        appendToConsole("> Cartas en la mesa:");
-        for (IPlayer player : players) {
-            appendToConsole("\t" + player.getName() + ": " + player.getHand().size() + " cartas");
+    private void showPlayersAndCards() {
+        try {
+            IDeck deck = controller.fetchDeck();
+            List<IPlayer> players = controller.fetchPlayers();
+
+            appendToConsole("> " + deck.size() + " cartas en pila...");
+            appendToConsole("> Cartas en la mesa:");
+            for (IPlayer player : players) {
+                appendToConsole("\t" + player.getName() + ": " + player.getHand().size() + " cartas");
+            }
+        } catch (Exception e) {
+            handleException(e);
         }
     }
 
-    @Override
-    public void updateScores(List<IPlayer> players) {
-        appendToConsole("> Puntajes:");
-        for (IPlayer player : players) {
-            appendToConsole("\t" + player.getName() + ": " + player.getHand().getScore());
+    private void updateScores() {
+        try {
+            List<IPlayer> players = controller.fetchPlayers();
+
+            appendToConsole("> Puntajes:");
+            for (IPlayer player : players) {
+                appendToConsole("\t" + player.getName() + ": " + player.getHand().getScore());
+            }
+        } catch (Exception e) {
+            handleException(e);
         }
     }
 
-    @Override
-    public void spawnExitOption() {
+    private void spawnExitOption() {
         this.placeholder = "Ingrese -exit- para volver al menu principal.";
         this.isGameOver = true;
+    }
+
+    private void updateTurnState() {
+        try {
+            isPlayerTurn = controller
+                    .fetchPlayingPlayer()
+                    .equals(controller.fetchClientPlayer());
+        } catch (RemoteException e) {
+            handleException(e);
+        }
     }
 
     @Override
     public void actualizar(IObservableRemoto iObservableRemoto, Object o) throws RemoteException {
         if (o instanceof GameState gameState) {
             try {
+                updateTurnState();
                 switch (gameState) {
                     case AWAITING_PLAYERS -> {
                     }
@@ -229,7 +296,6 @@ public class ConsoleGameViewEngine extends JPanel implements IObservadorRemoto, 
                     }
                     case GAME_OVER -> {
                     }
-                    default -> throw new IllegalArgumentException("Estado inválido del modelo.");
                 }
             } catch (Exception e) {
                 handleException(e);
