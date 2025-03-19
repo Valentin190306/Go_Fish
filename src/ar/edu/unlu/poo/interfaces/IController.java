@@ -1,33 +1,37 @@
 package ar.edu.unlu.poo.interfaces;
 
+import ar.edu.unlu.rmimvc.observer.IObservableRemoto;
 import ar.edu.unlu.rmimvc.observer.IObservadorRemoto;
 
 import java.rmi.RemoteException;
-import java.util.HashMap;
-import java.util.List;
+import java.util.ArrayList;
 
-public interface IController extends IObservadorRemoto {
+public interface IController {
+    void connect() throws RemoteException;
 
-    HashMap<String, Integer> getScores() throws RemoteException;
+    void disconnect(IObservadorRemoto clientViewObserver, IPlayer clientPlayer) throws RemoteException;
 
-    IPlayer getClientPlayer() throws RemoteException;
+    void registerLocalObserver(IObservadorRemoto observer);
 
-    void changeClientPlayerName(String name) throws RemoteException;
+    void unregisterLocalObserver(IObservadorRemoto observer);
 
-    void setClientPlayerReady() throws RemoteException;
+    IPlayer fetchClientPlayer() throws RemoteException;
 
-    void setGameWindow(IGameWindow gameWindow) throws RemoteException;
+    ArrayList<IPlayer> fetchPlayers() throws RemoteException;
 
-    List<IPlayer> getPlayerList() throws RemoteException;
+    IPlayer fetchPlayer(IPlayer player) throws RemoteException;
 
-    void disconnect() throws RemoteException;
+    ICard fetchQueriedCard() throws RemoteException;
+
+    IPlayer fetchPlayingPlayer() throws RemoteException;
+
+    IPlayer fetchTargetPlayer() throws RemoteException;
+
+    IDeck fetchDeck() throws RemoteException;
 
     boolean handlePlayerInput(String input) throws RemoteException;
 
-    void connect() throws RemoteException;
-
-    void setView(IGameView view) throws RemoteException;
-
     boolean handlePlayerExit(String input) throws RemoteException;
-}
 
+    <T extends IObservableRemoto> void setModeloRemoto(T t) throws RemoteException;
+}

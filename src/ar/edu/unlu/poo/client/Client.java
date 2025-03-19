@@ -1,6 +1,5 @@
 package ar.edu.unlu.poo.client;
 
-import ar.edu.unlu.poo.controller.Controller;
 import ar.edu.unlu.poo.interfaces.IGameWindow;
 import ar.edu.unlu.poo.view.GameWindow;
 import ar.edu.unlu.rmimvc.RMIMVCException;

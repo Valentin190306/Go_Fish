@@ -30,3 +30,4 @@ public class Card implements ICard, Serializable {
         return value.getValue() + " de " + suit.getValue();
     }
 }
+
