@@ -86,6 +86,17 @@ public class ConsoleGameView extends JPanel implements IGameView {
         consoleArea.setCaretPosition(consoleArea.getDocument().getLength());
     }
 
+    private void handleException(Exception e) {
+        if (e instanceof RMIMVCException) {
+            JOptionPane.showMessageDialog(null,
+                    e.getMessage(),
+                    "RMI Error",
+                    JOptionPane.ERROR_MESSAGE);
+        } else {
+            appendToConsole("!> " + e.getMessage());
+        }
+    }
+
     @Override
     public void start() {
         gameWindow.showGame();
@@ -96,14 +107,6 @@ public class ConsoleGameView extends JPanel implements IGameView {
         try {
             appendToConsole("> Bienvenido jugador " + controller.fetchClientPlayer().getName() + "...");
         } catch (RemoteException e) {
-            handleException(e);
-        }
-    }
-
-    public void notifyTurnSwitch() {
-        try {
-            appendToConsole("> Turno de " + controller.fetchPlayingPlayer().getName());
-        } catch (Exception e) {
             handleException(e);
         }
     }
@@ -133,17 +136,6 @@ public class ConsoleGameView extends JPanel implements IGameView {
             appendToConsole(message);
         } catch (Exception e) {
             handleException(e);
-        }
-    }
-
-    private void handleException(Exception e) {
-        if (e instanceof RMIMVCException) {
-            JOptionPane.showMessageDialog(null,
-                    e.getMessage(),
-                    "RMI Error",
-                    JOptionPane.ERROR_MESSAGE);
-        } else {
-            appendToConsole("!> " + e.getMessage());
         }
     }
 
@@ -290,31 +282,28 @@ public class ConsoleGameView extends JPanel implements IGameView {
             try {
                 updateTurnState();
                 switch (gameState) {
-                    case AWAITING_PLAYERS -> {
-                    }
-                    case NEW_STATUS_PLAYER -> {
-                        handleException(new Exception("Estado inválido del modelo."));
-                    }
-                    case READY -> {
+                    case READY, TURN_SWITCH -> {
                         notifyGameIntroduction();
                         showPlayersAndCards();
                         updateHand();
-                        notifyTurnSwitch();
-                    }
-                    case WAITING_ACTION -> {
+                        notifyPlayerTurn();
                     }
                     case GO_FISH -> {
                         notifyPlayerGoneFishing();
+                        notifyFishedCard();
                     }
                     case TRANSFERRING_CARDS -> {
-                        // TODO modificar los métodos necesarios para que solo se muestren a los jugadores pertinentes
                     }
                     case PLAYER_COMPLETED_SET -> {
-                        // TODO idem
-                    }
-                    case TURN_SWITCH -> {
+                        notifyAmountOfSets();
                     }
                     case GAME_OVER -> {
+                        notifyGameOver();
+                        updateScores();
+                        spawnExitOption();
+                    }
+                    case WAITING_ACTION, AWAITING_PLAYERS, NEW_STATUS_PLAYER -> {
+                        handleException(new Exception("Estado del modelo fuera de orden."));
                     }
                 }
             } catch (Exception e) {
