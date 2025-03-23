@@ -26,7 +26,7 @@ public class Controller implements IControladorRemoto, IController {
     }
 
     @Override
-    public void disconnect(IObservadorRemoto clientViewObserver, IPlayer clientPlayer) throws RemoteException {
+    public void disconnect(IObservadorRemoto clientViewObserver) throws RemoteException {
         model.disconnectPlayer(clientViewObserver, (Player) clientPlayer);
     }
 

@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public interface IController {
     void connect() throws RemoteException;
 
-    void disconnect(IObservadorRemoto clientViewObserver, IPlayer clientPlayer) throws RemoteException;
+    void disconnect(IObservadorRemoto clientViewObserver) throws RemoteException;
 
     void registerLocalObserver(IObservadorRemoto observer);
 

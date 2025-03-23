@@ -12,11 +12,10 @@ import ar.edu.unlu.rmimvc.observer.IObservadorRemoto;
 import ar.edu.unlu.rmimvc.observer.ObservableRemoto;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.*;
 
-public class Go_Fish extends ObservableRemoto implements IGo_Fish, Serializable {
+public class Go_Fish extends ObservableRemoto implements IGo_Fish {
     private static Go_Fish instance = null;
     private Deck deck;
     private final ArrayList<Player> players;

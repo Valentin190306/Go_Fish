@@ -1,11 +1,14 @@
 package ar.edu.unlu.poo.view;
 
+import ar.edu.unlu.poo.interfaces.IController;
 import ar.edu.unlu.poo.interfaces.IGameView;
 import ar.edu.unlu.poo.interfaces.IGameWindow;
 import ar.edu.unlu.poo.view.viewPanels.LobbyPanel;
 import ar.edu.unlu.poo.view.viewPanels.MenuPanel;
 import ar.edu.unlu.poo.view.viewPanels.RulesPanel;
 import ar.edu.unlu.poo.view.viewPanels.ScoresPanel;
+import ar.edu.unlu.rmimvc.observer.IObservableRemoto;
+import ar.edu.unlu.rmimvc.observer.IObservadorRemoto;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,7 +16,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.rmi.RemoteException;
 
-public class GameWindow extends JFrame implements IGameWindow {
+public class GameWindow extends JFrame implements IGameWindow, IObservadorRemoto {
     private final IController controller;
     private IGameView gameView;
     private String playerName = null;
@@ -25,7 +28,6 @@ public class GameWindow extends JFrame implements IGameWindow {
 
     public GameWindow(IController controller) throws RemoteException {
         this.controller = controller;
-        controller.setGameWindow(this);
         this.gameView = new GraphicGameView(this, controller);
 
         this.menuCard = new MenuPanel(this, controller);
@@ -46,8 +48,8 @@ public class GameWindow extends JFrame implements IGameWindow {
 
                 if (confirm == JOptionPane.YES_OPTION) {
                     try {
-                        if (controller.getClientPlayer() != null) {
-                            controller.disconnect();
+                        if (controller.fetchClientPlayer() != null) {
+                            controller.disconnect(this);
                         }
                     } catch (RemoteException ex) {
                         messagePopUp(ex);
@@ -137,5 +139,10 @@ public class GameWindow extends JFrame implements IGameWindow {
     @Override
     public void start() {
         setVisible(true);
+    }
+
+    @Override
+    public void actualizar(IObservableRemoto iObservableRemoto, Object o) throws RemoteException {
+
     }
 }

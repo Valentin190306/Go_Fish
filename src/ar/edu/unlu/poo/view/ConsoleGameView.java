@@ -185,32 +185,23 @@ public class ConsoleGameView extends JPanel implements IGameView {
         }
     }
 
-    private void notifyReceivedCards() {
+    private void notifyTransferredCards() {
         try {
+            IPlayer clientPlayer = controller.fetchClientPlayer();
+            IPlayer turnPlayer = controller.fetchPlayingPlayer();
+            IPlayer targetPlayer = controller.fetchTargetPlayer();
+
             List<ICard> cards = controller
                     .fetchClientPlayer()
                     .getHand()
                     .getTransferenceCards();
 
-            appendToConsole("> Cartas recibidas:");
-            for (ICard card : cards) {
-                appendToConsole("\t" + card.getNumber().getValue() + " de " + card.getSuit().getValue());
-            }
-        } catch (Exception e) {
-            handleException(e);
-        }
-    }
+            if (clientPlayer.equals(targetPlayer) || clientPlayer.equals(turnPlayer)) {
+                appendToConsole(clientPlayer.equals(targetPlayer) ? "> Cartas cedidas:" : "> Cartas adquiridas:");
 
-    private void notifyLostCards() {
-        try {
-            List<ICard> cards = controller
-                    .fetchClientPlayer()
-                    .getHand()
-                    .getTransferenceCards();
-
-            appendToConsole("> Cartas cedidas:");
-            for (ICard card : cards) {
-                appendToConsole("\t" + card.getNumber().getValue() + " de " + card.getSuit().getValue());
+                for (ICard card : cards) {
+                    appendToConsole("\t" + card.getNumber().getValue() + " de " + card.getSuit().getValue());
+                }
             }
         } catch (Exception e) {
             handleException(e);
@@ -293,6 +284,7 @@ public class ConsoleGameView extends JPanel implements IGameView {
                         notifyFishedCard();
                     }
                     case TRANSFERRING_CARDS -> {
+                        notifyTransferredCards();
                     }
                     case PLAYER_COMPLETED_SET -> {
                         notifyAmountOfSets();

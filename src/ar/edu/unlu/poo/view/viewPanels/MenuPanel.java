@@ -1,6 +1,8 @@
 package ar.edu.unlu.poo.view.viewPanels;
 
+import ar.edu.unlu.poo.interfaces.IController;
 import ar.edu.unlu.poo.interfaces.IGameView;
+import ar.edu.unlu.poo.view.ConsoleGameView;
 import ar.edu.unlu.poo.view.GameWindow;
 import ar.edu.unlu.poo.view.GraphicGameView;
 
@@ -118,7 +120,7 @@ public class MenuPanel extends JPanel {
                 String selectedItem = (String) comboBox.getSelectedItem();
 
                 if ("Consola".equals(selectedItem)) {
-                    if (!(gameWindow.getGameView() instanceof ConsoleGameView)) {
+                    if (gameWindow.getGameView() ) {
                         return new ConsoleGameView(gameWindow, controller);
                     }
                 }
