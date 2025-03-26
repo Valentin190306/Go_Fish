@@ -5,11 +5,12 @@ import ar.edu.unlu.rmimvc.observer.IObservadorRemoto;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public interface IController {
     void connect() throws RemoteException;
 
-    void disconnect(IObservadorRemoto clientViewObserver) throws RemoteException;
+    void disconnect() throws RemoteException;
 
     void registerLocalObserver(IObservadorRemoto observer);
 
@@ -28,6 +29,10 @@ public interface IController {
     IPlayer fetchTargetPlayer() throws RemoteException;
 
     IDeck fetchDeck() throws RemoteException;
+
+    HashMap<String, Integer> fetchScores() throws RemoteException;
+
+    void setClientPlayerReady() throws RemoteException;
 
     boolean handlePlayerInput(String input) throws RemoteException;
 

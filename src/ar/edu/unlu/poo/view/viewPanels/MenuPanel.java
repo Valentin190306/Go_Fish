@@ -120,7 +120,7 @@ public class MenuPanel extends JPanel {
                 String selectedItem = (String) comboBox.getSelectedItem();
 
                 if ("Consola".equals(selectedItem)) {
-                    if (gameWindow.getGameView() ) {
+                    if (gameWindow.getGameView() instanceof ConsoleGameView) {
                         return new ConsoleGameView(gameWindow, controller);
                     }
                 }

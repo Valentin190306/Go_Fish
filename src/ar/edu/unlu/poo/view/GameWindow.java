@@ -49,7 +49,7 @@ public class GameWindow extends JFrame implements IGameWindow, IObservadorRemoto
                 if (confirm == JOptionPane.YES_OPTION) {
                     try {
                         if (controller.fetchClientPlayer() != null) {
-                            controller.disconnect(this);
+                            controller.disconnect();
                         }
                     } catch (RemoteException ex) {
                         messagePopUp(ex);

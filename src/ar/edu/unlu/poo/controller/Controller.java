@@ -10,11 +10,16 @@ import ar.edu.unlu.rmimvc.observer.IObservadorRemoto;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Controller implements IControladorRemoto, IController {
     private IGo_Fish model;
     private final ArrayList<IObservadorRemoto> clientSideObservers;
     private IPlayer clientPlayer;
+
+    public Controller() throws RemoteException {
+        this.clientSideObservers = new ArrayList<>();
+    }
 
     public Controller(ArrayList<IObservadorRemoto> clientSideObservers) throws RemoteException {
         this.clientSideObservers = clientSideObservers;
@@ -26,8 +31,8 @@ public class Controller implements IControladorRemoto, IController {
     }
 
     @Override
-    public void disconnect(IObservadorRemoto clientViewObserver) throws RemoteException {
-        model.disconnectPlayer(clientViewObserver, (Player) clientPlayer);
+    public void disconnect() throws RemoteException {
+        model.disconnectPlayer(this, (Player) clientPlayer);
     }
 
     @Override
@@ -74,6 +79,16 @@ public class Controller implements IControladorRemoto, IController {
     @Override
     public IDeck fetchDeck() throws RemoteException {
         return model.getDeck();
+    }
+
+    @Override
+    public HashMap<String, Integer> fetchScores() throws RemoteException {
+        return model.getScoreList();
+    }
+
+    @Override
+    public void setClientPlayerReady() throws RemoteException {
+        model.setPlayerReady((Player) clientPlayer);
     }
 
     @Override
@@ -129,7 +144,6 @@ public class Controller implements IControladorRemoto, IController {
         this.model = (IGo_Fish) t;
     }
 
-    @Override
     public void actualizar(IObservableRemoto iObservableRemoto, Object o) throws RemoteException {
 
     }

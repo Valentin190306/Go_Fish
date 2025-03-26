@@ -1,9 +1,12 @@
 package ar.edu.unlu.poo.client;
 
+import ar.edu.unlu.poo.controller.Controller;
+import ar.edu.unlu.poo.interfaces.IController;
 import ar.edu.unlu.poo.interfaces.IGameWindow;
 import ar.edu.unlu.poo.view.GameWindow;
 import ar.edu.unlu.rmimvc.RMIMVCException;
 import ar.edu.unlu.rmimvc.cliente.Cliente;
+import ar.edu.unlu.rmimvc.cliente.IControladorRemoto;
 
 import javax.swing.*;
 import java.rmi.RemoteException;
@@ -15,10 +18,10 @@ public class Client {
     private static final int serverPort = 1234;
 
     public static void main (String[] args) throws RemoteException {
-        Controller controller = new Controller();
+        IController controller = new Controller();
         try {
             Cliente client = new Cliente(clientHost, clientPort, serverHost, serverPort);
-            client.iniciar(controller);
+            client.iniciar((IControladorRemoto) controller);
             IGameWindow gameWindow = new GameWindow(controller);
             gameWindow.start();
         } catch (RemoteException | RMIMVCException e) {

@@ -1,5 +1,6 @@
 package ar.edu.unlu.poo.view.viewPanels;
 
+import ar.edu.unlu.poo.interfaces.IController;
 import ar.edu.unlu.poo.interfaces.IPlayer;
 
 import javax.swing.*;
@@ -44,7 +45,7 @@ public class LobbyPanel extends JPanel {
 
     private void voteToStartGame() {
         try {
-            if (controller.getClientPlayer().toString().equals("READY")) return;
+            if (controller.fetchClientPlayer().toString().equals("READY")) return;
             btnVotePlay.setEnabled(false);
             controller.setClientPlayerReady();
         } catch (Exception e) {

@@ -1,5 +1,6 @@
 package ar.edu.unlu.poo.view.viewPanels;
 
+import ar.edu.unlu.poo.interfaces.IController;
 import ar.edu.unlu.poo.view.GameWindow;
 
 import javax.swing.*;
@@ -50,7 +51,7 @@ public class ScoresPanel extends JPanel {
 
     public void printScores() {
         try {
-            this.sortedScores = (LinkedHashMap<String, Integer>) controller.getScores();
+            this.sortedScores = (LinkedHashMap<String, Integer>) controller.fetchScores();
         } catch (Exception e) {
             gameWindow.messagePopUp(e);
         }
