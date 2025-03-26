@@ -89,6 +89,13 @@ public class Controller implements IControladorRemoto, IController {
     @Override
     public void setClientPlayerReady() throws RemoteException {
         model.setPlayerReady((Player) clientPlayer);
+        clientPlayer = model.getPlayer((Player) clientPlayer);
+    }
+
+    @Override
+    public void updateClientPlayerName(String name) throws RemoteException {
+        model.configPlayerName((Player) clientPlayer, name);
+        clientPlayer = model.getPlayer((Player) clientPlayer);
     }
 
     @Override

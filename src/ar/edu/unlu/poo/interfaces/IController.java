@@ -34,6 +34,8 @@ public interface IController {
 
     void setClientPlayerReady() throws RemoteException;
 
+    void updateClientPlayerName(String name) throws RemoteException;
+
     boolean handlePlayerInput(String input) throws RemoteException;
 
     boolean handlePlayerExit(String input) throws RemoteException;
