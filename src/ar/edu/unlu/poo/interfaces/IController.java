@@ -8,19 +8,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public interface IController {
+    IGameView getGameView();
+
+    void setGameView(IGameView gameView);
+
     void connect() throws RemoteException;
 
     void disconnect() throws RemoteException;
 
-    void registerLocalObserver(IObservadorRemoto observer);
-
-    void unregisterLocalObserver(IObservadorRemoto observer);
-
     IPlayer fetchClientPlayer() throws RemoteException;
 
     ArrayList<IPlayer> fetchPlayers() throws RemoteException;
-
-    IPlayer fetchPlayer(IPlayer player) throws RemoteException;
 
     ICard fetchQueriedCard() throws RemoteException;
 

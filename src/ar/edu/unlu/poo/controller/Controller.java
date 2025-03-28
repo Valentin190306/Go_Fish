@@ -6,7 +6,6 @@ import ar.edu.unlu.poo.model.enums.GameState;
 import ar.edu.unlu.poo.model.enums.Value;
 import ar.edu.unlu.rmimvc.cliente.IControladorRemoto;
 import ar.edu.unlu.rmimvc.observer.IObservableRemoto;
-import ar.edu.unlu.rmimvc.observer.IObservadorRemoto;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -14,15 +13,17 @@ import java.util.HashMap;
 
 public class Controller implements IControladorRemoto, IController {
     private IGo_Fish model;
-    private final ArrayList<IObservadorRemoto> clientSideObservers;
+    private IGameView gameView;
     private IPlayer clientPlayer;
 
-    public Controller() throws RemoteException {
-        this.clientSideObservers = new ArrayList<>();
+    @Override
+    public IGameView getGameView() {
+        return gameView;
     }
 
-    public Controller(ArrayList<IObservadorRemoto> clientSideObservers) throws RemoteException {
-        this.clientSideObservers = clientSideObservers;
+    @Override
+    public void setGameView(IGameView gameView) {
+        this.gameView = gameView;
     }
 
     @Override
@@ -36,16 +37,6 @@ public class Controller implements IControladorRemoto, IController {
     }
 
     @Override
-    public void registerLocalObserver(IObservadorRemoto observer) {
-        clientSideObservers.add(observer);
-    }
-
-    @Override
-    public void unregisterLocalObserver(IObservadorRemoto observer) {
-        clientSideObservers.remove(observer);
-    }
-
-    @Override
     public IPlayer fetchClientPlayer() throws RemoteException {
         clientPlayer = model.getPlayer((Player) clientPlayer);
         return clientPlayer;
@@ -54,11 +45,6 @@ public class Controller implements IControladorRemoto, IController {
     @Override
     public ArrayList<IPlayer> fetchPlayers() throws RemoteException {
         return model.getPlayers();
-    }
-
-    @Override
-    public IPlayer fetchPlayer(IPlayer player) throws RemoteException {
-        return model.getPlayer((Player) player);
     }
 
     @Override
@@ -149,6 +135,7 @@ public class Controller implements IControladorRemoto, IController {
     @Override
     public <T extends IObservableRemoto> void setModeloRemoto(T t) throws RemoteException {
         this.model = (IGo_Fish) t;
+        clientPlayer = model.connectPlayer();
     }
 
     public void actualizar(IObservableRemoto iObservableRemoto, Object o) throws RemoteException {

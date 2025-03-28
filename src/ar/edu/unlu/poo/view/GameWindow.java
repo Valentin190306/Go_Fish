@@ -112,7 +112,7 @@ public class GameWindow extends JFrame implements IGameWindow, IObservadorRemoto
     public void configureControllerAndView() {
         try {
             controller.connect();
-            controller.setView(this.gameView);
+            controller.setGameView(this.gameView);
 
             if (playerName != null) {
                 controller.updateClientPlayerName(playerName);
