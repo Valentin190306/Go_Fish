@@ -169,6 +169,7 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish {
                 break;
             }
         }
+
         if (areReady && players.size() == 4) {              // Recordar preestablecerlo a 3 o 4
             gameNotifyObservers(GameState.READY);
         }

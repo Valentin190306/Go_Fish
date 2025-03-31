@@ -1,14 +1,15 @@
 package ar.edu.unlu.poo.view;
 
 import ar.edu.unlu.poo.interfaces.*;
+import ar.edu.unlu.poo.model.enums.GameState;
 import ar.edu.unlu.poo.view.graphicViewPanels.FishermenPanel;
 import ar.edu.unlu.poo.view.graphicViewPanels.HandPanel;
+import ar.edu.unlu.rmimvc.RMIMVCException;
 import ar.edu.unlu.rmimvc.observer.IObservableRemoto;
 
 import javax.swing.*;
 import java.awt.*;
 import java.rmi.RemoteException;
-import java.util.List;
 import java.util.Objects;
 
 public class GraphicGameView extends JPanel implements IGameView {
@@ -53,76 +54,100 @@ public class GraphicGameView extends JPanel implements IGameView {
         setVisible(true);
     }
 
-    public void notifyTurnSwitch(IPlayer player) {
+    private void handleException(Exception e) {
 
     }
 
-    public void notifyGameOver() {
+    private void notifyGameIntroduction() {
 
     }
 
-    public void notifyPlayerAction(IPlayer targetPlayer, IPlayer player, ICard queriedCard, boolean isPlayerTurn) {
+    private void notifyGameOver() {
 
     }
 
-    public void handleException(Exception e) {
+    private void notifyPlayerAction() {
 
     }
 
-    public void notifyGameIntroduction(IPlayer player) {
+    private void notifyAmountOfSets() {
 
     }
 
-    public void notifyClientPlayerGoneFishing() {
+    private void notifyFishedCard() {
 
     }
 
-    public void notifyFishedCard(ICard card) {
+    private void notifyPlayerGoneFishing() {
 
     }
 
-    public void notifyReceivedCards(List<ICard> cards) {
+    private void notifyPlayerTurn() {
 
     }
 
-    public void notifyLostCards(List<ICard> cards) {
+    private void notifyTransferredCards() {
 
     }
 
-    public void notifyAmountOfSets(int amount) {
+    private void updateHand() {
 
     }
 
-    public void notifyPlayerGoneFishing(IPlayer player) {
+    private void showPlayersAndCards() {
 
     }
 
-    public void showPlayersAndCards(IDeck deck, List<IPlayer> players) {
+    private void updateScores() {
 
     }
 
-    @Override
-    public void setPlayerTurn(boolean isPlayerTurn) {
+    private void spawnExitOption() {
 
     }
 
-
-    public void updateHand(IHand hand) {
-
-    }
-
-
-    public void updateScores(List<IPlayer> players) {
-
-    }
-
-
-    public void spawnExitOption() {
+    private void updateTurnState() {
 
     }
 
     @Override
     public void actualizar(IObservableRemoto iObservableRemoto, Object o) throws RemoteException {
-
+        if (o instanceof GameState gameState) {
+            try {
+                updateTurnState();
+                switch (gameState) {
+                    case READY, TURN_SWITCH -> {
+                        notifyGameIntroduction();
+                        showPlayersAndCards();
+                        updateHand();
+                        notifyPlayerTurn();
+                    }
+                    case GO_FISH -> {
+                        notifyPlayerGoneFishing();
+                        notifyFishedCard();
+                    }
+                    case TRANSFERRING_CARDS -> {
+                        notifyTransferredCards();
+                    }
+                    case PLAYER_COMPLETED_SET -> {
+                        notifyAmountOfSets();
+                    }
+                    case GAME_OVER -> {
+                        notifyGameOver();
+                        updateScores();
+                        spawnExitOption();
+                    }
+                    case WAITING_ACTION, AWAITING_PLAYERS, NEW_STATUS_PLAYER -> {
+                        handleException(new Exception("Estado del modelo fuera de orden."));
+                    }
+                }
+            } catch (Exception e) {
+                handleException(e);
+            }
+        }
+        else {
+            handleException(new IllegalArgumentException("Señal inválida del modelo."));
+        }
     }
+
 }

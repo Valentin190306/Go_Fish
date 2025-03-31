@@ -81,7 +81,7 @@ public class ConsoleGameView extends JPanel implements IGameView {
         }
     }
 
-    public void appendToConsole(String text) {
+    private void appendToConsole(String text) {
         consoleArea.append(text + "\n");
         consoleArea.setCaretPosition(consoleArea.getDocument().getLength());
     }
@@ -103,7 +103,7 @@ public class ConsoleGameView extends JPanel implements IGameView {
         setVisible(true);
     }
 
-    public void notifyGameIntroduction() {
+    private void notifyGameIntroduction() {
         try {
             appendToConsole("> Bienvenido jugador " + controller.fetchClientPlayer().getName() + "...");
         } catch (RemoteException e) {
@@ -111,11 +111,11 @@ public class ConsoleGameView extends JPanel implements IGameView {
         }
     }
 
-    public void notifyGameOver() {
+    private void notifyGameOver() {
         appendToConsole("> No hay mas cartas en estas aguas...\n> El juego ha terminado.");
     }
 
-    public void notifyPlayerAction() {
+    private void notifyPlayerAction() {
         String[] vocabulary = {"reclama", "pide", "exige", "suplica", "mendiga"};
         String expression = vocabulary[(int) (Math.random() * vocabulary.length)];
 
@@ -139,7 +139,7 @@ public class ConsoleGameView extends JPanel implements IGameView {
         }
     }
 
-    public void notifyAmountOfSets() {
+    private void notifyAmountOfSets() {
         try {
             appendToConsole("> Tienes " + controller.fetchDeck().size() + " sets...");
         } catch (Exception e) {
