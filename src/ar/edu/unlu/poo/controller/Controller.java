@@ -135,7 +135,6 @@ public class Controller implements IControladorRemoto, IController {
     @Override
     public <T extends IObservableRemoto> void setModeloRemoto(T t) throws RemoteException {
         this.model = (IGo_Fish) t;
-        clientPlayer = model.connectPlayer();
     }
 
     public void actualizar(IObservableRemoto iObservableRemoto, Object o) throws RemoteException {

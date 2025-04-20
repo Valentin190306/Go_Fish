@@ -13,7 +13,7 @@ import java.util.Objects;
 public class MenuPanel extends JPanel {
     private final GameWindow gameWindow;
     private final IController controller;
-    private ImageIcon background;
+    private final ImageIcon background;
 
     public MenuPanel(GameWindow gameWindow, IController controller) {
         this.gameWindow = gameWindow;

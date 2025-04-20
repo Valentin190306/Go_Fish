@@ -6,6 +6,7 @@ import ar.edu.unlu.poo.interfaces.IPlayer;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 public class LobbyPanel extends JPanel {
@@ -17,6 +18,7 @@ public class LobbyPanel extends JPanel {
         this.controller = controller;
         this.tableModel = new DefaultTableModel(new Object[]{"Jugador", "Estado"}, 0);
         this.btnVotePlay = new JButton("Votar para Jugar");
+        updatePlayerList();
         initComponents();
     }
 
@@ -45,9 +47,14 @@ public class LobbyPanel extends JPanel {
 
     private void voteToStartGame() {
         try {
-            if (controller.fetchClientPlayer().toString().equals("READY")) return;
+            if (controller
+                    .fetchClientPlayer()
+                    .getPlayerState()
+                    .toString()
+                    .equals("READY")) return;
             btnVotePlay.setEnabled(false);
             controller.setClientPlayerReady();
+            updatePlayerList();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this,
                     e.getMessage(),
@@ -56,12 +63,20 @@ public class LobbyPanel extends JPanel {
         }
     }
 
-    public void updatePlayerList(ArrayList<IPlayer> players) {
-        SwingUtilities.invokeLater(() -> {
-            tableModel.setRowCount(0);
-            for (IPlayer player : players) {
-                tableModel.addRow(new Object[]{player.getName(), player.getPlayerState().toString()});
-            }
-        });
+    public void updatePlayerList() {
+        try {
+            ArrayList<IPlayer> players = controller.fetchPlayers();
+            SwingUtilities.invokeLater(() -> {
+                tableModel.setRowCount(0);
+                for (IPlayer player : players) {
+                    tableModel.addRow(new Object[]{player.getName(), player.getPlayerState().toString()});
+                }
+            });
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+                    e.getMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
     }
 }
