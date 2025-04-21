@@ -5,6 +5,7 @@ import ar.edu.unlu.poo.interfaces.*;
 import ar.edu.unlu.poo.model.enums.GameState;
 import ar.edu.unlu.rmimvc.RMIMVCException;
 import ar.edu.unlu.rmimvc.observer.IObservableRemoto;
+import ar.edu.unlu.rmimvc.observer.IObservadorRemoto;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,7 +14,7 @@ import java.awt.event.FocusEvent;
 import java.rmi.RemoteException;
 import java.util.List;
 
-public class ConsoleGameView extends JPanel implements IGameView {
+public class ConsoleGameView extends JPanel implements IGameView, IObservadorRemoto {
     private final GameWindow gameWindow;
     private final JTextArea consoleArea;
     private final JTextField inputField;

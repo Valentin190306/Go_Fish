@@ -16,6 +16,10 @@ public interface IController {
 
     void disconnect() throws RemoteException;
 
+    void addObserverToModel(IObservadorRemoto observadorRemoto) throws RemoteException;
+
+    void removeObserverOffModel(IObservadorRemoto observadorRemoto) throws RemoteException;
+
     IPlayer fetchClientPlayer() throws RemoteException;
 
     ArrayList<IPlayer> fetchPlayers() throws RemoteException;

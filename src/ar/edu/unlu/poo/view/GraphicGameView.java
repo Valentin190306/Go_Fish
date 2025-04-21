@@ -4,7 +4,6 @@ import ar.edu.unlu.poo.interfaces.*;
 import ar.edu.unlu.poo.model.enums.GameState;
 import ar.edu.unlu.poo.view.graphicViewPanels.FishermenPanel;
 import ar.edu.unlu.poo.view.graphicViewPanels.HandPanel;
-import ar.edu.unlu.rmimvc.RMIMVCException;
 import ar.edu.unlu.rmimvc.observer.IObservableRemoto;
 
 import javax.swing.*;

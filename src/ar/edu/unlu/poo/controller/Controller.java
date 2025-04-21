@@ -6,6 +6,7 @@ import ar.edu.unlu.poo.model.enums.GameState;
 import ar.edu.unlu.poo.model.enums.Value;
 import ar.edu.unlu.rmimvc.cliente.IControladorRemoto;
 import ar.edu.unlu.rmimvc.observer.IObservableRemoto;
+import ar.edu.unlu.rmimvc.observer.IObservadorRemoto;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -34,6 +35,16 @@ public class Controller implements IControladorRemoto, IController {
     @Override
     public void disconnect() throws RemoteException {
         model.disconnectPlayer(this, (Player) clientPlayer);
+    }
+
+    @Override
+    public void addObserverToModel(IObservadorRemoto observadorRemoto) throws RemoteException {
+        model.agregarObservador(observadorRemoto);
+    }
+
+    @Override
+    public void removeObserverOffModel(IObservadorRemoto observadorRemoto) throws RemoteException {
+        model.removerObservador(observadorRemoto);
     }
 
     @Override

@@ -7,8 +7,6 @@ import ar.edu.unlu.poo.view.viewPanels.LobbyPanel;
 import ar.edu.unlu.poo.view.viewPanels.MenuPanel;
 import ar.edu.unlu.poo.view.viewPanels.RulesPanel;
 import ar.edu.unlu.poo.view.viewPanels.ScoresPanel;
-import ar.edu.unlu.rmimvc.observer.IObservableRemoto;
-import ar.edu.unlu.rmimvc.observer.IObservadorRemoto;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,7 +14,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.rmi.RemoteException;
 
-public class GameWindow extends JFrame implements IGameWindow, IObservadorRemoto {
+public class GameWindow extends JFrame implements IGameWindow {
     private final IController controller;
     private IGameView gameView;
     private String playerName = null;
@@ -125,6 +123,7 @@ public class GameWindow extends JFrame implements IGameWindow, IObservadorRemoto
 
     public void showCard(String cardName) {
         cardLayout.show(viewContainer, cardName);
+        cardLayout.
     }
 
     public void showMenu() {
@@ -139,10 +138,5 @@ public class GameWindow extends JFrame implements IGameWindow, IObservadorRemoto
     @Override
     public void start() {
         setVisible(true);
-    }
-
-    @Override
-    public void actualizar(IObservableRemoto iObservableRemoto, Object o) throws RemoteException {
-
     }
 }

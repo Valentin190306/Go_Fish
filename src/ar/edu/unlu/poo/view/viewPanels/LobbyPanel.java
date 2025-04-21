@@ -2,6 +2,9 @@ package ar.edu.unlu.poo.view.viewPanels;
 
 import ar.edu.unlu.poo.interfaces.IController;
 import ar.edu.unlu.poo.interfaces.IPlayer;
+import ar.edu.unlu.poo.model.enums.GameState;
+import ar.edu.unlu.rmimvc.observer.IObservableRemoto;
+import ar.edu.unlu.rmimvc.observer.IObservadorRemoto;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -9,15 +12,17 @@ import java.awt.*;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
-public class LobbyPanel extends JPanel {
+public class LobbyPanel extends JPanel implements IObservadorRemoto {
     private final IController controller;
     private final DefaultTableModel tableModel;
     private final JButton btnVotePlay;
+    //private GameState pl_gamestate = null;
 
-    public LobbyPanel(IController controller) {
+    public LobbyPanel(IController controller) throws RemoteException {
         this.controller = controller;
         this.tableModel = new DefaultTableModel(new Object[]{"Jugador", "Estado"}, 0);
         this.btnVotePlay = new JButton("Votar para Jugar");
+        controller.addObserverToModel(this);
         updatePlayerList();
         initComponents();
     }
@@ -54,7 +59,6 @@ public class LobbyPanel extends JPanel {
                     .equals("READY")) return;
             btnVotePlay.setEnabled(false);
             controller.setClientPlayerReady();
-            updatePlayerList();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this,
                     e.getMessage(),
@@ -77,6 +81,20 @@ public class LobbyPanel extends JPanel {
                     e.getMessage(),
                     "Error",
                     JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    @Override
+    public void start() {
+
+    }
+
+    @Override
+    public void actualizar(IObservableRemoto iObservableRemoto, Object o) throws RemoteException {
+        if (o instanceof GameState gameState) {
+            if (gameState == GameState.NEW_STATUS_PLAYER) {
+                updatePlayerList();
+            }
         }
     }
 }
