@@ -10,6 +10,8 @@ import ar.edu.unlu.poo.view.viewPanels.ScoresPanel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.rmi.RemoteException;
@@ -31,6 +33,13 @@ public class GameWindow extends JFrame implements IGameWindow {
         this.menuCard = new MenuPanel(this, controller);
         this.lobbyCard = new LobbyPanel(controller);
         this.scoresCard = new ScoresPanel(this, controller);
+
+        lobbyCard.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentShown(ComponentEvent e) {
+                lobbyCard.start();
+            }
+        });
 
         setTitle("Go Fish");
         setSize(800, 600);
@@ -123,7 +132,6 @@ public class GameWindow extends JFrame implements IGameWindow {
 
     public void showCard(String cardName) {
         cardLayout.show(viewContainer, cardName);
-        cardLayout.
     }
 
     public void showMenu() {
