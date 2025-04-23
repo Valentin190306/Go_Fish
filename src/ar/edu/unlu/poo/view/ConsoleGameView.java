@@ -1,11 +1,7 @@
 package ar.edu.unlu.poo.view;
 
-import ar.edu.unlu.poo.interfaces.IController;
 import ar.edu.unlu.poo.interfaces.*;
-import ar.edu.unlu.poo.model.enums.GameState;
 import ar.edu.unlu.rmimvc.RMIMVCException;
-import ar.edu.unlu.rmimvc.observer.IObservableRemoto;
-import ar.edu.unlu.rmimvc.observer.IObservadorRemoto;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,7 +10,7 @@ import java.awt.event.FocusEvent;
 import java.rmi.RemoteException;
 import java.util.List;
 
-public class ConsoleGameView extends JPanel implements IGameView, IObservadorRemoto {
+public class ConsoleGameView extends JPanel implements IGameView {
     private final GameWindow gameWindow;
     private final JTextArea consoleArea;
     private final JTextField inputField;
@@ -87,7 +83,8 @@ public class ConsoleGameView extends JPanel implements IGameView, IObservadorRem
         consoleArea.setCaretPosition(consoleArea.getDocument().getLength());
     }
 
-    private void handleException(Exception e) {
+    @Override
+    public void handleException(Exception e) {
         if (e instanceof RMIMVCException) {
             JOptionPane.showMessageDialog(null,
                     e.getMessage(),
@@ -104,7 +101,8 @@ public class ConsoleGameView extends JPanel implements IGameView, IObservadorRem
         setVisible(true);
     }
 
-    private void notifyGameIntroduction() {
+    @Override
+    public void notifyGameIntroduction() {
         try {
             appendToConsole("> Bienvenido jugador " + controller.fetchClientPlayer().getName() + "...");
         } catch (RemoteException e) {
@@ -112,11 +110,13 @@ public class ConsoleGameView extends JPanel implements IGameView, IObservadorRem
         }
     }
 
-    private void notifyGameOver() {
+    @Override
+    public void notifyGameOver() {
         appendToConsole("> No hay mas cartas en estas aguas...\n> El juego ha terminado.");
     }
 
-    private void notifyPlayerAction() {
+    @Override
+    public void notifyPlayerAction() {
         String[] vocabulary = {"reclama", "pide", "exige", "suplica", "mendiga"};
         String expression = vocabulary[(int) (Math.random() * vocabulary.length)];
 
@@ -140,7 +140,8 @@ public class ConsoleGameView extends JPanel implements IGameView, IObservadorRem
         }
     }
 
-    private void notifyAmountOfSets() {
+    @Override
+    public void notifyAmountOfSets() {
         try {
             appendToConsole("> Tienes " + controller.fetchDeck().size() + " sets...");
         } catch (Exception e) {
@@ -148,7 +149,8 @@ public class ConsoleGameView extends JPanel implements IGameView, IObservadorRem
         }
     }
 
-    private void notifyFishedCard() {
+    @Override
+    public void notifyFishedCard() {
         try {
             ICard fishedCard = controller.fetchClientPlayer()
                     .getHand()
@@ -161,7 +163,8 @@ public class ConsoleGameView extends JPanel implements IGameView, IObservadorRem
         }
     }
 
-    private void notifyPlayerGoneFishing() {
+    @Override
+    public void notifyPlayerGoneFishing() {
         if (isPlayerTurn) {
             appendToConsole("> Has ido a pescar...");
         } else {
@@ -174,7 +177,8 @@ public class ConsoleGameView extends JPanel implements IGameView, IObservadorRem
         }
     }
 
-    private void notifyPlayerTurn() {
+    @Override
+    public void notifyPlayerTurn() {
         try {
             IPlayer player = controller.fetchPlayingPlayer();
 
@@ -186,7 +190,8 @@ public class ConsoleGameView extends JPanel implements IGameView, IObservadorRem
         }
     }
 
-    private void notifyTransferredCards() {
+    @Override
+    public void notifyTransferredCards() {
         try {
             IPlayer clientPlayer = controller.fetchClientPlayer();
             IPlayer turnPlayer = controller.fetchPlayingPlayer();
@@ -209,7 +214,8 @@ public class ConsoleGameView extends JPanel implements IGameView, IObservadorRem
         }
     }
 
-    private void updateHand() {
+    @Override
+    public void updateHand() {
         try {
             List<ICard> cards = controller
                     .fetchClientPlayer()
@@ -225,7 +231,8 @@ public class ConsoleGameView extends JPanel implements IGameView, IObservadorRem
         }
     }
 
-    private void showPlayersAndCards() {
+    @Override
+    public void showPlayersAndCards() {
         try {
             IDeck deck = controller.fetchDeck();
             List<IPlayer> players = controller.fetchPlayers();
@@ -240,7 +247,8 @@ public class ConsoleGameView extends JPanel implements IGameView, IObservadorRem
         }
     }
 
-    private void updateScores() {
+    @Override
+    public void updateScores() {
         try {
             List<IPlayer> players = controller.fetchPlayers();
 
@@ -253,58 +261,20 @@ public class ConsoleGameView extends JPanel implements IGameView, IObservadorRem
         }
     }
 
-    private void spawnExitOption() {
+    @Override
+    public void spawnExitOption() {
         this.placeholder = "Ingrese -exit- para volver al menu principal.";
         this.isGameOver = true;
     }
 
-    private void updateTurnState() {
+    @Override
+    public void updateTurnState() {
         try {
             isPlayerTurn = controller
                     .fetchPlayingPlayer()
                     .equals(controller.fetchClientPlayer());
         } catch (RemoteException e) {
             handleException(e);
-        }
-    }
-
-    @Override
-    public void actualizar(IObservableRemoto iObservableRemoto, Object o) throws RemoteException {
-        if (o instanceof GameState gameState) {
-            try {
-                updateTurnState();
-                switch (gameState) {
-                    case READY, TURN_SWITCH -> {
-                        notifyGameIntroduction();
-                        showPlayersAndCards();
-                        updateHand();
-                        notifyPlayerTurn();
-                    }
-                    case GO_FISH -> {
-                        notifyPlayerGoneFishing();
-                        notifyFishedCard();
-                    }
-                    case TRANSFERRING_CARDS -> {
-                        notifyTransferredCards();
-                    }
-                    case PLAYER_COMPLETED_SET -> {
-                        notifyAmountOfSets();
-                    }
-                    case GAME_OVER -> {
-                        notifyGameOver();
-                        updateScores();
-                        spawnExitOption();
-                    }
-                    case WAITING_ACTION, AWAITING_PLAYERS, NEW_STATUS_PLAYER -> {
-                        handleException(new Exception("Estado del modelo fuera de orden."));
-                    }
-                }
-            } catch (Exception e) {
-                handleException(e);
-            }
-        }
-        else {
-            handleException(new IllegalArgumentException("Señal inválida del modelo."));
         }
     }
 }

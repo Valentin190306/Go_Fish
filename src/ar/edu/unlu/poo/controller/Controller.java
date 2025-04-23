@@ -4,15 +4,13 @@ import ar.edu.unlu.poo.interfaces.*;
 import ar.edu.unlu.poo.model.Player;
 import ar.edu.unlu.poo.model.enums.GameState;
 import ar.edu.unlu.poo.model.enums.Value;
-import ar.edu.unlu.rmimvc.cliente.IControladorRemoto;
 import ar.edu.unlu.rmimvc.observer.IObservableRemoto;
-import ar.edu.unlu.rmimvc.observer.IObservadorRemoto;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class Controller implements IControladorRemoto, IController {
+public class Controller implements IController {
     private IGo_Fish model;
     private IGameView gameView;
     private IPlayer clientPlayer;
@@ -35,16 +33,6 @@ public class Controller implements IControladorRemoto, IController {
     @Override
     public void disconnect() throws RemoteException {
         model.disconnectPlayer(this, (Player) clientPlayer);
-    }
-
-    @Override
-    public void addObserverToModel(IObservadorRemoto observadorRemoto) throws RemoteException {
-        model.agregarObservador(observadorRemoto);
-    }
-
-    @Override
-    public void removeObserverOffModel(IObservadorRemoto observadorRemoto) throws RemoteException {
-        model.removerObservador(observadorRemoto);
     }
 
     @Override
@@ -93,6 +81,11 @@ public class Controller implements IControladorRemoto, IController {
     public void updateClientPlayerName(String name) throws RemoteException {
         model.configPlayerName((Player) clientPlayer, name);
         clientPlayer = model.getPlayer((Player) clientPlayer);
+    }
+
+    @Override
+    public void handleTurnInput(Value requestedValue, IPlayer targetPlayer) throws RemoteException {
+        model.playTurn(requestedValue, (Player) targetPlayer);
     }
 
     @Override
@@ -148,7 +141,50 @@ public class Controller implements IControladorRemoto, IController {
         this.model = (IGo_Fish) t;
     }
 
+    @Override
     public void actualizar(IObservableRemoto iObservableRemoto, Object o) throws RemoteException {
-
+        if (o instanceof GameState gameState) {
+            try {
+                gameView.updateTurnState();
+                switch (gameState) {
+                    case READY -> {
+                        gameView.notifyGameIntroduction();
+                        gameView.showPlayersAndCards();
+                        gameView.updateHand();
+                        gameView.notifyPlayerTurn();
+                    }
+                    case TURN_SWITCH -> {
+                        gameView.notifyPlayerAction();
+                        gameView.notifyGameIntroduction();
+                        gameView.showPlayersAndCards();
+                        gameView.updateHand();
+                        gameView.notifyPlayerTurn();
+                    }
+                    case GO_FISH -> {
+                        gameView.notifyPlayerGoneFishing();
+                        gameView.notifyFishedCard();
+                    }
+                    case TRANSFERRING_CARDS -> {
+                        gameView.notifyTransferredCards();
+                    }
+                    case PLAYER_COMPLETED_SET -> {
+                        gameView.notifyAmountOfSets();
+                    }
+                    case GAME_OVER -> {
+                        gameView.notifyGameOver();
+                        gameView.updateScores();
+                        gameView.spawnExitOption();
+                    }
+                    case WAITING_ACTION, AWAITING_PLAYERS, NEW_STATUS_PLAYER -> {
+                        gameView.handleException(new Exception("Estado del modelo fuera de orden."));
+                    }
+                }
+            } catch (Exception e) {
+                gameView.handleException(e);
+            }
+        }
+        else {
+            gameView.handleException(new IllegalArgumentException("Señal inválida del modelo."));
+        }
     }
 }

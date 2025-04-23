@@ -1,13 +1,33 @@
 package ar.edu.unlu.poo.interfaces;
 
-
-import ar.edu.unlu.rmimvc.observer.IObservableRemoto;
-
-import java.rmi.RemoteException;
-
 public interface IGameView {
+    void handleException(Exception e);
 
     void start();
 
-    void actualizar(IObservableRemoto iObservableRemoto, Object o) throws RemoteException;
+    void notifyGameIntroduction();
+
+    void notifyGameOver();
+
+    void notifyPlayerAction();
+
+    void notifyAmountOfSets();
+
+    void notifyFishedCard();
+
+    void notifyPlayerGoneFishing();
+
+    void notifyPlayerTurn();
+
+    void notifyTransferredCards();
+
+    void updateHand();
+
+    void showPlayersAndCards();
+
+    void updateScores();
+
+    void spawnExitOption();
+
+    void updateTurnState();
 }

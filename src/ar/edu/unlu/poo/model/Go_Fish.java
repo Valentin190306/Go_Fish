@@ -85,6 +85,9 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish {
         if (localTargetPlayer == null) {
             throw new IllegalArgumentException("El jugador objetivo no pertenece a la partida.");
         }
+        if (targetPlayer.getPlayerState() != PlayerState.PLAYING) {
+            throw new IllegalArgumentException("El jugador objetivo no esta jugando.");
+        }
         if (localTargetPlayer.getHand().hasCardOfValue(valueRequested)) {
             this.targetPlayer = localTargetPlayer;
             queriedCard = new Card(valueRequested, Suit.SPADES);

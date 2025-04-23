@@ -1,5 +1,7 @@
 package ar.edu.unlu.poo.interfaces;
 
+import ar.edu.unlu.poo.model.enums.Value;
+import ar.edu.unlu.rmimvc.cliente.IControladorRemoto;
 import ar.edu.unlu.rmimvc.observer.IObservableRemoto;
 import ar.edu.unlu.rmimvc.observer.IObservadorRemoto;
 
@@ -7,7 +9,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public interface IController {
+public interface IController extends IControladorRemoto {
     IGameView getGameView();
 
     void setGameView(IGameView gameView);
@@ -15,10 +17,6 @@ public interface IController {
     void connect() throws RemoteException;
 
     void disconnect() throws RemoteException;
-
-    void addObserverToModel(IObservadorRemoto observadorRemoto) throws RemoteException;
-
-    void removeObserverOffModel(IObservadorRemoto observadorRemoto) throws RemoteException;
 
     IPlayer fetchClientPlayer() throws RemoteException;
 
@@ -37,6 +35,8 @@ public interface IController {
     void setClientPlayerReady() throws RemoteException;
 
     void updateClientPlayerName(String name) throws RemoteException;
+
+    void handleTurnInput(Value requestedValue, IPlayer targetPlayer) throws RemoteException;
 
     boolean handlePlayerInput(String input) throws RemoteException;
 

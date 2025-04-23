@@ -17,11 +17,10 @@ public class LobbyPanel extends JPanel implements IObservadorRemoto {
     private final DefaultTableModel tableModel;
     private final JButton btnVotePlay;
 
-    public LobbyPanel(IController controller) throws RemoteException {
+    public LobbyPanel(IController controller) {
         this.controller = controller;
         this.tableModel = new DefaultTableModel(new Object[]{"Jugador", "Estado"}, 0);
         this.btnVotePlay = new JButton("Votar para Jugar");
-        controller.addObserverToModel(this);
         initComponents();
     }
 
@@ -76,6 +75,7 @@ public class LobbyPanel extends JPanel implements IObservadorRemoto {
                 }
             });
         } catch (Exception e) {
+            e.printStackTrace();
             JOptionPane.showMessageDialog(this,
                     e.getMessage(),
                     "Error",
@@ -84,7 +84,16 @@ public class LobbyPanel extends JPanel implements IObservadorRemoto {
     }
 
     public void start() {
-        updatePlayerList();
+        try {
+            controller.addObserverToModel(this);
+            updatePlayerList();
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this,
+                    e.getMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     @Override
