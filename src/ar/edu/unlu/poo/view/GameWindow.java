@@ -1,6 +1,6 @@
 package ar.edu.unlu.poo.view;
 
-import ar.edu.unlu.poo.interfaces.IController;
+import ar.edu.unlu.poo.interfaces.IGameController;
 import ar.edu.unlu.poo.interfaces.IGameView;
 import ar.edu.unlu.poo.interfaces.IGameWindow;
 import ar.edu.unlu.poo.view.viewPanels.LobbyPanel;
@@ -17,7 +17,7 @@ import java.awt.event.WindowEvent;
 import java.rmi.RemoteException;
 
 public class GameWindow extends JFrame implements IGameWindow {
-    private final IController controller;
+    private final IGameController controller;
     private IGameView gameView;
     private String playerName = null;
     private final JPanel viewContainer;
@@ -26,7 +26,7 @@ public class GameWindow extends JFrame implements IGameWindow {
     private final LobbyPanel lobbyCard;
     private final ScoresPanel scoresCard;
 
-    public GameWindow(IController controller) throws RemoteException {
+    public GameWindow(IGameController controller) throws RemoteException {
         this.controller = controller;
         this.gameView = new GraphicGameView(this, controller);
 
@@ -59,7 +59,7 @@ public class GameWindow extends JFrame implements IGameWindow {
                             controller.disconnect();
                         }
                     } catch (RemoteException ex) {
-                        messagePopUp(ex);
+                        handleException(ex);
                     }
                     dispose();
                     System.exit(0);
@@ -81,7 +81,8 @@ public class GameWindow extends JFrame implements IGameWindow {
         showMenu();
     }
 
-    public void messagePopUp(Exception e) {
+    @Override
+    public void handleException(Exception e) {
         JOptionPane.showMessageDialog(null,
                 e.getMessage(),
                 "Error",
@@ -126,7 +127,7 @@ public class GameWindow extends JFrame implements IGameWindow {
             }
             viewContainer.add((Component) gameView, "View");
         } catch (RemoteException e) {
-            messagePopUp(e);
+            handleException(e);
         }
     }
 
@@ -138,7 +139,7 @@ public class GameWindow extends JFrame implements IGameWindow {
         showCard("Menu");
     }
 
-    public void showGame() {
+    public void showGameCard() {
         lobbyCard.removeAll();
         showCard("View");
     }

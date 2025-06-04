@@ -9,10 +9,11 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public interface IController extends IControladorRemoto {
-    IGameView getGameView();
+public interface IGameController extends IControladorRemoto, IObservadorRemoto {
 
-    void setGameView(IGameView gameView);
+    void setGameWindow(IGameWindow gameWindow) throws RemoteException;
+
+    void setGameView(IGameView gameView) throws RemoteException;
 
     void connect() throws RemoteException;
 
@@ -22,7 +23,7 @@ public interface IController extends IControladorRemoto {
 
     ArrayList<IPlayer> fetchPlayers() throws RemoteException;
 
-    ICard fetchQueriedCard() throws RemoteException;
+    Value fetchQueriedValue() throws RemoteException;
 
     IPlayer fetchPlayingPlayer() throws RemoteException;
 
@@ -30,17 +31,15 @@ public interface IController extends IControladorRemoto {
 
     IDeck fetchDeck() throws RemoteException;
 
-    HashMap<String, Integer> fetchScores() throws RemoteException;
-
     void setClientPlayerReady() throws RemoteException;
 
     void updateClientPlayerName(String name) throws RemoteException;
 
-    void handleTurnInput(Value requestedValue, IPlayer targetPlayer) throws RemoteException;
+    HashMap<String, Integer> fetchGameScoreList() throws RemoteException;
 
-    boolean handlePlayerInput(String input) throws RemoteException;
-
-    boolean handlePlayerExit(String input) throws RemoteException;
+    HashMap<String, Integer> fetchHighScoreList() throws RemoteException;
 
     <T extends IObservableRemoto> void setModeloRemoto(T t) throws RemoteException;
+
+    void clientPlaysTurn(Value valueRequested, String targetPlayer) throws RemoteException;
 }

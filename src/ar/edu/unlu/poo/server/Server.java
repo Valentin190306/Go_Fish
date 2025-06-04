@@ -16,7 +16,7 @@ public class Server {
     public static void main(String[] args) {
         Servidor server = new Servidor(serverHost, serverPort);
         try {
-            IGo_Fish model = Go_Fish.getInstance();
+            Go_Fish model = Go_Fish.getInstance();
             model.setFilePath(filePath);
             server.iniciar(model);
         } catch (RemoteException | RMIMVCException e) {

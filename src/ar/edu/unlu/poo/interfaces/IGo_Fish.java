@@ -12,13 +12,9 @@ import java.util.HashMap;
 
 public interface IGo_Fish extends IObservableRemoto {
 
-    void setFilePath(String filePath) throws RemoteException;
-
     void start() throws RemoteException;
 
-    void playTurn(Value valueRequested, Player targetPlayer) throws RemoteException;
-
-    void removePlayer(IPlayer clientPlayer) throws RemoteException;
+    void playTurn(Value queriedValue, Player targetPlayer) throws RemoteException;
 
     IPlayer connectPlayer() throws RemoteException;
 
@@ -38,13 +34,15 @@ public interface IGo_Fish extends IObservableRemoto {
 
     IPlayer getTargetPlayer() throws RemoteException;
 
-    ICard getQueriedCard() throws RemoteException;
+    Value getQueriedValue() throws RemoteException;
 
     ArrayList<IPlayer> getPlayers() throws RemoteException;
 
     IPlayer getCurrentPlayerInTurn() throws RemoteException;
 
-    HashMap<String, Integer> getScoreList() throws RemoteException;
+    HashMap<String, Integer> getHighScoreList() throws RemoteException;
+
+    HashMap<String, Integer> getGameScores() throws RemoteException;
 
     GameState getGameState() throws RemoteException;
 

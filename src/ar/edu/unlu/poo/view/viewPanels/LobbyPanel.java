@@ -1,23 +1,19 @@
 package ar.edu.unlu.poo.view.viewPanels;
 
-import ar.edu.unlu.poo.interfaces.IController;
+import ar.edu.unlu.poo.interfaces.IGameController;
 import ar.edu.unlu.poo.interfaces.IPlayer;
-import ar.edu.unlu.poo.model.enums.GameState;
-import ar.edu.unlu.rmimvc.observer.IObservableRemoto;
-import ar.edu.unlu.rmimvc.observer.IObservadorRemoto;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 
-public class LobbyPanel extends JPanel implements IObservadorRemoto {
-    private final IController controller;
+public class LobbyPanel extends JPanel {
+    private final IGameController controller;
     private final DefaultTableModel tableModel;
     private final JButton btnVotePlay;
 
-    public LobbyPanel(IController controller) {
+    public LobbyPanel(IGameController controller) {
         this.controller = controller;
         this.tableModel = new DefaultTableModel(new Object[]{"Jugador", "Estado"}, 0);
         this.btnVotePlay = new JButton("Votar para Jugar");
@@ -56,7 +52,6 @@ public class LobbyPanel extends JPanel implements IObservadorRemoto {
                     .equals("READY")) return;
             btnVotePlay.setEnabled(false);
             controller.setClientPlayerReady();
-            //updatePlayerList();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this,
                     e.getMessage(),
@@ -85,7 +80,6 @@ public class LobbyPanel extends JPanel implements IObservadorRemoto {
 
     public void start() {
         try {
-            controller.addObserverToModel(this);
             updatePlayerList();
         } catch (Exception e) {
             e.printStackTrace();
@@ -93,15 +87,6 @@ public class LobbyPanel extends JPanel implements IObservadorRemoto {
                     e.getMessage(),
                     "Error",
                     JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-    @Override
-    public void actualizar(IObservableRemoto iObservableRemoto, Object o) throws RemoteException {
-        if (o instanceof GameState gameState) {
-            if (gameState == GameState.NEW_STATUS_PLAYER) {
-                updatePlayerList();
-            }
         }
     }
 }

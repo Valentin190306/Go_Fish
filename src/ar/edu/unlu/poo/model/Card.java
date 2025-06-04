@@ -1,12 +1,11 @@
 package ar.edu.unlu.poo.model;
 
-import ar.edu.unlu.poo.interfaces.ICard;
 import ar.edu.unlu.poo.model.enums.Suit;
 import ar.edu.unlu.poo.model.enums.Value;
 
 import java.io.Serializable;
 
-public class Card implements ICard, Serializable {
+public class Card implements Serializable {
     private final Value value;
     private final Suit suit;
 
@@ -15,14 +14,24 @@ public class Card implements ICard, Serializable {
         this.suit = suit;
     }
 
-    @Override
     public Value getNumber() {
         return value;
     }
 
-    @Override
     public Suit getSuit() {
         return suit;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        Card card = (Card) obj;
+        return card.getNumber() == value && card.getSuit() == suit;
     }
 
     @Override

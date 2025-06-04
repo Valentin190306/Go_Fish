@@ -1,12 +1,11 @@
 package ar.edu.unlu.poo.client;
 
-import ar.edu.unlu.poo.controller.Controller;
-import ar.edu.unlu.poo.interfaces.IController;
+import ar.edu.unlu.poo.controller.GameController;
+import ar.edu.unlu.poo.interfaces.IGameController;
 import ar.edu.unlu.poo.interfaces.IGameWindow;
 import ar.edu.unlu.poo.view.GameWindow;
 import ar.edu.unlu.rmimvc.RMIMVCException;
 import ar.edu.unlu.rmimvc.cliente.Cliente;
-import ar.edu.unlu.rmimvc.cliente.IControladorRemoto;
 
 import javax.swing.*;
 import java.rmi.RemoteException;
@@ -17,14 +16,16 @@ public class Client {
     private static final int clientPort = 0;
     private static final int serverPort = 1234;
 
-    public static void main (String[] args) throws RemoteException {
-        IController controller = new Controller();
+    public static void main (String[] args) {
+        IGameController controller = GameController.getInstance();
         try {
             Cliente client = new Cliente(clientHost, clientPort, serverHost, serverPort);
-            client.iniciar((IControladorRemoto) controller);
+            client.iniciar(controller);
             IGameWindow gameWindow = new GameWindow(controller);
+            controller.setGameWindow(gameWindow);
             gameWindow.start();
         } catch (RemoteException | RMIMVCException e) {
+            e.printStackTrace();
             SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(
                     null,
                     e.getMessage(),

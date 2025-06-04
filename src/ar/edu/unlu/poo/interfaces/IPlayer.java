@@ -16,4 +16,6 @@ public interface IPlayer extends Serializable {
     Hand getHand();
 
     String toString();
+
+    boolean equals(Object object);
 }

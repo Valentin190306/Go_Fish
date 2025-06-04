@@ -1,6 +1,8 @@
 package ar.edu.unlu.poo.view;
 
 import ar.edu.unlu.poo.interfaces.*;
+import ar.edu.unlu.poo.model.Card;
+import ar.edu.unlu.poo.model.enums.Value;
 import ar.edu.unlu.rmimvc.RMIMVCException;
 
 import javax.swing.*;
@@ -11,16 +13,14 @@ import java.rmi.RemoteException;
 import java.util.List;
 
 public class ConsoleGameView extends JPanel implements IGameView {
-    private final GameWindow gameWindow;
     private final JTextArea consoleArea;
     private final JTextField inputField;
-    private final IController controller;
+    private final IGameController controller;
     private String placeholder;
     private boolean isPlayerTurn;
     private boolean isGameOver = false;
 
-    public ConsoleGameView(GameWindow gameWindow, IController controller) {
-        this.gameWindow = gameWindow;
+    public ConsoleGameView(GameWindow gameWindow, IGameController controller) {
         this.controller = controller;
         this.consoleArea = new JTextArea();
         this.inputField = new JTextField();
@@ -67,7 +67,8 @@ public class ConsoleGameView extends JPanel implements IGameView {
         String input = inputField.getText().trim();
         try {
             if (!isGameOver) {
-                if (!input.isEmpty() && controller.handlePlayerInput(input)) {
+                if (!input.isEmpty()) {
+                    handlePlayerInput(input);
                     inputField.setText("");
                 }
             } else if (!input.isEmpty() && controller.handlePlayerExit(input)) {
@@ -76,6 +77,30 @@ public class ConsoleGameView extends JPanel implements IGameView {
         } catch (Exception ex) {
             handleException(ex);
         }
+    }
+
+    public void handlePlayerInput(String input) throws RemoteException {
+        if (input == null || input.isBlank()) {
+            throw new IllegalArgumentException("La entrada del jugador no puede estar vacía");
+        }
+
+        String[] parts = input.split(" ");
+
+        if (parts.length == 2) {
+            Value valueRequested = parseValue(parts[0]);
+            controller.clientPlaysTurn(valueRequested, parts[1]);
+        } else {
+            handleException(new IllegalArgumentException("Formato inválido. Use: <RANGO> <NOMBRE_JUGADOR>"));
+        }
+    }
+
+    private Value parseValue(String input) throws IllegalArgumentException {
+        for (Value value : Value.values()) {
+            if (value.getValue().equalsIgnoreCase(input)) {
+                return value;
+            }
+        }
+        throw new IllegalArgumentException("Rango inválido. Use: <RANGO> <NOMBRE_JUGADOR>");
     }
 
     private void appendToConsole(String text) {
@@ -97,7 +122,7 @@ public class ConsoleGameView extends JPanel implements IGameView {
 
     @Override
     public void start() {
-        gameWindow.showGame();
+        //gameWindow.showGameCard();
         setVisible(true);
     }
 
@@ -122,9 +147,8 @@ public class ConsoleGameView extends JPanel implements IGameView {
 
         try {
             String cardValue = controller
-                    .fetchQueriedCard()
-                    .getNumber()
-                    .getValue();
+                    .fetchQueriedValue()
+                    .toString();
 
             String targetPlayer = controller
                     .fetchTargetPlayer()
@@ -152,7 +176,7 @@ public class ConsoleGameView extends JPanel implements IGameView {
     @Override
     public void notifyFishedCard() {
         try {
-            ICard fishedCard = controller.fetchClientPlayer()
+            Card fishedCard = controller.fetchClientPlayer()
                     .getHand()
                     .getTransferenceCards()
                     .get(0);
@@ -197,7 +221,7 @@ public class ConsoleGameView extends JPanel implements IGameView {
             IPlayer turnPlayer = controller.fetchPlayingPlayer();
             IPlayer targetPlayer = controller.fetchTargetPlayer();
 
-            List<ICard> cards = controller
+            List<Card> cards = controller
                     .fetchClientPlayer()
                     .getHand()
                     .getTransferenceCards();
@@ -205,7 +229,7 @@ public class ConsoleGameView extends JPanel implements IGameView {
             if (clientPlayer.equals(targetPlayer) || clientPlayer.equals(turnPlayer)) {
                 appendToConsole(clientPlayer.equals(targetPlayer) ? "> Cartas cedidas:" : "> Cartas adquiridas:");
 
-                for (ICard card : cards) {
+                for (Card card : cards) {
                     appendToConsole("\t" + card.getNumber().getValue() + " de " + card.getSuit().getValue());
                 }
             }
@@ -217,13 +241,13 @@ public class ConsoleGameView extends JPanel implements IGameView {
     @Override
     public void updateHand() {
         try {
-            List<ICard> cards = controller
+            List<Card> cards = controller
                     .fetchClientPlayer()
                     .getHand()
                     .getTransferenceCards();
 
             appendToConsole("> Tu mano:");
-            for (ICard card : cards) {
+            for (Card card : cards) {
                 appendToConsole("\t" + card.getNumber().getValue() + " de " + card.getSuit().getValue());
             }
         } catch (Exception e) {

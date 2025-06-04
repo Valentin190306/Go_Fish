@@ -1,6 +1,6 @@
 package ar.edu.unlu.poo.view.viewPanels;
 
-import ar.edu.unlu.poo.interfaces.IController;
+import ar.edu.unlu.poo.interfaces.IGameController;
 import ar.edu.unlu.poo.interfaces.IGameView;
 import ar.edu.unlu.poo.view.ConsoleGameView;
 import ar.edu.unlu.poo.view.GameWindow;
@@ -12,10 +12,10 @@ import java.util.Objects;
 
 public class MenuPanel extends JPanel {
     private final GameWindow gameWindow;
-    private final IController controller;
+    private final IGameController controller;
     private final ImageIcon background;
 
-    public MenuPanel(GameWindow gameWindow, IController controller) {
+    public MenuPanel(GameWindow gameWindow, IGameController controller) {
         this.gameWindow = gameWindow;
         this.controller = controller;
         this.background = new ImageIcon(Objects.requireNonNull(getClass().getResource("/ar/edu/unlu/poo/view/assets/backgrounds/background.png")));
@@ -131,7 +131,7 @@ public class MenuPanel extends JPanel {
                 }
             }
         } catch (NullPointerException e) {
-            gameWindow.messagePopUp(e);
+            gameWindow.handleException(e);
         }
         return gameWindow.getGameView();
     }

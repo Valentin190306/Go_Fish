@@ -1,6 +1,5 @@
 package ar.edu.unlu.poo.model;
 
-import ar.edu.unlu.poo.interfaces.ICard;
 import ar.edu.unlu.poo.interfaces.IHand;
 import ar.edu.unlu.poo.model.enums.Value;
 
@@ -75,8 +74,8 @@ public class Hand implements Serializable, IHand {
     }
 
     @Override
-    public List<ICard> getTransferenceCards() {
-        return new ArrayList<>(transferenceCards);
+    public List<Card> getTransferenceCards() {
+        return List.copyOf(transferenceCards);
     }
 
     @Override

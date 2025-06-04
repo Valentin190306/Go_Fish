@@ -11,7 +11,7 @@ public interface IHand {
 
     boolean hasCardOfValue(Value value);
 
-    List<ICard> getTransferenceCards();
+    List<Card> getTransferenceCards();
 
     int getScore();
 

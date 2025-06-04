@@ -5,6 +5,8 @@ import ar.edu.unlu.poo.view.viewPanels.MenuPanel;
 import ar.edu.unlu.poo.view.viewPanels.ScoresPanel;
 
 public interface IGameWindow {
+    void handleException(Exception e);
+
     MenuPanel getMenuCard();
 
     LobbyPanel getLobbyCard();
@@ -12,4 +14,6 @@ public interface IGameWindow {
     ScoresPanel getScoresCard();
 
     void start();
+
+    void showGameCard();
 }
