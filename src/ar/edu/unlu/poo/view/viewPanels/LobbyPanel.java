@@ -70,7 +70,6 @@ public class LobbyPanel extends JPanel {
                 }
             });
         } catch (Exception e) {
-            e.printStackTrace();
             JOptionPane.showMessageDialog(this,
                     e.getMessage(),
                     "Error",
@@ -82,7 +81,6 @@ public class LobbyPanel extends JPanel {
         try {
             updatePlayerList();
         } catch (Exception e) {
-            e.printStackTrace();
             JOptionPane.showMessageDialog(this,
                     e.getMessage(),
                     "Error",

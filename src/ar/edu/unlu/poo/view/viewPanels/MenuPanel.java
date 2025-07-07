@@ -18,7 +18,7 @@ public class MenuPanel extends JPanel {
     public MenuPanel(GameWindow gameWindow, IGameController controller) {
         this.gameWindow = gameWindow;
         this.controller = controller;
-        this.background = new ImageIcon(Objects.requireNonNull(getClass().getResource("/ar/edu/unlu/poo/view/assets/backgrounds/background.png")));
+        this.background = new ImageIcon(Objects.requireNonNull(getClass().getResource("../assets/backgrounds/background.png")));
         initComponents();
     }
 

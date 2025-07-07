@@ -23,6 +23,8 @@ public interface IGameController extends IControladorRemoto, IObservadorRemoto {
 
     ArrayList<IPlayer> fetchPlayers() throws RemoteException;
 
+    ArrayList<IPlayer> fetchOpponents() throws RemoteException;
+
     Value fetchQueriedValue() throws RemoteException;
 
     IPlayer fetchPlayingPlayer() throws RemoteException;

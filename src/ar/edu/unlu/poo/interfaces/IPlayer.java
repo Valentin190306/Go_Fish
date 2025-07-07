@@ -1,21 +1,38 @@
 package ar.edu.unlu.poo.interfaces;
 
-import ar.edu.unlu.poo.model.Hand;
+import ar.edu.unlu.poo.model.Card;
 import ar.edu.unlu.poo.model.enums.PlayerState;
+import ar.edu.unlu.poo.model.enums.Value;
 
-import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
-public interface IPlayer extends Serializable {
-
+public interface IPlayer {
     int getID();
 
     String getName();
 
     PlayerState getPlayerState();
 
-    Hand getHand();
+    boolean hasCardOfValue(Value value);
 
+    List<Card> getAvailableCards();
+
+    Map<Value, Integer> countAvailableCardsByValue();
+
+    int getHandSize();
+
+    List<Card> getLastTransferenceCards();
+
+    List<List<Card>> getCompletedSets();
+
+    int getScore();
+
+    boolean hasCompletedSets();
+
+    @Override
+    boolean equals(Object obj);
+
+    @Override
     String toString();
-
-    boolean equals(Object object);
 }

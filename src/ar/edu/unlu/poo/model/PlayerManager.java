@@ -117,5 +117,9 @@ public class PlayerManager {
     public void reset() {
         currentPlayerIndex = 0;
         targetPlayer = null;
+
+        for (Player player : players) {
+            player.clearHand();
+        }
     }
 }

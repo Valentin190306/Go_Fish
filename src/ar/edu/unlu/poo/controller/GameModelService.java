@@ -2,7 +2,6 @@ package ar.edu.unlu.poo.controller;
 
 import ar.edu.unlu.poo.interfaces.IDeck;
 import ar.edu.unlu.poo.interfaces.IGo_Fish;
-import ar.edu.unlu.poo.interfaces.IPlayer;
 import ar.edu.unlu.poo.model.Player;
 
 import java.rmi.RemoteException;

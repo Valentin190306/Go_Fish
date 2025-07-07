@@ -57,6 +57,13 @@ public class GameController implements IGameController {
     }
 
     @Override
+    public ArrayList<IPlayer> fetchOpponents() throws RemoteException {
+        ArrayList<IPlayer> opponents = service.fetchPlayers();
+        opponents.remove(clientPlayer);
+        return opponents;
+    }
+
+    @Override
     public Value fetchQueriedValue() throws RemoteException {
         return service.fetchQueriedValue();
     }
@@ -111,11 +118,15 @@ public class GameController implements IGameController {
         IPlayer clientPlayer = service.fetchClientPlayer(this.clientPlayer);
         if (targetPlayer != null
                 && !targetPlayer.equals(clientPlayer)
-                && clientPlayer.getHand().hasCardOfValue(valueRequested)) {
+                && clientPlayer.hasCardOfValue(valueRequested)) {
             service.playTurn(valueRequested, targetPlayer);
         } else {
             throw new IllegalArgumentException("Jugador inexistente o jugada inválida");
         }
+    }
+
+    private void returnToWaitingClient() throws RemoteException {
+        service.setPlayerWaiting(clientPlayer);
     }
 
     // TODO Crear lógica de recarga del modelo y guardado
@@ -151,9 +162,10 @@ public class GameController implements IGameController {
                         gameView.notifyAmountOfSets();
                     }
                     case GAME_OVER -> {
-                        gameView.notifyGameOver();
                         gameView.updateScores();
-                        //TODO Pensar en como actualizar el estado del jugador cliente
+                        gameView.notifyGameOver();
+                        gameView.spawnExitOption();
+                        returnToWaitingClient();
                     }
                     case NEW_STATUS_PLAYER -> {
                         gameWindow.getLobbyCard().updatePlayerList();

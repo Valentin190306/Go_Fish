@@ -20,6 +20,8 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish {
     private GameState gameState;
     private Value queriedValue;
 
+    private static final int PLAYER_CAP = 3;
+
     private Go_Fish() {
         this.deck = new Deck.Builder().build();
         this.playerManager = new PlayerManager();
@@ -32,13 +34,6 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish {
             instance = new Go_Fish();
         }
         return instance;
-    }
-
-    public void setFilePath(String filePath) throws RemoteException {
-        if (filePath == null || filePath.trim().isEmpty()) {
-            throw new IllegalArgumentException("La ruta del archivo no puede ser nula o vacía.");
-        }
-        ScoreSerializer.FILE_PATH = filePath;
     }
 
     @Override
@@ -57,7 +52,7 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish {
             throw new IllegalArgumentException("El jugador no puede ser nulo.");
         }
 
-        deck.addCardsBack(player.getHand().getCards());
+        deck.addCardsBack(player.getAllCards());
         deck.shuffle();
 
         playerManager.removePlayer(player);
@@ -101,10 +96,11 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish {
             throw new IllegalArgumentException("Referencia de jugador nula.");
         }
         playerManager.setPlayerReady(remotePlayer);
-        if (playerManager.areAllReady(2)) {
-            gameNotifyObservers(GameState.READY);
-        }
         gameNotifyObservers(GameState.NEW_STATUS_PLAYER);
+
+        if (playerManager.areAllReady(PLAYER_CAP)) {
+            start();
+        }
     }
 
     @Override
@@ -119,13 +115,10 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish {
         }
     }
 
-    @Override
     public void start() throws RemoteException {
-        if (gameState != GameState.READY) {
-            throw new IllegalStateException("No se puede iniciar la partida: el estado del juego no es READY.");
-        }
         dealStartingCards();
         playerManager.selectFirstPlayer();
+        gameNotifyObservers(GameState.READY);
         this.gameState = GameState.WAITING_ACTION;
     }
 
@@ -137,7 +130,7 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish {
         for (Player player : players) {
             for (int i = 0; i < 7; i++) {
                 Card drawn = deck.drawCard();
-                player.getHand().addCard(drawn);
+                player.receiveCard(drawn);
             }
             player.setPlayerState(PlayerState.PLAYING);
         }
@@ -165,35 +158,35 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish {
         queriedValue = valueRequested;
         playerManager.setTargetPlayer(localTarget);
 
-        if (localTarget.getHand().hasCardOfValue(valueRequested)) {
+        if (localTarget.hasCardOfValue(valueRequested)) {
             transferringCardsToPlayer(valueRequested, localTarget);
         } else {
             playerWentFishing();
+            playerManager.nextPlayer();
         }
 
         checkGameIsOver();
         playerGotSets();
-        playerManager.nextPlayer();
         gameNotifyObservers(GameState.TURN_SWITCH);
     }
 
     private void transferringCardsToPlayer(Value value, Player fromPlayer) throws RemoteException {
         Player currentPlayer = playerManager.getCurrent();
-        List<Card> cardsTransferred = fromPlayer.getHand().removeCardsByValue(value);
-        currentPlayer.getHand().addCards(cardsTransferred);
+        List<Card> cardsTransferred = fromPlayer.giveCardsByValue(value);
+        currentPlayer.receiveCards(cardsTransferred);
         gameNotifyObservers(GameState.TRANSFERRING_CARDS);
     }
 
     private void playerWentFishing() throws RemoteException {
         Player currentPlayer = playerManager.getCurrent();
         Card drawn = deck.drawCard();
-        currentPlayer.getHand().addCard(drawn);
+        currentPlayer.receiveCard(drawn);
         gameNotifyObservers(GameState.GO_FISH);
     }
 
     private void playerGotSets() throws RemoteException {
         Player currentPlayer = playerManager.getCurrent();
-        if (currentPlayer.getHand().checkForSets()) {
+        if (currentPlayer.hasCompletedSets()) {
             gameNotifyObservers(GameState.PLAYER_COMPLETED_SET);
         }
     }
@@ -233,11 +226,7 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish {
 
     @Override
     public HashMap<String, Integer> getHighScoreList() throws RemoteException {
-        try {
-            return ScoreSerializer.getSortedHighScores();
-        } catch (IOException e) {
-            throw new RemoteException(e.getMessage());
-        }
+        return ScoreSerializer.getHighScores();
     }
 
     @Override
@@ -245,18 +234,14 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish {
         HashMap<String, Integer> scores = new HashMap<>();
 
         for (Player player : playerManager.getPlayers()) {
-            scores.put(player.getName(), player.getHand().getScore());
+            scores.put(player.getName(), player.getScore());
         }
 
         return scores;
     }
 
     private void updateScoreList(HashMap<String, Integer> scores) throws RemoteException {
-        try {
-            ScoreSerializer.updateHighScores(scores);
-        } catch (IOException | ClassNotFoundException e) {
-            throw new RemoteException(e.getMessage());
-        }
+        ScoreSerializer.updateHighScores(scores);
     }
 
     @Override
@@ -271,9 +256,6 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish {
         gameState = GameState.AWAITING_PLAYERS;
         queriedValue = null;
         playerManager.reset();
-        for (Player p : playerManager.getPlayers()) {
-            p.getHand().clear();
-        }
     }
 
     private void gameNotifyObservers(GameState newState) throws RemoteException {

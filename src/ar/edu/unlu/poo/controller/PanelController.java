@@ -2,14 +2,15 @@ package ar.edu.unlu.poo.controller;
 
 import ar.edu.unlu.poo.interfaces.IGameWindow;
 import ar.edu.unlu.poo.interfaces.IGo_Fish;
-import ar.edu.unlu.poo.interfaces.IPanelController;
 import ar.edu.unlu.poo.model.enums.GameState;
+import ar.edu.unlu.rmimvc.cliente.IControladorRemoto;
 import ar.edu.unlu.rmimvc.observer.IObservableRemoto;
+import ar.edu.unlu.rmimvc.observer.IObservadorRemoto;
 
 import java.rmi.RemoteException;
 
 @Deprecated
-public class PanelController implements IPanelController {
+public class PanelController implements IControladorRemoto, IObservadorRemoto {
     private IGameWindow gameWindow;
     private GameModelService service;
 

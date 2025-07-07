@@ -1,21 +1,18 @@
 package ar.edu.unlu.poo.model;
 
-import ar.edu.unlu.poo.interfaces.IHand;
 import ar.edu.unlu.poo.model.enums.Value;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
-public class Hand implements Serializable, IHand {
+public class Hand implements Serializable {
     private final List<Card> cards;
     private List<Card> transferenceCards;
-    private int score;
 
     public Hand() {
         this.cards = new ArrayList<>();
-        this.score = 0;
+        this.transferenceCards = new ArrayList<>();
     }
 
     public void addCard(Card card) {
@@ -26,18 +23,19 @@ public class Hand implements Serializable, IHand {
     }
 
     public void addCards(List<Card> cards) {
-        transferenceCards = cards;
+        transferenceCards = new ArrayList<>(cards);
         transferenceCards.sort(Comparator.comparing(Card::getNumber));
         this.cards.addAll(cards);
+        this.cards.sort(Comparator.comparing(Card::getNumber));
     }
 
     public void clear() {
         cards.clear();
+        transferenceCards.clear();
     }
 
-    @Override
     public List<Card> getCards() {
-        return cards;
+        return new ArrayList<>(cards);
     }
 
     public List<Card> removeCardsByValue(Value value) {
@@ -47,59 +45,68 @@ public class Hand implements Serializable, IHand {
                 cardsToRemove.add(card);
         }
         cards.removeAll(cardsToRemove);
-        transferenceCards = cardsToRemove;
+        transferenceCards = new ArrayList<>(cardsToRemove);
         return cardsToRemove;
     }
 
-    @Override
-    public boolean hasCardOfValue(Value value) {
-        return cards.stream().anyMatch(card -> card.getNumber() == value);
+    /**
+     * Remueve cartas específicas de la mano
+     */
+    public void removeCards(List<Card> cardsToRemove) {
+        cards.removeAll(cardsToRemove);
+        transferenceCards = new ArrayList<>(cardsToRemove);
     }
 
+    public boolean hasCardOfValue(Value value) {
+        return cards.stream().anyMatch(card -> card.getNumber().equals(value));
+    }
+
+    public Map<Value, Integer> countCardsByValue() {
+        Map<Value, Integer> counts = new HashMap<>();
+
+        for (Card card : cards) {
+            Value value = card.getNumber();
+            counts.put(value, counts.getOrDefault(value, 0) + 1);
+        }
+
+        return counts;
+    }
+
+    /**
+     * Verifica si hay sets (4 cartas del mismo valor) en la mano
+     */
     public boolean checkForSets() {
-        boolean areSets = false;
+        return countCardsByValue().values().stream()
+                .anyMatch(count -> count >= 4);
+    }
 
-        int[] rankCounts = new int[Value.values().length];
+    /**
+     * Obtiene los sets agrupados por valor
+     */
+    public Map<Value, List<Card>> getSetsByValue() {
+        Map<Value, List<Card>> setsByValue = new HashMap<>();
+        Map<Value, Integer> valueCounts = countCardsByValue();
 
-        for (Card card : cards)
-            rankCounts[card.getNumber().ordinal()]++;
-
-        for (int rankCount : rankCounts) {
-            if (rankCount == 4) {
-                areSets = true;
-                break;
+        for (Map.Entry<Value, Integer> entry : valueCounts.entrySet()) {
+            if (entry.getValue() >= 4) {
+                List<Card> cardsOfValue = cards.stream()
+                        .filter(card -> card.getNumber().equals(entry.getKey()))
+                        .collect(Collectors.toList());
+                setsByValue.put(entry.getKey(), cardsOfValue);
             }
         }
-        return areSets;
+
+        return setsByValue;
     }
 
-    @Override
     public List<Card> getTransferenceCards() {
         return List.copyOf(transferenceCards);
     }
 
-    @Override
-    public int getScore() {
-        int[] rankCounts = new int[Value.values().length];
-        this.score = 0;
-
-        for (Card card : cards)
-            rankCounts[card.getNumber().ordinal()]++;
-
-        for (int rankCount : rankCounts) {
-            if (rankCount == 4) {
-                score++;
-            }
-        }
-        return score;
-    }
-
-    @Override
     public int size() {
         return cards.size();
     }
 
-    @Override
     public String toString() {
         return cards.toString();
     }

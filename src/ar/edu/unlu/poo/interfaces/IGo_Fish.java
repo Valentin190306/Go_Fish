@@ -12,8 +12,6 @@ import java.util.HashMap;
 
 public interface IGo_Fish extends IObservableRemoto {
 
-    void start() throws RemoteException;
-
     void playTurn(Value queriedValue, Player targetPlayer) throws RemoteException;
 
     IPlayer connectPlayer() throws RemoteException;

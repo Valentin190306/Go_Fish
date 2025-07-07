@@ -3,7 +3,6 @@ package ar.edu.unlu.poo.view;
 import ar.edu.unlu.poo.interfaces.*;
 import ar.edu.unlu.poo.model.Card;
 import ar.edu.unlu.poo.model.enums.Value;
-import ar.edu.unlu.rmimvc.RMIMVCException;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,12 +14,14 @@ import java.util.List;
 public class ConsoleGameView extends JPanel implements IGameView {
     private final JTextArea consoleArea;
     private final JTextField inputField;
+    private final GameWindow gameWindow;
     private final IGameController controller;
     private String placeholder;
     private boolean isPlayerTurn;
     private boolean isGameOver = false;
 
     public ConsoleGameView(GameWindow gameWindow, IGameController controller) {
+        this.gameWindow = gameWindow;
         this.controller = controller;
         this.consoleArea = new JTextArea();
         this.inputField = new JTextField();
@@ -71,7 +72,8 @@ public class ConsoleGameView extends JPanel implements IGameView {
                     handlePlayerInput(input);
                     inputField.setText("");
                 }
-            } else if (!input.isEmpty() && controller.handlePlayerExit(input)) {
+            } else if (!input.isEmpty()) {
+                handlePlayerExit(input);
                 inputField.setText("");
             }
         } catch (Exception ex) {
@@ -103,6 +105,14 @@ public class ConsoleGameView extends JPanel implements IGameView {
         throw new IllegalArgumentException("Rango inválido. Use: <RANGO> <NOMBRE_JUGADOR>");
     }
 
+    private void handlePlayerExit(String input) {
+        if (input.equals("exit")) {
+            gameWindow.showMenu();
+        } else {
+            throw new IllegalArgumentException("Entrada inválida.");
+        }
+    }
+
     private void appendToConsole(String text) {
         consoleArea.append(text + "\n");
         consoleArea.setCaretPosition(consoleArea.getDocument().getLength());
@@ -110,14 +120,12 @@ public class ConsoleGameView extends JPanel implements IGameView {
 
     @Override
     public void handleException(Exception e) {
-        if (e instanceof RMIMVCException) {
-            JOptionPane.showMessageDialog(null,
-                    e.getMessage(),
-                    "RMI Error",
+        SwingUtilities.invokeLater(() -> {
+            JOptionPane.showMessageDialog(this,
+                    "Error: " + e.getMessage(),
+                    "Error del Juego",
                     JOptionPane.ERROR_MESSAGE);
-        } else {
-            appendToConsole("!> " + e.getMessage());
-        }
+        });
     }
 
     @Override
@@ -176,9 +184,9 @@ public class ConsoleGameView extends JPanel implements IGameView {
     @Override
     public void notifyFishedCard() {
         try {
-            Card fishedCard = controller.fetchClientPlayer()
-                    .getHand()
-                    .getTransferenceCards()
+            Card fishedCard = controller
+                    .fetchClientPlayer()
+                    .getLastTransferenceCards()
                     .get(0);
 
             appendToConsole(String.format("> Pescaste un %s de %s...", fishedCard.getNumber().getValue(), fishedCard.getSuit().getValue()));
@@ -223,8 +231,7 @@ public class ConsoleGameView extends JPanel implements IGameView {
 
             List<Card> cards = controller
                     .fetchClientPlayer()
-                    .getHand()
-                    .getTransferenceCards();
+                    .getLastTransferenceCards();
 
             if (clientPlayer.equals(targetPlayer) || clientPlayer.equals(turnPlayer)) {
                 appendToConsole(clientPlayer.equals(targetPlayer) ? "> Cartas cedidas:" : "> Cartas adquiridas:");
@@ -243,8 +250,7 @@ public class ConsoleGameView extends JPanel implements IGameView {
         try {
             List<Card> cards = controller
                     .fetchClientPlayer()
-                    .getHand()
-                    .getTransferenceCards();
+                    .getLastTransferenceCards();
 
             appendToConsole("> Tu mano:");
             for (Card card : cards) {
@@ -264,7 +270,7 @@ public class ConsoleGameView extends JPanel implements IGameView {
             appendToConsole("> " + deck.size() + " cartas en pila...");
             appendToConsole("> Cartas en la mesa:");
             for (IPlayer player : players) {
-                appendToConsole("\t" + player.getName() + ": " + player.getHand().size() + " cartas");
+                appendToConsole("\t" + player.getName() + ": " + player.getHandSize() + " cartas");
             }
         } catch (Exception e) {
             handleException(e);
@@ -278,7 +284,7 @@ public class ConsoleGameView extends JPanel implements IGameView {
 
             appendToConsole("> Puntajes:");
             for (IPlayer player : players) {
-                appendToConsole("\t" + player.getName() + ": " + player.getHand().getScore());
+                appendToConsole("\t" + player.getName() + ": " + player.getScore());
             }
         } catch (Exception e) {
             handleException(e);

@@ -2,10 +2,9 @@ package ar.edu.unlu.poo.model;
 
 import java.io.*;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class ScoreSerializer {
-    public static String FILE_PATH;
+    private static final String FILE_PATH = "data/high_scores.dat";
 
     private static void serialize(HashMap<String, Integer> scores) throws IOException {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FILE_PATH))) {
@@ -24,38 +23,37 @@ public class ScoreSerializer {
         }
     }
 
-    public static void updateHighScores(HashMap<String, Integer> newScores) throws IOException, ClassNotFoundException {
-        HashMap<String, Integer> storedScores = deserialize();
-
-        for (var entry : newScores.entrySet()) {
-            String name = entry.getKey();
-            int newScore = entry.getValue();
-
-            int existingScore = storedScores.getOrDefault(name, 0);
-            if (newScore > existingScore) {
-                storedScores.put(name, newScore);
-            }
+    public static void updateHighScores(HashMap<String, Integer> newScores) {
+        if (newScores == null || newScores.isEmpty()) {
+            return;
         }
 
-        serialize(storedScores);
+        try {
+            HashMap<String, Integer> storedScores = deserialize();
+
+            for (var entry : newScores.entrySet()) {
+                String name = entry.getKey();
+                int newScore = entry.getValue();
+
+                int existingScore = storedScores.getOrDefault(name, 0);
+                if (newScore > existingScore) {
+                    storedScores.put(name, newScore);
+                }
+            }
+
+            serialize(storedScores);
+
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("Error al actualizar los puntajes: " + e.getMessage());
+        }
     }
 
-    public static LinkedHashMap<String, Integer> getSortedHighScores() throws IOException {
-        HashMap<String, Integer> scores;
+    public static HashMap<String, Integer> getHighScores() {
         try {
-            scores = deserialize();
-        } catch (ClassNotFoundException e) {
-            return new LinkedHashMap<>();
+            return deserialize();
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("Error al leer puntajes: " + e.getMessage());
+            return new HashMap<>();
         }
-
-        return scores.entrySet()
-                .stream()
-                .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        Map.Entry::getValue,
-                        (e1, e2) -> e1,
-                        LinkedHashMap::new
-                ));
     }
 }
