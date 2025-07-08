@@ -9,6 +9,7 @@ import ar.edu.unlu.poo.view.GraphicGameView;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
+import java.io.File;
 import java.rmi.RemoteException;
 import java.util.List;
 import java.util.HashMap;
@@ -56,7 +57,6 @@ public class PlayerHandPanel extends JPanel {
         cardsPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
         cardsPanel.setOpaque(false);
 
-        // Scroll pane para las cartas - COMPLETAMENTE TRANSPARENTE
         cardsScrollPane = new JScrollPane(cardsPanel);
         cardsScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         cardsScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
@@ -65,22 +65,20 @@ public class PlayerHandPanel extends JPanel {
         // Hacer el scroll pane completamente transparente
         cardsScrollPane.setOpaque(false);
         cardsScrollPane.getViewport().setOpaque(false);
-        cardsScrollPane.setBorder(null); // Eliminar borde del scroll pane
+        cardsScrollPane.setBorder(null);
 
         // Hacer las barras de scroll transparentes
         cardsScrollPane.getHorizontalScrollBar().setOpaque(false);
         cardsScrollPane.getVerticalScrollBar().setOpaque(false);
 
-        // Botón para pedir carta - MANTENER OPACO (visible)
         requestCardButton = new JButton("Pedir Carta");
         requestCardButton.setPreferredSize(new Dimension(120, REQUEST_BUTTON_HEIGHT));
-        requestCardButton.setEnabled(false); // Deshabilitado hasta tener selección
+        requestCardButton.setEnabled(false);
         requestCardButton.setFont(new Font("Arial", Font.BOLD, 12));
 
-        // Configurar panel principal - TRANSPARENTE CON BORDE SEMI-TRANSPARENTE
         setPreferredSize(new Dimension(800, 180));
         setBorder(createTransparentTitledBorder());
-        setOpaque(false); // Panel principal transparente
+        setOpaque(false);
     }
 
     /**
@@ -126,17 +124,13 @@ public class PlayerHandPanel extends JPanel {
      */
     private void handleRequestCard() {
         if (selectedCardValue != null) {
-            // Obtener oponente seleccionado de OpponentsPanel a través de parentView
             IPlayer selectedOpponent = getSelectedOpponentFromParent();
 
             if (selectedOpponent != null) {
-                // Comunicar jugada a la vista principal
                 parentView.playTurn(selectedCardValue, selectedOpponent.getName());
 
-                // Limpiar selección después de la jugada
                 clearSelection();
             } else {
-                // Mostrar mensaje de error
                 JOptionPane.showMessageDialog(this,
                         "Debes seleccionar un oponente antes de pedir una carta.",
                         "Selección Requerida",
@@ -204,21 +198,69 @@ public class PlayerHandPanel extends JPanel {
      * @param count Cantidad de cartas de ese valor
      */
     private void createCardButton(Value value, Suit suit, int count) {
-        JToggleButton cardButton = new JToggleButton();
+        JToggleButton cardButton = new JToggleButton() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+
+                // Dibujar borde de selección
+                if (isSelected()) {
+                    Graphics2D g2d = (Graphics2D) g.create();
+                    g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                    g2d.setColor(Color.BLUE);
+                    g2d.setStroke(new BasicStroke(3));
+                    g2d.drawRect(1, 1, getWidth() - 3, getHeight() - 3);
+                    g2d.dispose();
+                }
+
+                // Dibujar el contador en la esquina superior derecha
+                if (count > 1) {
+                    Graphics2D g2d = (Graphics2D) g.create();
+                    g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+                    // Círculo de fondo
+                    g2d.setColor(Color.RED);
+                    g2d.fillOval(getWidth() - 20, 2, 16, 16);
+
+                    // Texto del contador
+                    g2d.setColor(Color.WHITE);
+                    g2d.setFont(new Font("Arial", Font.BOLD, 10));
+                    FontMetrics fm = g2d.getFontMetrics();
+                    String countStr = String.valueOf(count);
+                    int textWidth = fm.stringWidth(countStr);
+                    int textHeight = fm.getAscent();
+
+                    g2d.drawString(countStr,
+                            getWidth() - 20 + (16 - textWidth) / 2,
+                            2 + (16 + textHeight) / 2 - 2);
+
+                    g2d.dispose();
+                }
+            }
+        };
+
         cardButton.setPreferredSize(new Dimension(CARD_BUTTON_WIDTH, CARD_BUTTON_HEIGHT));
-        cardButton.setText(value.getValue() + " (" + count + ")");
-        cardButton.setVerticalTextPosition(SwingConstants.BOTTOM);
-        cardButton.setHorizontalTextPosition(SwingConstants.CENTER);
         cardButton.setFocusPainted(false);
+        cardButton.setContentAreaFilled(false);
+        cardButton.setBorderPainted(false);
 
-        String imagePath = String.format("view/assets/cards/%s-%s.png",
-                value.getValue().toLowerCase(),
-                suit.getValue().toLowerCase());
+        String fileName = value.getValue().toLowerCase() + "-" + suit.getValue().toLowerCase() + ".png";
+        String imagePath ="src/ar/edu/unlu/poo/view/assets/cards/" + fileName;
 
-        cardButton.setIcon(new ImageIcon(imagePath));
+        File imageFile = new File(imagePath);
+        if (imageFile.exists()) {
+            ImageIcon icon = new ImageIcon(imagePath);
+
+            Image scaledImage = icon.getImage().getScaledInstance(
+                    CARD_BUTTON_WIDTH - 4, CARD_BUTTON_HEIGHT - 4,
+                    Image.SCALE_SMOOTH);
+
+            cardButton.setIcon(new ImageIcon(scaledImage));
+        }
+
+        cardButton.addChangeListener(e -> cardButton.repaint());
 
         cardButton.addActionListener(e -> handleCardSelection(value));
-
         cardButtons.put(value, cardButton);
         cardButtonGroup.add(cardButton);
         cardsPanel.add(cardButton);
