@@ -17,7 +17,6 @@ public class ScoresPanel extends JPanel {
         this.gameWindow = gameWindow;
         this.controller = controller;
         this.sortedScores = new LinkedHashMap<>();
-        printScores();
     }
 
     private void initComponents() {
@@ -53,7 +52,8 @@ public class ScoresPanel extends JPanel {
         try {
             this.sortedScores = (LinkedHashMap<String, Integer>) controller.fetchHighScoreList();
         } catch (Exception e) {
-            gameWindow.handleException(e);
+            gameWindow.handleException(new Exception("No existen puntajes guardados"));
+            gameWindow.showMenu();
         }
         initComponents();
     }

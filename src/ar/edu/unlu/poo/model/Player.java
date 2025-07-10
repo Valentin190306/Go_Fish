@@ -13,8 +13,11 @@ public class Player implements Serializable, IPlayer {
     private static int IDCounter = 0;
     private final int ID;
     private String name;
+
     private final Hand hand;
     private final List<List<Card>> completedSets;
+    private Card fishedCard = null;
+
     private PlayerState playerState = PlayerState.WAITING;
 
     public Player() {
@@ -49,11 +52,10 @@ public class Player implements Serializable, IPlayer {
     }
 
     /**
-     * Recibe una carta y procesa automáticamente los sets completados
+     * Recibe una carta
      */
     public void receiveCard(Card card) {
         hand.addCard(card);
-        processCompletedSets();
     }
 
     /**
@@ -62,6 +64,17 @@ public class Player implements Serializable, IPlayer {
     public void receiveCards(List<Card> cards) {
         hand.addCards(cards);
         processCompletedSets();
+    }
+
+    public void fishing(Card card) {
+        fishedCard = card;
+        hand.addCard(card);
+        processCompletedSets();
+    }
+
+    @Override
+    public Card getFishedCard() {
+        return fishedCard;
     }
 
     /**

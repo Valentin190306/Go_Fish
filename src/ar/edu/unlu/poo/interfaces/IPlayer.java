@@ -14,6 +14,8 @@ public interface IPlayer {
 
     PlayerState getPlayerState();
 
+    Card getFishedCard();
+
     boolean hasCardOfValue(Value value);
 
     List<Card> getAvailableCards();

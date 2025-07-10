@@ -1,5 +1,6 @@
 package ar.edu.unlu.poo.interfaces;
 
+import ar.edu.unlu.poo.model.Card;
 import ar.edu.unlu.poo.model.Player;
 import ar.edu.unlu.poo.model.enums.GameState;
 import ar.edu.unlu.poo.model.enums.Value;

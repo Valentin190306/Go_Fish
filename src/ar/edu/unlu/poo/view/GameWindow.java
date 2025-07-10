@@ -139,6 +139,11 @@ public class GameWindow extends JFrame implements IGameWindow {
         showCard("Menu");
     }
 
+    public void showScores() {
+        showCard("Scores");
+        scoresCard.printScores();
+    }
+
     public void showGameCard() {
         lobbyCard.removeAll();
         showCard("View");

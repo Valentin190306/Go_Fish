@@ -50,7 +50,7 @@ public class MenuPanel extends JPanel {
             gameWindow.showCard("Lobby");
         });
 
-        btnScores.addActionListener(e -> gameWindow.showCard("Scores"));
+        btnScores.addActionListener(e -> gameWindow.showScores());
 
         btnChangeName.addActionListener(e -> {
             String newName = JOptionPane.showInputDialog(null,

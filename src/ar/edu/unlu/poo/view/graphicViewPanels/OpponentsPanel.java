@@ -1,6 +1,8 @@
 package ar.edu.unlu.poo.view.graphicViewPanels;
 
 import ar.edu.unlu.poo.interfaces.IPlayer;
+import ar.edu.unlu.poo.model.Card;
+import ar.edu.unlu.poo.model.enums.Value;
 import ar.edu.unlu.poo.view.GraphicGameView;
 
 import javax.swing.*;
@@ -9,24 +11,25 @@ import java.awt.*;
 import java.awt.event.*;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class OpponentsPanel extends JPanel {
 
     private final GraphicGameView parentView;
 
-    // Componentes UI
     private JToggleButton[] opponentButtons;
     private JLabel[] opponentLabels;
     private ButtonGroup buttonGroup;
 
-    // Estado del panel
     private ArrayList<IPlayer> opponents;
     private IPlayer selectedOpponent;
 
-    // Constantes
     private static final int MAX_OPPONENTS = 2;
-    private static final int BUTTON_WIDTH = 120;
-    private static final int BUTTON_HEIGHT = 100;
+    private static final int BUTTON_SIZE = 100;
+    private static final int ICON_SIZE = 90;
     private static final Font LABEL_FONT = new Font("Arial", Font.PLAIN, 11);
     private static final Font TITLE_FONT = new Font("Arial", Font.BOLD, 12);
 
@@ -66,14 +69,22 @@ public class OpponentsPanel extends JPanel {
         opponentButtons[index] = new JToggleButton();
         JToggleButton button = opponentButtons[index];
 
-        button.setPreferredSize(new Dimension(BUTTON_WIDTH, BUTTON_HEIGHT));
-        button.setMinimumSize(new Dimension(BUTTON_WIDTH, BUTTON_HEIGHT));
-        button.setMaximumSize(new Dimension(BUTTON_WIDTH, BUTTON_HEIGHT));
+        button.setPreferredSize(new Dimension(BUTTON_SIZE, BUTTON_SIZE));
+        button.setMinimumSize(new Dimension(BUTTON_SIZE, BUTTON_SIZE));
+        button.setMaximumSize(new Dimension(BUTTON_SIZE, BUTTON_SIZE));
 
         button.setOpaque(false);
         button.setContentAreaFilled(false);
         button.setBorderPainted(true);
         button.setFocusPainted(false);
+
+        button.setMargin(new Insets(3, 3, 3, 3));
+
+        button.setHorizontalAlignment(SwingConstants.CENTER);
+        button.setVerticalAlignment(SwingConstants.CENTER);
+        button.setIconTextGap(0);
+
+        button.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
 
         button.setEnabled(false);
         button.setToolTipText("Slot vacío");
@@ -97,12 +108,12 @@ public class OpponentsPanel extends JPanel {
      * Configura la apariencia del panel principal
      */
     private void configurePanelAppearance() {
-        setPreferredSize(new Dimension(800, 140));
+        setPreferredSize(new Dimension(800, 180));
         setOpaque(false);
 
         setBorder(BorderFactory.createTitledBorder(
                 BorderFactory.createLineBorder(Color.WHITE, 2),
-                "Oponentes - Selecciona tu objetivo",
+                "Oponentes",
                 TitledBorder.DEFAULT_JUSTIFICATION,
                 TitledBorder.DEFAULT_POSITION,
                 TITLE_FONT,
@@ -117,8 +128,9 @@ public class OpponentsPanel extends JPanel {
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
 
-        gbc.insets = new Insets(5, 15, 5, 15);
-        gbc.fill = GridBagConstraints.BOTH;
+        gbc.insets = new Insets(5, 10, 5, 10);
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.anchor = GridBagConstraints.CENTER;
         gbc.weighty = 1.0;
 
         for (int i = 0; i < MAX_OPPONENTS; i++) {
@@ -136,10 +148,14 @@ public class OpponentsPanel extends JPanel {
      * Crea un contenedor para botón y label de un oponente
      */
     private JPanel createOpponentContainer(int index) {
-        JPanel container = new JPanel(new BorderLayout(0, 5));
+        JPanel container = new JPanel(new BorderLayout(0, 8));
         container.setOpaque(false);
 
-        container.add(opponentButtons[index], BorderLayout.CENTER);
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        buttonPanel.setOpaque(false);
+        buttonPanel.add(opponentButtons[index]);
+
+        container.add(buttonPanel, BorderLayout.CENTER);
         container.add(opponentLabels[index], BorderLayout.SOUTH);
 
         return container;
@@ -152,9 +168,12 @@ public class OpponentsPanel extends JPanel {
         for (int i = 0; i < MAX_OPPONENTS; i++) {
             final int opponentIndex = i;
 
-            opponentButtons[i].addActionListener(e -> selectOpponent(opponentIndex));
+            opponentButtons[i].addActionListener(e -> {
+                if (opponentButtons[opponentIndex].isEnabled()) {
+                    selectOpponent(opponentIndex);
+                }
+            });
 
-            // Agregar efectos hover
             opponentButtons[i].addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseEntered(MouseEvent e) {
@@ -169,13 +188,13 @@ public class OpponentsPanel extends JPanel {
         }
     }
 
+
     /**
      * Maneja la selección de un oponente
      */
     private void selectOpponent(int index) {
         if (index >= 0 && index < opponents.size()) {
             selectedOpponent = opponents.get(index);
-            parentView.onOpponentSelected(selectedOpponent);
             updateButtonStyles();
         }
     }
@@ -184,14 +203,25 @@ public class OpponentsPanel extends JPanel {
      * Maneja el evento mouse entered
      */
     private void handleMouseEnter(int index) {
-        if (index < opponents.size() && opponentButtons[index].isEnabled()) {
-            opponentButtons[index].setBorder(BorderFactory.createLineBorder(Color.CYAN, 2));
+        JToggleButton button = opponentButtons[index];
 
+        if (index < opponents.size()) {
             IPlayer opponent = opponents.get(index);
+
             opponentLabels[index].setText(
                     opponent.getName() + " (" + opponent.getHandSize() + " cartas, "
                             + opponent.getScore() + " sets)"
             );
+
+            if (selectedOpponent != null && selectedOpponent.equals(opponent)) {
+                button.setBorder(BorderFactory.createLineBorder(Color.ORANGE, 2));
+            } else {
+                button.setBorder(BorderFactory.createLineBorder(Color.CYAN, 1));
+            }
+        } else {
+            // Slot vacío
+            button.setToolTipText("<html><b>Slot vacío</b><br><i>Esperando jugador...</i></html>");
+            button.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
         }
     }
 
@@ -199,13 +229,18 @@ public class OpponentsPanel extends JPanel {
      * Maneja el evento mouse exited
      */
     private void handleMouseExit(int index) {
-        if (index < opponents.size() && opponentButtons[index].isEnabled()) {
-            if (selectedOpponent == null || !selectedOpponent.equals(opponents.get(index))) {
-                opponentButtons[index].setBorder(UIManager.getBorder("Button.border"));
-            }
+        JToggleButton button = opponentButtons[index];
 
+        if (index < opponents.size()) {
             IPlayer opponent = opponents.get(index);
+
             opponentLabels[index].setText(opponent.getName());
+
+            if (selectedOpponent != null && selectedOpponent.equals(opponent)) {
+                button.setBorder(BorderFactory.createLineBorder(Color.YELLOW, 2));
+            } else {
+                button.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
+            }
         }
     }
 
@@ -218,7 +253,6 @@ public class OpponentsPanel extends JPanel {
             refreshUI();
         } catch (RemoteException e) {
             parentView.handleException(e);
-            // Estado seguro en caso de error
             opponents = new ArrayList<>();
             refreshUI();
         }
@@ -244,8 +278,6 @@ public class OpponentsPanel extends JPanel {
         for (int i = 0; i < MAX_OPPONENTS; i++) {
             if (i < opponents.size()) {
                 updateOpponentDisplay(i, opponents.get(i));
-            } else {
-                updateEmptySlot(i);
             }
         }
     }
@@ -262,25 +294,10 @@ public class OpponentsPanel extends JPanel {
         ImageIcon icon = loadOpponentIcon(index + 1);
         button.setIcon(icon);
 
-        button.setToolTipText(createTooltip(opponent));
-
         label.setText(opponent.getName());
         label.setForeground(Color.WHITE);
-    }
 
-    /**
-     * Actualiza un slot vacío
-     */
-    private void updateEmptySlot(int index) {
-        JToggleButton button = opponentButtons[index];
-        JLabel label = opponentLabels[index];
-
-        button.setEnabled(false);
-        button.setIcon(null);
-        button.setToolTipText("Slot vacío");
-
-        label.setText("Vacío");
-        label.setForeground(Color.GRAY);
+        button.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
     }
 
     /**
@@ -291,25 +308,12 @@ public class OpponentsPanel extends JPanel {
             String iconPath = "src/ar/edu/unlu/poo/view/assets/playerIcons/fisherman" + playerNumber + ".png";
 
             ImageIcon icon = new ImageIcon(iconPath);
-            Image scaledImage = icon.getImage().getScaledInstance(64, 64, Image.SCALE_SMOOTH);
+            Image scaledImage = icon.getImage().getScaledInstance(ICON_SIZE, ICON_SIZE, Image.SCALE_SMOOTH);
             return new ImageIcon(scaledImage);
         } catch (Exception e) {
             System.err.println("Error cargando icono " + playerNumber + ": " + e.getMessage());
+            return null;
         }
-
-        return null;
-    }
-
-    /**
-     * Crea un tooltip con información del oponente
-     */
-    private String createTooltip(IPlayer opponent) {
-        return String.format(
-                "<html><b>%s</b><br>Cartas: %d<br>Sets: %d<br><i>Click para seleccionar</i></html>",
-                opponent.getName(),
-                opponent.getHandSize(),
-                opponent.getScore()
-        );
     }
 
     /**
@@ -322,10 +326,12 @@ public class OpponentsPanel extends JPanel {
             if (i < opponents.size()) {
                 IPlayer opponent = opponents.get(i);
                 if (selectedOpponent != null && selectedOpponent.equals(opponent)) {
-                    button.setBorder(BorderFactory.createLineBorder(Color.YELLOW, 3));
+                    button.setBorder(BorderFactory.createLineBorder(Color.YELLOW, 2));
                 } else {
-                    button.setBorder(UIManager.getBorder("Button.border"));
+                    button.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
                 }
+            } else {
+                button.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY, 1));
             }
         }
     }
@@ -350,8 +356,40 @@ public class OpponentsPanel extends JPanel {
      */
     public void setOpponentsEnabled(boolean enabled) {
         for (int i = 0; i < MAX_OPPONENTS && i < opponents.size(); i++) {
-            opponentButtons[i].setEnabled(enabled);
+            JToggleButton button = opponentButtons[i];
+            button.setEnabled(enabled);
+
+            if (i < opponents.size()) {
+                IPlayer opponent = opponents.get(i);
+                String tooltipText = createSimpleSetTooltip(opponent, enabled);
+                button.setToolTipText(tooltipText);
+            }
         }
+    }
+
+    private String createSimpleSetTooltip(IPlayer opponent, boolean enabled) {
+        StringBuilder tooltip = new StringBuilder();
+        tooltip.append("<html><b>").append(opponent.getName()).append("</b><br>");
+        tooltip.append("Cartas: ").append(opponent.getHandSize()).append("<br>");
+        tooltip.append("Sets: ").append(opponent.getScore()).append("<br>");
+
+        if (opponent.hasCompletedSets()) {
+            tooltip.append("<br><b>Sets:</b> ");
+            List<List<Card>> completedSets = opponent.getCompletedSets();
+
+            for (int i = 0; i < completedSets.size(); i++) {
+                if (i > 0) tooltip.append(", ");
+                Set<String> uniqueValues = completedSets.get(i).stream()
+                        .map(card -> card.getNumber().getValue())
+                        .collect(Collectors.toSet());
+                tooltip.append(uniqueValues);
+            }
+        }
+
+        tooltip.append("<br>").append(enabled ? "<i>Click para seleccionar</i>" : "<i>No es tu turno</i>");
+        tooltip.append("</html>");
+
+        return tooltip.toString();
     }
 
     /**

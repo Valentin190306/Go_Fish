@@ -9,7 +9,6 @@ import ar.edu.unlu.poo.model.enums.Value;
 import ar.edu.unlu.rmimvc.observer.IObservadorRemoto;
 import ar.edu.unlu.rmimvc.observer.ObservableRemoto;
 
-import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.*;
 
@@ -17,6 +16,7 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish {
     private static Go_Fish instance;
     private Deck deck;
     private final PlayerManager playerManager;
+
     private GameState gameState;
     private Value queriedValue;
 
@@ -173,14 +173,18 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish {
     private void transferringCardsToPlayer(Value value, Player fromPlayer) throws RemoteException {
         Player currentPlayer = playerManager.getCurrent();
         List<Card> cardsTransferred = fromPlayer.giveCardsByValue(value);
+
+        if (currentPlayer.getHandSize() == 0 && !deck.isEmpty()) {
+            cardsTransferred.add(deck.drawCard());
+        }
+
         currentPlayer.receiveCards(cardsTransferred);
         gameNotifyObservers(GameState.TRANSFERRING_CARDS);
     }
 
     private void playerWentFishing() throws RemoteException {
         Player currentPlayer = playerManager.getCurrent();
-        Card drawn = deck.drawCard();
-        currentPlayer.receiveCard(drawn);
+        currentPlayer.fishing(deck.drawCard());
         gameNotifyObservers(GameState.GO_FISH);
     }
 

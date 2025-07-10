@@ -62,12 +62,10 @@ public class PlayerHandPanel extends JPanel {
         cardsScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
         cardsScrollPane.setPreferredSize(new Dimension(800, 140));
 
-        // Hacer el scroll pane completamente transparente
         cardsScrollPane.setOpaque(false);
         cardsScrollPane.getViewport().setOpaque(false);
         cardsScrollPane.setBorder(null);
 
-        // Hacer las barras de scroll transparentes
         cardsScrollPane.getHorizontalScrollBar().setOpaque(false);
         cardsScrollPane.getVerticalScrollBar().setOpaque(false);
 
@@ -76,7 +74,7 @@ public class PlayerHandPanel extends JPanel {
         requestCardButton.setEnabled(false);
         requestCardButton.setFont(new Font("Arial", Font.BOLD, 12));
 
-        setPreferredSize(new Dimension(800, 180));
+        setPreferredSize(new Dimension(800, 200));
         setBorder(createTransparentTitledBorder());
         setOpaque(false);
     }
@@ -102,10 +100,8 @@ public class PlayerHandPanel extends JPanel {
     private void setupLayout() {
         setLayout(new BorderLayout());
 
-        // Panel superior con las cartas
         add(cardsScrollPane, BorderLayout.CENTER);
 
-        // Panel inferior con el botón - TRANSPARENTE
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         buttonPanel.setOpaque(false);
         buttonPanel.add(requestCardButton);
@@ -203,7 +199,6 @@ public class PlayerHandPanel extends JPanel {
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
 
-                // Dibujar borde de selección
                 if (isSelected()) {
                     Graphics2D g2d = (Graphics2D) g.create();
                     g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -213,16 +208,13 @@ public class PlayerHandPanel extends JPanel {
                     g2d.dispose();
                 }
 
-                // Dibujar el contador en la esquina superior derecha
                 if (count > 1) {
                     Graphics2D g2d = (Graphics2D) g.create();
                     g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-                    // Círculo de fondo
                     g2d.setColor(Color.RED);
                     g2d.fillOval(getWidth() - 20, 2, 16, 16);
 
-                    // Texto del contador
                     g2d.setColor(Color.WHITE);
                     g2d.setFont(new Font("Arial", Font.BOLD, 10));
                     FontMetrics fm = g2d.getFontMetrics();
@@ -272,14 +264,7 @@ public class PlayerHandPanel extends JPanel {
      */
     private void handleCardSelection(Value value) {
         selectedCardValue = value;
-
-        // Comunicar selección a la vista principal
-        parentView.onCardSelected(selectedCardValue);
-
-        // Actualizar estado del botón de pedir carta
         updateRequestButtonState();
-
-        // Actualizar apariencia visual
         updateCardButtonSelection(value);
     }
 
@@ -314,7 +299,6 @@ public class PlayerHandPanel extends JPanel {
         selectedCardValue = null;
         updateRequestButtonState();
 
-        // Resetear borders
         for (JToggleButton button : cardButtons.values()) {
             button.setBorder(UIManager.getBorder("Button.border"));
         }
@@ -337,7 +321,6 @@ public class PlayerHandPanel extends JPanel {
             button.setEnabled(enabled);
         }
 
-        // Solo habilitar botón de pedir si hay selección y está habilitado
         requestCardButton.setEnabled(enabled && selectedCardValue != null);
     }
 
