@@ -2,7 +2,6 @@ package ar.edu.unlu.poo.client;
 
 import ar.edu.unlu.poo.controller.GameController;
 import ar.edu.unlu.poo.interfaces.IGameController;
-import ar.edu.unlu.poo.interfaces.IGameWindow;
 import ar.edu.unlu.poo.view.GameWindow;
 import ar.edu.unlu.rmimvc.RMIMVCException;
 import ar.edu.unlu.rmimvc.cliente.Cliente;
@@ -21,7 +20,7 @@ public class Client {
         try {
             Cliente client = new Cliente(clientHost, clientPort, serverHost, serverPort);
             client.iniciar(controller);
-            IGameWindow gameWindow = new GameWindow(controller);
+            GameWindow gameWindow = new GameWindow(controller);
             controller.setGameWindow(gameWindow);
             gameWindow.start();
         } catch (RemoteException | RMIMVCException e) {

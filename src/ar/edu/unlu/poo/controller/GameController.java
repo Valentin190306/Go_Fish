@@ -3,6 +3,7 @@ package ar.edu.unlu.poo.controller;
 import ar.edu.unlu.poo.interfaces.*;
 import ar.edu.unlu.poo.model.enums.GameState;
 import ar.edu.unlu.poo.model.enums.Value;
+import ar.edu.unlu.poo.view.GameWindow;
 import ar.edu.unlu.rmimvc.observer.IObservableRemoto;
 
 import java.rmi.RemoteException;
@@ -13,7 +14,7 @@ public class GameController implements IGameController {
     private static GameController instance = null;
     private GameModelService service;
     private IGameView gameView;
-    private IGameWindow gameWindow;
+    private GameWindow gameWindow;
     private IPlayer clientPlayer;
 
     public static IGameController getInstance() {
@@ -26,7 +27,7 @@ public class GameController implements IGameController {
     private GameController() {}
 
     @Override
-    public void setGameWindow(IGameWindow gameWindow) throws RemoteException {
+    public void setGameWindow(GameWindow gameWindow) throws RemoteException {
         try {
             this.gameWindow = gameWindow;
         } catch (Exception e) {

@@ -2,7 +2,6 @@ package ar.edu.unlu.poo.view;
 
 import ar.edu.unlu.poo.interfaces.IGameController;
 import ar.edu.unlu.poo.interfaces.IGameView;
-import ar.edu.unlu.poo.interfaces.IGameWindow;
 import ar.edu.unlu.poo.view.viewPanels.LobbyPanel;
 import ar.edu.unlu.poo.view.viewPanels.MenuPanel;
 import ar.edu.unlu.poo.view.viewPanels.RulesPanel;
@@ -16,7 +15,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.rmi.RemoteException;
 
-public class GameWindow extends JFrame implements IGameWindow {
+public class GameWindow extends JFrame {
     private final IGameController controller;
     private IGameView gameView;
     private String playerName = null;
@@ -81,7 +80,6 @@ public class GameWindow extends JFrame implements IGameWindow {
         showMenu();
     }
 
-    @Override
     public void handleException(Exception e) {
         JOptionPane.showMessageDialog(null,
                 e.getMessage(),
@@ -102,17 +100,14 @@ public class GameWindow extends JFrame implements IGameWindow {
         this.playerName = playerName;
     }
 
-    @Override
     public MenuPanel getMenuCard() {
         return menuCard;
     }
 
-    @Override
     public LobbyPanel getLobbyCard() {
         return lobbyCard;
     }
 
-    @Override
     public ScoresPanel getScoresCard() {
         return scoresCard;
     }
@@ -149,7 +144,6 @@ public class GameWindow extends JFrame implements IGameWindow {
         showCard("View");
     }
 
-    @Override
     public void start() {
         setVisible(true);
     }

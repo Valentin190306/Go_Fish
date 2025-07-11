@@ -152,7 +152,7 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish {
             throw new IllegalStateException("No es el turno de un jugador válido o el jugador no puede jugar.");
         }
 
-        Player localTarget = playerManager.lookup(remoteTarget);
+        Player localTarget = playerManager.getPlayer(remoteTarget);
         if (localTarget == null || localTarget.getPlayerState() != PlayerState.PLAYING) {
             throw new IllegalArgumentException("El jugador objetivo no está disponible para jugar.");
         }

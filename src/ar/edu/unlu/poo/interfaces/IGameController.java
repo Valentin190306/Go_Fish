@@ -1,6 +1,7 @@
 package ar.edu.unlu.poo.interfaces;
 
 import ar.edu.unlu.poo.model.enums.Value;
+import ar.edu.unlu.poo.view.GameWindow;
 import ar.edu.unlu.rmimvc.cliente.IControladorRemoto;
 import ar.edu.unlu.rmimvc.observer.IObservableRemoto;
 import ar.edu.unlu.rmimvc.observer.IObservadorRemoto;
@@ -11,7 +12,7 @@ import java.util.HashMap;
 
 public interface IGameController extends IControladorRemoto, IObservadorRemoto {
 
-    void setGameWindow(IGameWindow gameWindow) throws RemoteException;
+    void setGameWindow(GameWindow gameWindow) throws RemoteException;
 
     void setGameView(IGameView gameView) throws RemoteException;
 

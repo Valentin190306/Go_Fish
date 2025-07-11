@@ -85,13 +85,6 @@ public class PlayerManager {
         currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
     }
 
-    public Player lookup(Player remotePlayer) {
-        return players.stream()
-                .filter(p -> p.equals(remotePlayer))
-                .findFirst()
-                .orElse(null);
-    }
-
     public void setTargetPlayer(Player target) {
         this.targetPlayer = target;
     }
