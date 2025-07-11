@@ -38,7 +38,7 @@ public class GameInfoPanel extends JPanel {
     }
 
     private void initializeComponents() {
-        messageArea = new JTextArea();
+        messageArea = new CustomTransparentTextArea();
         messageArea.setFont(MAIN_FONT);
         messageArea.setForeground(TEXT_COLOR);
         messageArea.setBackground(MESSAGE_AREA_BG);
@@ -46,10 +46,12 @@ public class GameInfoPanel extends JPanel {
         messageArea.setLineWrap(true);
         messageArea.setWrapStyleWord(true);
         messageArea.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        messageArea.setOpaque(false);
 
         messageScrollPane = new JScrollPane(messageArea);
         messageScrollPane.setOpaque(false);
         messageScrollPane.getViewport().setOpaque(false);
+        messageScrollPane.getViewport().setBackground(MESSAGE_AREA_BG);
         messageScrollPane.setBorder(BorderFactory.createLineBorder(BORDER_COLOR, 1));
         messageScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         messageScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -104,6 +106,7 @@ public class GameInfoPanel extends JPanel {
         SwingUtilities.invokeLater(() -> {
             addMessageToCurrentTurn(message);
             updateMessageDisplay();
+            messageArea.repaint();
         });
     }
 
@@ -127,6 +130,7 @@ public class GameInfoPanel extends JPanel {
             addMessageToCurrentTurn(gameOverMessage.toString());
             updateMessageDisplay();
             scrollToBottom();
+            messageArea.repaint();
         });
     }
 
@@ -237,6 +241,38 @@ public class GameInfoPanel extends JPanel {
         SwingUtilities.invokeLater(() -> {
             clearCurrentTurnMessages();
             updateMessageDisplay();
+            messageArea.repaint();
         });
+    }
+
+    /**
+     * Clase interna para manejar correctamente la transparencia del JTextArea
+     */
+    private static class CustomTransparentTextArea extends JTextArea {
+
+        public CustomTransparentTextArea() {
+            super();
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            Graphics2D g2d = (Graphics2D) g.create();
+
+            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.8f));
+
+            g2d.setColor(getBackground());
+            g2d.fillRect(0, 0, getWidth(), getHeight());
+
+            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+
+            super.paintComponent(g);
+
+            g2d.dispose();
+        }
+
+        @Override
+        public boolean isOpaque() {
+            return false;
+        }
     }
 }
