@@ -53,16 +53,16 @@ public class GameWindow extends JFrame implements IGameWindow {
                         "¿Seguro que quieres salir?", "Confirmar salida",
                         JOptionPane.YES_NO_OPTION);
 
-                if (confirm == JOptionPane.YES_OPTION) {
-                    try {
+                try {
+                    if (confirm == JOptionPane.YES_OPTION) {
                         if (controller.fetchClientPlayer() != null) {
                             controller.disconnect();
                         }
-                    } catch (RemoteException ex) {
-                        handleException(ex);
+                        dispose();
+                        System.exit(0);
                     }
-                    dispose();
-                    System.exit(0);
+                } catch (RemoteException ex) {
+                    handleException(ex);
                 }
             }
         });

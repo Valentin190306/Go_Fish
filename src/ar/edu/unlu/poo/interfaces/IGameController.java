@@ -1,6 +1,5 @@
 package ar.edu.unlu.poo.interfaces;
 
-import ar.edu.unlu.poo.model.Card;
 import ar.edu.unlu.poo.model.enums.Value;
 import ar.edu.unlu.rmimvc.cliente.IControladorRemoto;
 import ar.edu.unlu.rmimvc.observer.IObservableRemoto;

@@ -51,16 +51,10 @@ public class Player implements Serializable, IPlayer {
         return playerState;
     }
 
-    /**
-     * Recibe una carta
-     */
     public void receiveCard(Card card) {
         hand.addCard(card);
     }
 
-    /**
-     * Recibe múltiples cartas y procesa automáticamente los sets completados
-     */
     public void receiveCards(List<Card> cards) {
         hand.addCards(cards);
         processCompletedSets();
@@ -77,32 +71,21 @@ public class Player implements Serializable, IPlayer {
         return fishedCard;
     }
 
-    /**
-     * Remueve cartas de un valor específico de la mano (para dar cartas a otro jugador)
-     */
     public List<Card> giveCardsByValue(Value value) {
         return hand.removeCardsByValue(value);
     }
 
-    /**
-     * Verifica si el jugador tiene cartas de un valor específico
-     */
+
     @Override
     public boolean hasCardOfValue(Value value) {
         return hand.hasCardOfValue(value);
     }
 
-    /**
-     * Obtiene las cartas disponibles para jugar (después de apartar sets)
-     */
     @Override
     public List<Card> getAvailableCards() {
         return hand.getCards();
     }
 
-    /**
-     * Obtiene las cartas disponibles para jugar (después de apartar sets)
-     */
     public List<Card> getAllCards() {
         List<Card> cards = hand.getCards();
 
@@ -113,41 +96,26 @@ public class Player implements Serializable, IPlayer {
         return cards;
     }
 
-    /**
-     * Cuenta cartas por valor de las cartas disponibles
-     */
     @Override
     public Map<Value, Integer> countAvailableCardsByValue() {
         return hand.countCardsByValue();
     }
 
-    /**
-     * Obtiene el número de cartas en la mano
-     */
     @Override
     public int getHandSize() {
         return hand.size();
     }
 
-    /**
-     * Obtiene las cartas de la última transacción
-     */
     @Override
     public List<Card> getLastTransferenceCards() {
         return hand.getTransferenceCards();
     }
 
-    /**
-     * Limpia la mano del jugador
-     */
     public void clearHand() {
         hand.clear();
         completedSets.clear();
     }
 
-    /**
-     * Procesa automáticamente los sets completados y los mueve fuera de la mano
-     */
     private void processCompletedSets() {
         Map<Value, List<Card>> setsByValue = hand.getSetsByValue();
 
@@ -160,25 +128,16 @@ public class Player implements Serializable, IPlayer {
         }
     }
 
-    /**
-     * Obtiene todos los sets completados por el jugador
-     */
     @Override
     public List<List<Card>> getCompletedSets() {
         return new ArrayList<>(completedSets);
     }
 
-    /**
-     * Obtiene el puntaje del jugador (igual al número de sets completados)
-     */
     @Override
     public int getScore() {
         return completedSets.size();
     }
 
-    /**
-     * Verifica si el jugador tiene sets completados
-     */
     @Override
     public boolean hasCompletedSets() {
         return !completedSets.isEmpty();

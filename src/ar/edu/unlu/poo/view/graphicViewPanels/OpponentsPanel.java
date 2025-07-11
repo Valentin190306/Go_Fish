@@ -2,17 +2,16 @@ package ar.edu.unlu.poo.view.graphicViewPanels;
 
 import ar.edu.unlu.poo.interfaces.IPlayer;
 import ar.edu.unlu.poo.model.Card;
-import ar.edu.unlu.poo.model.enums.Value;
 import ar.edu.unlu.poo.view.GraphicGameView;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -244,23 +243,15 @@ public class OpponentsPanel extends JPanel {
         }
     }
 
-    /**
-     * Actualiza la lista de oponentes y refresca la UI
-     */
     public void updateOpponents() {
         try {
             opponents = parentView.getController().fetchOpponents();
             refreshUI();
         } catch (RemoteException e) {
             parentView.handleException(e);
-            opponents = new ArrayList<>();
-            refreshUI();
         }
     }
 
-    /**
-     * Refresca la interfaz de usuario
-     */
     private void refreshUI() {
         SwingUtilities.invokeLater(() -> {
             clearSelection();
@@ -271,9 +262,6 @@ public class OpponentsPanel extends JPanel {
         });
     }
 
-    /**
-     * Actualiza la visualización de cada oponente
-     */
     private void updateOpponentDisplays() {
         for (int i = 0; i < MAX_OPPONENTS; i++) {
             if (i < opponents.size()) {
@@ -282,9 +270,6 @@ public class OpponentsPanel extends JPanel {
         }
     }
 
-    /**
-     * Actualiza la visualización de un oponente específico
-     */
     private void updateOpponentDisplay(int index, IPlayer opponent) {
         JToggleButton button = opponentButtons[index];
         JLabel label = opponentLabels[index];

@@ -49,9 +49,6 @@ public class Hand implements Serializable {
         return cardsToRemove;
     }
 
-    /**
-     * Remueve cartas específicas de la mano
-     */
     public void removeCards(List<Card> cardsToRemove) {
         cards.removeAll(cardsToRemove);
         transferenceCards = new ArrayList<>(cardsToRemove);
@@ -72,17 +69,6 @@ public class Hand implements Serializable {
         return counts;
     }
 
-    /**
-     * Verifica si hay sets (4 cartas del mismo valor) en la mano
-     */
-    public boolean checkForSets() {
-        return countCardsByValue().values().stream()
-                .anyMatch(count -> count >= 4);
-    }
-
-    /**
-     * Obtiene los sets agrupados por valor
-     */
     public Map<Value, List<Card>> getSetsByValue() {
         Map<Value, List<Card>> setsByValue = new HashMap<>();
         Map<Value, Integer> valueCounts = countCardsByValue();

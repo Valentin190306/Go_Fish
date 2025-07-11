@@ -1,6 +1,8 @@
 package ar.edu.unlu.poo.view;
 
-import ar.edu.unlu.poo.interfaces.*;
+import ar.edu.unlu.poo.interfaces.IGameController;
+import ar.edu.unlu.poo.interfaces.IGameView;
+import ar.edu.unlu.poo.interfaces.IPlayer;
 import ar.edu.unlu.poo.model.Card;
 import ar.edu.unlu.poo.model.enums.Value;
 import ar.edu.unlu.poo.view.graphicViewPanels.GameInfoPanel;
@@ -11,9 +13,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.rmi.RemoteException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.List;
 
 public class GraphicGameView extends JPanel implements IGameView {
     private final IGameController controller;
@@ -25,10 +27,6 @@ public class GraphicGameView extends JPanel implements IGameView {
 
     private ImageIcon background;
 
-    /**
-     * Constructor que inicializa la vista gráfica
-     * @param controller Controlador del juego para manejar acciones
-     */
     public GraphicGameView(GameWindow gameWindow, IGameController controller) {
         this.controller = controller;
         this.gameWindow = gameWindow;
@@ -36,9 +34,6 @@ public class GraphicGameView extends JPanel implements IGameView {
         setupLayout();
     }
 
-    /**
-     * Inicializa los componentes principales de la vista
-     */
     private void initializeComponents() {
         try {
             background = new ImageIcon(Objects.requireNonNull(getClass().getResource("assets/backgrounds/background.png")));
@@ -56,9 +51,6 @@ public class GraphicGameView extends JPanel implements IGameView {
         setOpaque(true);
     }
 
-    /**
-     * Configura el layout de la vista con las tres secciones
-     */
     private void setupLayout() {
         add(opponentsPanel, BorderLayout.NORTH);
         add(gameInfoPanel, BorderLayout.CENTER);
@@ -98,7 +90,7 @@ public class GraphicGameView extends JPanel implements IGameView {
 
     @Override
     public void notifyGameOver() {
-        SwingUtilities.invokeLater(() -> {
+        SwingUtilities.invokeLater(()-> {
             try {
                 HashMap<String, Integer> scores = controller.fetchGameScoreList();
                 gameInfoPanel.displayGameOver(scores);
@@ -106,7 +98,6 @@ public class GraphicGameView extends JPanel implements IGameView {
                 opponentsPanel.setOpponentsEnabled(false);
                 playerHandPanel.setCardsEnabled(false);
                 gameInfoPanel.setEnabled(false);
-
             } catch (RemoteException e) {
                 handleException(e);
             }
@@ -115,7 +106,7 @@ public class GraphicGameView extends JPanel implements IGameView {
 
     @Override
     public void notifyPlayerAction() {
-        SwingUtilities.invokeLater(() -> {
+        SwingUtilities.invokeLater(()-> {
             try {
                 IPlayer playingPlayer = controller.fetchPlayingPlayer();
                 IPlayer targetPlayer = controller.fetchTargetPlayer();
@@ -128,7 +119,6 @@ public class GraphicGameView extends JPanel implements IGameView {
                             targetPlayer.getName());
                     gameInfoPanel.displayMessage(message);
                 }
-
             } catch (RemoteException e) {
                 handleException(e);
             }
@@ -137,7 +127,7 @@ public class GraphicGameView extends JPanel implements IGameView {
 
     @Override
     public void notifyAmountOfSets() {
-        SwingUtilities.invokeLater(() -> {
+        SwingUtilities.invokeLater(()-> {
             try {
                 IPlayer playingPlayer = controller.fetchPlayingPlayer();
                 IPlayer clientPlayer = controller.fetchClientPlayer();
@@ -163,38 +153,34 @@ public class GraphicGameView extends JPanel implements IGameView {
 
     @Override
     public void notifyFishedCard() {
-        SwingUtilities.invokeLater(() -> {
-            try {
-                IPlayer playingPlayer = controller.fetchPlayingPlayer();
-                IPlayer clientPlayer = controller.fetchClientPlayer();
+        try {
+            IPlayer playingPlayer = controller.fetchPlayingPlayer();
+            IPlayer clientPlayer = controller.fetchClientPlayer();
 
-                if (playingPlayer != null) {
-                    if (clientPlayer.equals(playingPlayer)) {
-                        Card fishedCard = playingPlayer.getFishedCard();
-                        if (fishedCard != null) {
-                            String message = String.format("Fuiste a pescar y obtuviste: %s de %s",
-                                    fishedCard.getNumber().getValue(),
-                                    fishedCard.getSuit().toString());
-                            gameInfoPanel.displayMessage(message);
-                            gameInfoPanel.showFishedCardPopup(fishedCard);
-                        } else {
-                            gameInfoPanel.displayMessage("Fuiste a pescar una carta del mazo");
-                        }
-                    } else {
-                        String message = String.format("%s fue a pescar una carta del mazo",
-                                playingPlayer.getName());
+            if (playingPlayer != null) {
+                if (clientPlayer.equals(playingPlayer)) {
+                    Card fishedCard = playingPlayer.getFishedCard();
+                    if (fishedCard != null) {
+                        String message = String.format("Fuiste a pescar y obtuviste: %s de %s",
+                                fishedCard.getNumber().getValue(),
+                                fishedCard.getSuit().toString());
                         gameInfoPanel.displayMessage(message);
+                        gameInfoPanel.showFishedCardPopup(fishedCard);
                     }
+                } else {
+                    String message = String.format("%s fue a pescar una carta del mazo",
+                            playingPlayer.getName());
+                    gameInfoPanel.displayMessage(message);
                 }
-            } catch (RemoteException e) {
-                handleException(e);
             }
-        });
+        } catch (RemoteException e) {
+            handleException(e);
+        }
     }
 
     @Override
     public void notifyPlayerGoneFishing() {
-        SwingUtilities.invokeLater(() -> {
+        SwingUtilities.invokeLater(()-> {
             try {
                 IPlayer playingPlayer = controller.fetchPlayingPlayer();
                 IPlayer targetPlayer = controller.fetchTargetPlayer();
@@ -212,7 +198,7 @@ public class GraphicGameView extends JPanel implements IGameView {
 
     @Override
     public void notifyPlayerTurn() {
-        SwingUtilities.invokeLater(() -> {
+        SwingUtilities.invokeLater(()-> {
             try {
                 IPlayer playingPlayer = controller.fetchPlayingPlayer();
                 IPlayer clientPlayer = controller.fetchClientPlayer();
@@ -223,7 +209,7 @@ public class GraphicGameView extends JPanel implements IGameView {
                             "¡Es tu turno!" :
                             String.format("Turno de %s", playingPlayer.getName());
 
-                    gameInfoPanel.displayTurnMessage(message, isClientTurn);
+                    gameInfoPanel.displayMessage(message);
                 }
                 updateTurnState();
             } catch (RemoteException e) {
@@ -234,7 +220,7 @@ public class GraphicGameView extends JPanel implements IGameView {
 
     @Override
     public void notifyTransferredCards() {
-        SwingUtilities.invokeLater(() -> {
+        SwingUtilities.invokeLater(()-> {
             try {
                 IPlayer playingPlayer = controller.fetchPlayingPlayer();
                 IPlayer targetPlayer = controller.fetchTargetPlayer();
@@ -255,7 +241,7 @@ public class GraphicGameView extends JPanel implements IGameView {
 
     @Override
     public void updateHand() {
-        SwingUtilities.invokeLater(() -> {
+        SwingUtilities.invokeLater(()-> {
             try {
                 playerHandPanel.updateHand();
                 IPlayer clientPlayer = controller.fetchClientPlayer();
@@ -268,7 +254,7 @@ public class GraphicGameView extends JPanel implements IGameView {
 
     @Override
     public void showPlayersAndCards() {
-        SwingUtilities.invokeLater(() -> {
+        SwingUtilities.invokeLater(()-> {
             try {
                 opponentsPanel.updateOpponents();
             } catch (Exception e) {
@@ -279,7 +265,7 @@ public class GraphicGameView extends JPanel implements IGameView {
 
     @Override
     public void updateScores() {
-        SwingUtilities.invokeLater(() -> {
+        SwingUtilities.invokeLater(()->{
             try {
                 HashMap<String, Integer> scores = controller.fetchGameScoreList();
                 StringBuilder scoresText = new StringBuilder("Puntuaciones: ");
@@ -289,7 +275,6 @@ public class GraphicGameView extends JPanel implements IGameView {
                 }
 
                 gameInfoPanel.displayMessage(scoresText.toString());
-
             } catch (RemoteException e) {
                 handleException(e);
             }
@@ -298,22 +283,21 @@ public class GraphicGameView extends JPanel implements IGameView {
 
     @Override
     public void spawnExitOption() {
-        SwingUtilities.invokeLater(() -> {
-            int option = JOptionPane.showConfirmDialog(this,
-                    "¿Deseas salir del juego?",
-                    "Salir del Juego",
-                    JOptionPane.YES_NO_OPTION);
+        int option = JOptionPane.showConfirmDialog(this,
+                "¿Deseas salir del juego?",
+                "Salir del Juego",
+                JOptionPane.YES_NO_OPTION);
 
-            if (option == JOptionPane.YES_OPTION) {
-                gameWindow.showMenu();
-            }
-        });
+        if (option == JOptionPane.YES_OPTION) {
+            gameWindow.showMenu();
+        }
     }
 
     @Override
     public void updateTurnState() {
-        SwingUtilities.invokeLater(() -> {
+        SwingUtilities.invokeLater(()-> {
             try {
+                gameInfoPanel.clearMessages();
                 IPlayer clientPlayer = controller.fetchClientPlayer();
                 IPlayer playingPlayer = controller.fetchPlayingPlayer();
 
@@ -321,33 +305,20 @@ public class GraphicGameView extends JPanel implements IGameView {
 
                 opponentsPanel.updateTurnState(isClientTurn);
                 playerHandPanel.updateTurnState(isClientTurn);
-
             } catch (RemoteException e) {
                 handleException(e);
             }
         });
     }
 
-    /**
-     * Getter para el controlador (usado por los paneles)
-     */
     public IGameController getController() {
         return controller;
     }
 
-    /**
-     * Obtiene el oponente seleccionado del OpponentsPanel
-     * @return El oponente seleccionado o null
-     */
     public IPlayer getSelectedOpponent() {
         return opponentsPanel.getSelectedOpponent();
     }
 
-    /**
-     * Método para ejecutar jugada
-     * @param value Valor solicitado
-     * @param targetPlayer Jugador objetivo
-     */
     public void playTurn(Value value, String targetPlayer) {
         try {
             controller.clientPlaysTurn(value, targetPlayer);

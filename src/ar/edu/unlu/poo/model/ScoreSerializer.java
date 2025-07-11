@@ -1,10 +1,11 @@
 package ar.edu.unlu.poo.model;
 
 import java.io.*;
+import java.rmi.RemoteException;
 import java.util.*;
 
 public class ScoreSerializer {
-    private static final String FILE_PATH = "data/high_scores.dat";
+    private static final String FILE_PATH = "high_scores.dat";
 
     private static void serialize(HashMap<String, Integer> scores) throws IOException {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FILE_PATH))) {
@@ -23,7 +24,7 @@ public class ScoreSerializer {
         }
     }
 
-    public static void updateHighScores(HashMap<String, Integer> newScores) {
+    public static void updateHighScores(HashMap<String, Integer> newScores) throws RemoteException {
         if (newScores == null || newScores.isEmpty()) {
             return;
         }
@@ -44,7 +45,7 @@ public class ScoreSerializer {
             serialize(storedScores);
 
         } catch (IOException | ClassNotFoundException e) {
-            System.err.println("Error al actualizar los puntajes: " + e.getMessage());
+            throw new RemoteException("Error al persistir puntaje");
         }
     }
 
@@ -52,7 +53,6 @@ public class ScoreSerializer {
         try {
             return deserialize();
         } catch (IOException | ClassNotFoundException e) {
-            System.err.println("Error al leer puntajes: " + e.getMessage());
             return new HashMap<>();
         }
     }

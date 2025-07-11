@@ -21,6 +21,7 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish {
     private Value queriedValue;
 
     private static final int PLAYER_CAP = 3;
+    private static final int SCORE_CAP = 3;
 
     private Go_Fish() {
         this.deck = new Deck.Builder().build();
@@ -141,6 +142,7 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish {
         if (valueRequested == null) {
             throw new IllegalArgumentException("La carta solicitada no puede ser null.");
         }
+
         if (remoteTarget == null ) {
             throw new IllegalArgumentException("El jugador objetivo no puede ser null.");
         }
@@ -155,6 +157,10 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish {
             throw new IllegalArgumentException("El jugador objetivo no está disponible para jugar.");
         }
 
+        if (!playerManager.getCurrent().hasCardOfValue(valueRequested)) {
+            throw new IllegalArgumentException("No puedes pedir cartas que no tienes en tu mano.");
+        }
+
         queriedValue = valueRequested;
         playerManager.setTargetPlayer(localTarget);
 
@@ -163,21 +169,19 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish {
         } else {
             playerWentFishing();
             playerManager.nextPlayer();
+            gameNotifyObservers(GameState.TURN_SWITCH);
         }
 
-        checkGameIsOver();
+        ensurePlayerHasCards(playerManager.getCurrent());
+        //playerManager.nextPlayer();
+        //gameNotifyObservers(GameState.TURN_SWITCH);
         playerGotSets();
-        gameNotifyObservers(GameState.TURN_SWITCH);
+        checkGameIsOver();
     }
 
     private void transferringCardsToPlayer(Value value, Player fromPlayer) throws RemoteException {
         Player currentPlayer = playerManager.getCurrent();
         List<Card> cardsTransferred = fromPlayer.giveCardsByValue(value);
-
-        if (currentPlayer.getHandSize() == 0 && !deck.isEmpty()) {
-            cardsTransferred.add(deck.drawCard());
-        }
-
         currentPlayer.receiveCards(cardsTransferred);
         gameNotifyObservers(GameState.TRANSFERRING_CARDS);
     }
@@ -195,8 +199,28 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish {
         }
     }
 
+    private void ensurePlayerHasCards(Player player) {
+        if (player.getHandSize() == 0 && !deck.isEmpty()) {
+            player.receiveCard(deck.drawCard());
+        }
+    }
+
     private void checkGameIsOver() throws RemoteException {
         if (deck.isEmpty()) {
+            gameNotifyObservers(GameState.GAME_OVER);
+        }
+
+        boolean score_capped = false;
+        List<Player> players = playerManager.getPlayers();
+        for (Player player : players ) {
+           if (player.getScore() == SCORE_CAP) {
+               score_capped = true;
+               break;
+           }
+        }
+
+        if (score_capped) {
+            updateScoreList(getGameScores());
             gameNotifyObservers(GameState.GAME_OVER);
         }
     }
@@ -255,7 +279,6 @@ public class Go_Fish extends ObservableRemoto implements IGo_Fish {
 
     @Override
     public void reload() throws RemoteException {
-        updateScoreList(getGameScores());
         deck = new Deck.Builder().build();
         gameState = GameState.AWAITING_PLAYERS;
         queriedValue = null;

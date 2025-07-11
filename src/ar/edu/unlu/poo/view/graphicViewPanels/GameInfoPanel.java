@@ -8,14 +8,10 @@ import ar.edu.unlu.poo.view.GraphicGameView;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-/**
- * Panel que muestra información y eventos del juego Go Fish
- * Incluye área de mensajes principales y panel de sets completados
- */
 public class GameInfoPanel extends JPanel {
 
     private JTextArea messageArea;
@@ -24,20 +20,15 @@ public class GameInfoPanel extends JPanel {
     private JPanel setsContainer;
 
     private final List<String> currentTurnMessages;
-    private String currentTurnPlayer; // Para detectar cambios de turno
+    private String currentTurnPlayer;
 
     private static final Color BACKGROUND_COLOR = new Color(0, 0, 0, 120);
     private static final Color TEXT_COLOR = Color.WHITE;
-    private static final Color BORDER_COLOR = new Color(255, 215, 0); // Dorado
-    private static final Color TURN_COLOR = new Color(0, 255, 0);
+    private static final Color BORDER_COLOR = new Color(255, 215, 0);
     private static final Color MESSAGE_AREA_BG = new Color(0, 0, 0, 160);
     private static final Font MAIN_FONT = new Font("Arial", Font.BOLD, 12);
     private static final Font TITLE_FONT = new Font("Arial", Font.BOLD, 16);
 
-    /**
-     * Constructor del panel de información del juego
-     * @param parent Vista padre que contiene este panel
-     */
     public GameInfoPanel(GraphicGameView parent) {
         this.currentTurnMessages = new ArrayList<>();
         this.currentTurnPlayer = null;
@@ -46,9 +37,6 @@ public class GameInfoPanel extends JPanel {
         setupStyling();
     }
 
-    /**
-     * Inicializa los componentes del panel
-     */
     private void initializeComponents() {
         messageArea = new JTextArea();
         messageArea.setFont(MAIN_FONT);
@@ -88,9 +76,6 @@ public class GameInfoPanel extends JPanel {
         ));
     }
 
-    /**
-     * Configura el layout del panel
-     */
     private void setupLayout() {
         setLayout(new BorderLayout(10, 10));
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -99,9 +84,6 @@ public class GameInfoPanel extends JPanel {
         add(setsPanel, BorderLayout.SOUTH);
     }
 
-    /**
-     * Configura el estilo visual del panel
-     */
     private void setupStyling() {
         setOpaque(false);
         setPreferredSize(new Dimension(400, 300));
@@ -118,10 +100,6 @@ public class GameInfoPanel extends JPanel {
         g2d.dispose();
     }
 
-    /**
-     * Muestra un mensaje general en el panel (se acumula hasta cambio de turno)
-     * @param message Mensaje a mostrar
-     */
     public void displayMessage(String message) {
         SwingUtilities.invokeLater(() -> {
             addMessageToCurrentTurn(message);
@@ -129,40 +107,9 @@ public class GameInfoPanel extends JPanel {
         });
     }
 
-    /**
-     * Muestra un mensaje de turno con color especial si es el turno del cliente
-     * Este método limpia los mensajes acumulados y reinicia para el nuevo turno
-     * @param message Mensaje a mostrar
-     * @param isClientTurn True si es el turno del cliente
-     */
-    public void displayTurnMessage(String message, boolean isClientTurn) {
-        SwingUtilities.invokeLater(() -> {
-            // Detectar cambio de turno y limpiar mensajes acumulados
-            String newTurnPlayer = extractPlayerFromTurnMessage(message);
-            if (shouldClearMessages(newTurnPlayer)) {
-                clearCurrentTurnMessages();
-            }
-
-            currentTurnPlayer = newTurnPlayer;
-
-            // Agregar mensaje de turno con formato especial
-            String turnMessage = formatTurnMessage(message, isClientTurn);
-            addMessageToCurrentTurn(turnMessage);
-            updateMessageDisplay();
-
-            // Scroll automático al final
-            scrollToBottom();
-        });
-    }
-
-    /**
-     * Muestra la pantalla de fin de juego con puntuaciones
-     * @param scores Mapa de puntuaciones finales
-     */
     public void displayGameOver(HashMap<String, Integer> scores) {
         StringBuilder gameOverMessage = new StringBuilder("¡JUEGO TERMINADO! - ");
 
-        // Encontrar al ganador
         String winner = "";
         int maxScore = -1;
 
@@ -183,10 +130,6 @@ public class GameInfoPanel extends JPanel {
         });
     }
 
-    /**
-     * Actualiza la visualización de sets completados del jugador cliente
-     * @param clientPlayer Jugador cliente
-     */
     public void updateSetsFromPlayer(IPlayer clientPlayer) {
         SwingUtilities.invokeLater(() -> {
             setsContainer.removeAll();
@@ -213,10 +156,6 @@ public class GameInfoPanel extends JPanel {
         });
     }
 
-    /**
-     * Muestra un pop-up con la carta pescada
-     * @param fishedCard Carta pescada
-     */
     public void showFishedCardPopup(Card fishedCard) {
         SwingUtilities.invokeLater(() -> {
             JDialog popup = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Carta Pescada", true);
@@ -246,19 +185,12 @@ public class GameInfoPanel extends JPanel {
         });
     }
 
-    /**
-     * Agrega un mensaje a la lista del turno actual
-     * @param message Mensaje a agregar
-     */
     private void addMessageToCurrentTurn(String message) {
         if (message != null && !message.trim().isEmpty()) {
             currentTurnMessages.add(message);
         }
     }
 
-    /**
-     * Actualiza la visualización con todos los mensajes acumulados
-     */
     private void updateMessageDisplay() {
         if (currentTurnMessages.isEmpty()) {
             messageArea.setText("Esperando eventos del juego...");
@@ -276,63 +208,16 @@ public class GameInfoPanel extends JPanel {
         messageArea.setText(displayText.toString());
     }
 
-    /**
-     * Limpia los mensajes del turno actual
-     */
     private void clearCurrentTurnMessages() {
         currentTurnMessages.clear();
     }
 
-    /**
-     * Extrae el nombre del jugador de un mensaje de turno
-     * @param turnMessage Mensaje de turno
-     * @return Nombre del jugador o null si no se puede extraer
-     */
-    private String extractPlayerFromTurnMessage(String turnMessage) {
-        if (turnMessage.contains("¡Es tu turno!")) {
-            return "CLIENT"; // Identificador especial para el cliente
-        } else if (turnMessage.startsWith("Turno de ")) {
-            return turnMessage.substring(9); // Extraer nombre después de "Turno de "
-        }
-        return null;
-    }
-
-    /**
-     * Determina si se deben limpiar los mensajes basado en el cambio de turno
-     * @param newTurnPlayer Nuevo jugador del turno
-     * @return true si se debe limpiar, false en caso contrario
-     */
-    private boolean shouldClearMessages(String newTurnPlayer) {
-        return currentTurnPlayer != null &&
-                newTurnPlayer != null &&
-                !currentTurnPlayer.equals(newTurnPlayer);
-    }
-
-    /**
-     * Formatea el mensaje de turno con estilo especial
-     * @param message Mensaje original
-     * @param isClientTurn Si es el turno del cliente
-     * @return Mensaje formateado
-     */
-    private String formatTurnMessage(String message, boolean isClientTurn) {
-        String prefix = isClientTurn ? ">>> " : "--- ";
-        return prefix + message + " " + prefix;
-    }
-
-    /**
-     * Hace scroll automático hacia el final del área de mensajes
-     */
     private void scrollToBottom() {
         SwingUtilities.invokeLater(() -> {
             messageArea.setCaretPosition(messageArea.getDocument().getLength());
         });
     }
 
-    /**
-     * Crea una etiqueta para mostrar un set completado
-     * @param value Valor del set
-     * @return JLabel configurado
-     */
     private JLabel createSetLabel(String value) {
         JLabel setLabel = new JLabel(String.format("%s", value));
         setLabel.setFont(new Font("Arial", Font.BOLD, 12));
@@ -348,9 +233,6 @@ public class GameInfoPanel extends JPanel {
         return setLabel;
     }
 
-    /**
-     * Método para limpiar manualmente los mensajes (útil para testing)
-     */
     public void clearMessages() {
         SwingUtilities.invokeLater(() -> {
             clearCurrentTurnMessages();

@@ -12,11 +12,13 @@ public class ScoresPanel extends JPanel {
     private final GameWindow gameWindow;
     private final IGameController controller;
     private LinkedHashMap<String, Integer> sortedScores;
+    private JPanel scoresPanel;
 
     public ScoresPanel(GameWindow gameWindow, IGameController controller) {
         this.gameWindow = gameWindow;
         this.controller = controller;
         this.sortedScores = new LinkedHashMap<>();
+        initComponents();
     }
 
     private void initComponents() {
@@ -26,17 +28,10 @@ public class ScoresPanel extends JPanel {
         title.setFont(new Font("Arial", Font.BOLD, 18));
         add(title, BorderLayout.NORTH);
 
-        JPanel scoresPanel = new JPanel();
+        // Crear el panel de puntajes y mantener referencia
+        scoresPanel = new JPanel();
         scoresPanel.setLayout(new BoxLayout(scoresPanel, BoxLayout.Y_AXIS));
         scoresPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
-        for (Map.Entry<String, Integer> entry : sortedScores.entrySet()) {
-            String text = entry.getKey() + ": " + entry.getValue();
-            JLabel label = new JLabel(text);
-            label.setFont(new Font("Arial", Font.PLAIN, 14));
-            label.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-            scoresPanel.add(label);
-        }
 
         JScrollPane scrollPane = new JScrollPane(scoresPanel);
         add(scrollPane, BorderLayout.CENTER);
@@ -48,13 +43,63 @@ public class ScoresPanel extends JPanel {
         add(buttonPanel, BorderLayout.SOUTH);
     }
 
+    private void updateScoresDisplay() {
+        scoresPanel.removeAll();
+
+        if (sortedScores.isEmpty()) {
+            JLabel noScoresLabel = new JLabel("No hay puntajes disponibles");
+            noScoresLabel.setFont(new Font("Arial", Font.ITALIC, 14));
+            noScoresLabel.setForeground(Color.GRAY);
+            scoresPanel.add(noScoresLabel);
+        } else {
+            for (Map.Entry<String, Integer> entry : sortedScores.entrySet()) {
+                String text = entry.getKey() + ": " + entry.getValue();
+                JLabel label = new JLabel(text);
+                label.setFont(new Font("Arial", Font.PLAIN, 14));
+                label.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+                scoresPanel.add(label);
+            }
+        }
+
+        scoresPanel.revalidate();
+        scoresPanel.repaint();
+    }
+
     public void printScores() {
         try {
-            this.sortedScores = (LinkedHashMap<String, Integer>) controller.fetchHighScoreList();
+            Map<String, Integer> scoreData = controller.fetchHighScoreList();
+
+            if (scoreData instanceof LinkedHashMap<String, Integer> scores) {
+                this.sortedScores = scores;
+            } else if (scoreData != null) {
+                this.sortedScores = new LinkedHashMap<>(scoreData);
+            } else {
+                throw new ClassCastException("El controlador no devolvió un Map válido");
+            }
+
+            updateScoresDisplay();
+
+        } catch (ClassCastException e) {
+            System.err.println("Error de tipo de datos: " + e.getMessage());
+            handleScoresError("Error en el formato de los puntajes");
         } catch (Exception e) {
-            gameWindow.handleException(new Exception("No existen puntajes guardados"));
-            gameWindow.showMenu();
+            System.err.println("Error al cargar puntajes: " + e.getMessage());
+            handleScoresError("No se pudieron cargar los puntajes");
         }
-        initComponents();
+    }
+
+    private void handleScoresError(String message) {
+        sortedScores.clear();
+        scoresPanel.removeAll();
+
+        JLabel errorLabel = new JLabel(message);
+        errorLabel.setFont(new Font("Arial", Font.ITALIC, 14));
+        errorLabel.setForeground(Color.RED);
+        scoresPanel.add(errorLabel);
+
+        scoresPanel.revalidate();
+        scoresPanel.repaint();
+
+        JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.WARNING_MESSAGE);
     }
 }

@@ -11,8 +11,8 @@ import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.io.File;
 import java.rmi.RemoteException;
-import java.util.List;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -149,12 +149,12 @@ public class PlayerHandPanel extends JPanel {
     public void updateHand() {
         try {
             SwingUtilities.invokeLater(() -> {
-                cardsPanel.removeAll();
-                cardButtonGroup = new ButtonGroup();
-                cardButtons.clear();
-                selectedCardValue = null;
-
                 try {
+                    cardsPanel.removeAll();
+                    cardButtonGroup = new ButtonGroup();
+                    cardButtons.clear();
+                    selectedCardValue = null;
+
                     List<Card> availableCards = parentView
                             .getController()
                             .fetchClientPlayer()
@@ -173,26 +173,19 @@ public class PlayerHandPanel extends JPanel {
                         createCardButton(value, representativeCard.getSuit(), count);
                     }
 
-                } catch (RemoteException ex) {
-                    parentView.handleException(ex);
+                    updateRequestButtonState();
+
+                    cardsPanel.revalidate();
+                    cardsPanel.repaint();
+                } catch (RemoteException e) {
+                    parentView.handleException(e);
                 }
-
-                updateRequestButtonState();
-
-                cardsPanel.revalidate();
-                cardsPanel.repaint();
             });
         } catch (Exception e) {
             parentView.handleException(e);
         }
     }
 
-
-    /**
-     * Crea un botón para un valor de carta específico
-     * @param value Valor de la carta
-     * @param count Cantidad de cartas de ese valor
-     */
     private void createCardButton(Value value, Suit suit, int count) {
         JToggleButton cardButton = new JToggleButton() {
             @Override
